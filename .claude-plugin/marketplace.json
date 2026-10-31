@@ -1,0 +1,12 @@
+{
+  "name": "svg-ui-bridge",
+  "description": "SVG-first UI design workflow for Claude Code",
+  "owner": { "name": "ETEason" },
+  "plugins": [
+    {
+      "name": "svg-ui-bridge",
+      "source": "./",
+      "description": "SVG design spec -> live browser review -> component manifest -> per-component visual diff"
+    }
+  ]
+}

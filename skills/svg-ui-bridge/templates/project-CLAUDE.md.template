@@ -1,0 +1,30 @@
+<!-- Paste into the project's CLAUDE.md and fill the <…> parts. Delete rows that don't apply. -->
+
+## Visual design (svg-ui-bridge)
+
+- Design specs: `design/<screen>.svg` (+ generated `<screen>.components.md/.json`). Screenshots: `shots/`.
+- Target stack: <React 19 + Tailwind | Rust egui 0.3x | Bevy 0.1x UI | Qt 6 QML | …>
+- Canvas sizes: desktop `<1280x800>`, mobile `<390x844>` — one SVG per breakpoint that changes layout.
+- Tokens live in `<src/styles/tokens.css | src/theme.rs | …>`, generated from the SVG `<style>` tokens.
+  Code never uses literal colours/spacing that exist as tokens.
+- Acceptance: `visual_diff.py` overall ≤ <2>% and no component > <10>% (defaults; `--tol 24 --shift 1`). Web: `SVG_UI_RENDERER=playwright`.
+- Screenshot command: <`/verify` (pstack project verify skill) | `npx playwright screenshot --viewport-size=1280,800 http://localhost:5173/settings shots/settings.png` | `cargo run --example screenshot -- settings`>
+
+### Mapping overrides (SVG → code)
+| SVG | this project |
+|---|---|
+| `data-component="Button"` | <`components/ui/Button.tsx` variant prop / `widgets::button()`> |
+| `data-layout="row …"` | <Tailwind `flex gap-*` / `ui.horizontal`> |
+| `data-state` | <`variant`/`state` prop / enum `ButtonState`> |
+| icons | <lucide-react / `assets/icons/*.svg`> |
+
+### With superpowers
+- In brainstorming, UI work is at least *bounded*; every screen's design section is an approved SVG render.
+- Spec (`docs/superpowers/specs/…`) must contain a "Visual design" section linking the SVGs, manifests and the acceptance threshold above.
+- writing-plans: one task per manifest component (leaves first) + one assembly task per screen; each task's
+  acceptance is the visual_diff command for that screen with `--manifest`.
+- verification-before-completion: visual claims need fresh visual_diff PASS output + diff image path.
+
+### Housekeeping
+- Commit `design/*.svg` and `design/*.components.*`; ignore generated images:
+  `.gitignore` → `design/*.png`, `design/_preview.html`, `shots/*.diff.*`

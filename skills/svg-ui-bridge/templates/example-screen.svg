@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800"
+     data-screen="DocsSearch" data-target="desktop-1280x800">
+  <style>
+    :root {
+      --color-bg: #0f1115; --color-surface: #181b22; --color-surface-2: #20242d;
+      --color-border: #2b303b; --color-primary: #4f8cff; --color-primary-hover: #6a9dff;
+      --color-on-primary: #ffffff; --color-text: #e8eaf0; --color-muted: #8b93a7;
+      --color-accent: #3ecf8e; --color-code: #c9d1e3;
+    }
+    text { font-family: "DejaVu Sans", "Noto Sans TC", sans-serif; }
+    .mono { font-family: "DejaVu Sans Mono", monospace; }
+  </style>
+
+  <g id="App" data-component="Screen" data-layout="col">
+    <rect x="0" y="0" width="1280" height="800" fill="var(--color-bg)"/>
+
+    <g id="NavBar" data-component="NavBar" data-layout="row between center pad-0-24">
+      <rect x="0" y="0" width="1280" height="56" fill="var(--color-surface)"/>
+      <rect x="0" y="55" width="1280" height="1" fill="var(--color-border)"/>
+      <g id="NavBar-Title" data-component="Text">
+        <text x="24" y="35" font-size="18" font-weight="700" fill="var(--color-text)">Help Center</text>
+      </g>
+      <g id="NavBar-Status" data-component="Badge" data-note="shows index size; green when index loaded">
+        <rect x="1104" y="16" width="152" height="24" rx="12" fill="var(--color-surface-2)"/>
+        <circle cx="1120" cy="28" r="4" fill="var(--color-accent)"/>
+        <text x="1132" y="33" font-size="12" fill="var(--color-muted)">128 articles</text>
+      </g>
+    </g>
+
+    <g id="SearchBar" data-component="Toolbar" data-layout="row center gap-12 pad-24">
+      <g id="SearchInput" data-component="Input" data-note="Enter submits; placeholder until typed">
+        <rect x="24" y="80" width="1084" height="44" rx="8" fill="var(--color-surface)" stroke="var(--color-border)"/>
+        <text x="44" y="108" font-size="15" fill="var(--color-muted)">Search the help center, e.g. how to reset a password</text>
+      </g>
+      <g id="SearchButton" data-component="Button" data-note="disabled while query empty or request in flight">
+        <g data-state="default">
+          <rect x="1120" y="80" width="136" height="44" rx="8" fill="var(--color-primary)"/>
+          <text x="1188" y="108" font-size="15" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Search</text>
+        </g>
+        <g data-state="hover" display="none">
+          <rect x="1120" y="80" width="136" height="44" rx="8" fill="var(--color-primary-hover)"/>
+          <text x="1188" y="108" font-size="15" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Search</text>
+        </g>
+        <g data-state="disabled" display="none">
+          <rect x="1120" y="80" width="136" height="44" rx="8" fill="var(--color-surface-2)"/>
+          <text x="1188" y="108" font-size="15" font-weight="600" text-anchor="middle" fill="var(--color-muted)">Search</text>
+        </g>
+      </g>
+    </g>
+
+    <g id="Body" data-component="Split" data-layout="row gap-16 pad-0-24 fill">
+      <g id="ResultList" data-component="List" data-layout="col gap-12 scroll-y fixed-480x632" data-repeat="results">
+        <g id="ResultCard" data-component="Card" data-layout="col gap-6 pad-16" data-bind="results[i]">
+          <g data-state="default">
+            <rect x="24" y="144" width="480" height="104" rx="10" fill="var(--color-surface)" stroke="var(--color-border)"/>
+          </g>
+          <g data-state="selected" display="none">
+            <rect x="24" y="144" width="480" height="104" rx="10" fill="var(--color-surface-2)" stroke="var(--color-primary)" stroke-width="2"/>
+          </g>
+          <text x="40" y="172" font-size="15" font-weight="600" fill="var(--color-text)">reset-your-password</text>
+          <text x="40" y="196" font-size="13" fill="var(--color-muted)">Account · 4 steps · Updated this week</text>
+          <g id="ResultCard-Score" data-component="Badge">
+            <rect x="40" y="212" width="88" height="22" rx="11" fill="var(--color-surface-2)"/>
+            <text x="84" y="227" font-size="12" text-anchor="middle" fill="var(--color-accent)">score 0.91</text>
+          </g>
+        </g>
+        <g id="ResultCard-2" data-component="Card" data-note="same component as ResultCard, second item">
+          <rect x="24" y="260" width="480" height="104" rx="10" fill="var(--color-surface)" stroke="var(--color-border)"/>
+          <text x="40" y="288" font-size="15" font-weight="600" fill="var(--color-text)">turn-on-two-step-sign-in</text>
+          <text x="40" y="312" font-size="13" fill="var(--color-muted)">Security · 6 steps · Updated last month</text>
+          <rect x="40" y="328" width="88" height="22" rx="11" fill="var(--color-surface-2)"/>
+          <text x="84" y="343" font-size="12" text-anchor="middle" fill="var(--color-accent)">score 0.84</text>
+        </g>
+      </g>
+
+      <g id="DetailPanel" data-component="Panel" data-layout="col gap-12 pad-20 fill">
+        <rect x="520" y="144" width="736" height="632" rx="10" fill="var(--color-surface)" stroke="var(--color-border)"/>
+        <g id="DetailPanel-Header" data-component="Text">
+          <text x="540" y="176" font-size="17" font-weight="700" fill="var(--color-text)">reset-your-password</text>
+          <text x="540" y="198" font-size="13" fill="var(--color-muted)">Matched on title + first step</text>
+        </g>
+        <g id="ArticlePreview" data-component="CodeBlock" data-note="monospace, read-only, scrolls; highlight matched lines">
+          <rect x="540" y="216" width="696" height="540" rx="8" fill="var(--color-bg)"/>
+          <rect x="540" y="248" width="696" height="22" fill="var(--color-surface-2)"/>
+          <text class="mono" x="556" y="240" font-size="13" fill="var(--color-code)"># Reset your password</text>
+          <text class="mono" x="556" y="264" font-size="13" fill="var(--color-code)">1. Open Settings and choose Account</text>
+          <text class="mono" x="556" y="288" font-size="13" fill="var(--color-code)">2. Select Reset password</text>
+          <text class="mono" x="556" y="312" font-size="13" fill="var(--color-code)">3. Follow the link in your email</text>
+          <text class="mono" x="556" y="336" font-size="13" fill="var(--color-code)">4. Sign in with the new password</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
