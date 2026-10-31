@@ -111,6 +111,8 @@ def test_prompt(page) -> str:
     check("snapshot path", job["selection"][0]["path"] == "App>SearchBar>SearchButton", job["selection"])
     check("snapshot keeps locating fields only", set(job["selection"][0]) == {"ref", "kind", "path", "bbox"})
     check("snapshot is one line", "\n" not in re.search(r"```json\n(.*)\n```", text).group(1))
+    visible = job["view"]["visible"]
+    check("visible range covers the full width at 1600px", visible[0] == 0 and visible[2] == 1280, visible)
     check("input and text cleared after copy", page.locator("#qeText").input_value() == "")
 
     page.locator("#state").select_option("hover")
@@ -224,6 +226,8 @@ def test_responsive(browser, url: str, port: int) -> None:
         page = ctx.new_page()
         page.goto(url)
         select(page, "NavBar-Title")
+        shown = page.evaluate("visible(roots[0])")
+        check(f"{w}x{h} visible range stays partial when clipped", shown[2] < 1280 and shown[3] < 800, shown)
         p = page.evaluate("() => { const b = document.getElementById('qe').getBoundingClientRect(); return {l: b.left, r: innerWidth - b.right, t: b.top, b: innerHeight - b.bottom, h: b.height}; }")
         check(f"{w}x{h} bottom panel with 16px sides", abs(p["l"] - 16) < 1 and abs(p["r"] - 16) < 1 and abs(p["b"] - 16) < 1, p)
         check(f"{w}x{h} panel at most 45vh", p["h"] <= h * 0.45 + 1, p)

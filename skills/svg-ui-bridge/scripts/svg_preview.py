@@ -132,7 +132,7 @@ main.addEventListener('mouseleave',()=>{mark(null);tip.style.display='none'});
 tree.addEventListener('mouseover',e=>{const id=e.target.dataset&&e.target.dataset.id;if(!id)return;const r=roots.find(x=>x.file===e.target.dataset.file);const g=r&&r.sr.getElementById(id);mark(g);if(g&&!matchMedia('(max-width:800px)').matches)g.scrollIntoView({block:'nearest',inline:'nearest'});});
 /* Quick Edit: selection, region drag, prompt text */
 const $=id=>document.getElementById(id),qe=$('qe'),qeText=$('qeText'),qeManual=$('qeManual'),rootEl=document.documentElement;
-const MARK='#e0218a',MIN_DRAG=4,picked=[];let queue=[],dragging=null,skipClick=false,statusTimer=0;
+const MARK='#e0218a',MIN_DRAG=4,EDGE=2,picked=[];let queue=[],dragging=null,skipClick=false,statusTimer=0;
 const ids=g=>chain(g).map(n=>n.id);
 function isComp(n){return n.tagName==='g'&&n.dataset&&n.dataset.component!==undefined;}
 function chain(g){const out=[];for(let n=g;n&&n.tagName!=='svg';n=n.parentNode)if(isComp(n)&&n.id)out.unshift(n);return out;}
@@ -179,10 +179,13 @@ function current(){const text=qeText.value;return text||picked.length?{text,stat
 function refLines(e){const st=e.state==='default'?'':'?state='+e.state,out=[];
   [...new Set(e.items.map(i=>i.file))].forEach(f=>{const it=e.items.filter(i=>i.file===f),c=it.filter(i=>!i.region);if(c.length)out.push(f+'#'+c.map(i=>i.ref).join(',')+st);
     it.filter(i=>i.region).forEach(i=>out.push(f+'#'+i.ref+st));});return out;}
-function visible(r){const b=r.svg.getBoundingClientRect(),c=r.host.closest('.card').getBoundingClientRect(),v=r.svg.viewBox.baseVal;
-  const l=Math.max(b.left,c.left,0),t=Math.max(b.top,c.top,document.querySelector('header').getBoundingClientRect().bottom),rt=Math.min(b.right,c.right,innerWidth),bt=Math.min(b.bottom,c.bottom,panelTop());
-  if(rt<=l||bt<=t)return [v.x,v.y,v.width,v.height].map(Math.round);const p=toSvg(r,l,t),q=toSvg(r,rt,bt),x=Math.max(v.x,Math.floor(p[0])),y=Math.max(v.y,Math.floor(p[1]));
-  return [x,y,Math.min(v.x+v.width,Math.ceil(q[0]))-x,Math.min(v.y+v.height,Math.ceil(q[1]))-y];}
+function visible(r){const b=r.svg.getBoundingClientRect(),card=r.host.closest('.card'),c=card.getBoundingClientRect(),v=r.svg.viewBox.baseVal;
+  const cl=c.left+card.clientLeft,ct=c.top+card.clientTop;
+  const l=Math.max(b.left,cl,0),t=Math.max(b.top,ct,document.querySelector('header').getBoundingClientRect().bottom),rt=Math.min(b.right,cl+card.clientWidth,innerWidth),bt=Math.min(b.bottom,ct+card.clientHeight,panelTop());
+  if(rt<=l||bt<=t)return [v.x,v.y,v.width,v.height].map(Math.round);
+  /* a sliver of EDGE px or less at the canvas edge counts as visible */
+  const p=toSvg(r,l,t),q=toSvg(r,rt,bt),x2=v.x+v.width,y2=v.y+v.height,x=p[0]-v.x<=EDGE?v.x:Math.floor(p[0]),y=p[1]-v.y<=EDGE?v.y:Math.floor(p[1]);
+  return [x,y,(x2-q[0]<=EDGE?x2:Math.ceil(q[0]))-x,(y2-q[1]<=EDGE?y2:Math.ceil(q[1]))-y];}
 function snapshot(entries,files){const all=entries.flatMap(e=>e.items),state=entries[entries.length-1].state,zoom=+$('zoom').value;
   const jobs=files.map((f,n)=>{const r=roots.find(x=>x.file===f);return {input:f,screen:r.d.screen,target:r.d.target,state,view:{zoom,visible:visible(r)},
     selection:all.filter(i=>i.file===f).map(({ref,kind,path,bbox})=>({ref,kind,path,bbox})),
