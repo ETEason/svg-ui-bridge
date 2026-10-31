@@ -2,15 +2,35 @@
 
 [English](../../skills/svg-ui-bridge/SKILL.md)
 
+版本：0.2.0
+
 SVG 是人的視覺意圖和 agent 程式碼之間的共同語言：人判斷渲染出來的畫面，agent 讀有命名、有分層、用 token 表示的標記。要反覆修改的是畫面，不是程式碼。
 
-腳本放在 skill 資料夾的 `scripts/` 裡（需要 Python 3 與 Pillow，再加一種 SVG 算圖器：resvg、rsvg-convert、搭配系統 Chrome/Edge 的 Playwright，或 cairosvg）。下文以 `<skill>/scripts/…` 表示。
+下文的 `<skill>` 指包含 SKILL.md 的資料夾。請從這個檔案的載入位置推得，因為每種安裝方式都不同。腳本放在 `<skill>/scripts/`（需要 Python 3 與 Pillow，再加一種 SVG 算圖器：resvg、rsvg-convert、搭配系統 Chrome/Edge 的 Playwright，或 cairosvg）。
 
 ## 適用時機
 
 - 適用：任何有視覺結果的工作，包含小調整（「移動按鈕」、「卡片加深」）。
 - 略過：純邏輯或後端變更、只改文案，或使用者說「不用畫稿」。
-- 搭配 superpowers：本流程在 **brainstorming 的設計步驟之內**執行，影響規格、計畫任務和驗證證據，不取代 superpowers 的任何階段。詳見[整合 superpowers 與 pstack](workflow-integration.md)（superpowers 或 pstack skill 啟用時請閱讀）。
+- 搭配 superpowers：本流程在 **brainstorming 的設計步驟之內**執行，影響規格、計畫任務和驗證證據，不取代 superpowers 的任何階段。詳見[整合 superpowers 與 pstack](workflow-integration.md)（superpowers 或 pstack skill 啟用時請閱讀）。兩者都是選用的：沒有時照下列步驟走，不必提起它們。
+
+## Step 0：判斷環境
+
+```
+python <skill>/scripts/env_check.py
+```
+
+最後一行是 `MODE=local` 或 `MODE=sandbox`。模式是 `sandbox` 或缺少工具時，請閱讀[執行環境](environments.md)。
+
+| 步驟 | `MODE=local` | `MODE=sandbox` |
+|---|---|---|
+| 預覽 | `svg_preview.py design --serve`，把網址告訴使用者 | 每次編輯 SVG 後重新產生靜態 `_preview.html`，發佈成 artifact 或傳送檔案 |
+| 驗證 | 截取使用者電腦上的 app | 網頁：對沙盒內啟動的頁面跑 `screenshot_web.py`。原生 app 或遊戲：請使用者上傳指定尺寸的截圖 |
+
+兩條規則在兩種模式下同樣嚴格：
+
+- **核准關卡：** 使用者看過設計並核准前，不寫產品程式。
+- **證據：** `visual_diff.py` 在真實截圖上通過前，都不算完成。拿不到截圖時，要說明視覺檢查尚未完成。
 
 ## 流程
 
@@ -24,7 +44,8 @@ SVG 是人的視覺意圖和 agent 程式碼之間的共同語言：人判斷渲
 
 ```
 python <skill>/scripts/svg_lint.py design/<screen>.svg
-python <skill>/scripts/svg_preview.py design --serve        # 人：瀏覽器即時預覽頁
+python <skill>/scripts/svg_preview.py design --serve        # 人：瀏覽器即時預覽頁（local）
+python <skill>/scripts/svg_preview.py design --no-open       # 人：要發佈的靜態頁（sandbox）
 python <skill>/scripts/svg_render.py design/<screen>.svg     # agent：用 Read 查看的 PNG
 ```
 
@@ -55,7 +76,7 @@ python <skill>/scripts/svg_manifest.py design/<screen>.svg
 
 ### 5. 視覺驗證
 
-- 以 SVG 的 `data-target` 尺寸截取執行中的實作，並裁切到畫布範圍（有專案驗證 skill 就用它，否則用 Playwright、瀏覽器工具或引擎的截圖功能）。
+- 以 SVG 的 `data-target` 尺寸截取執行中的實作，並裁切到畫布範圍（有專案驗證 skill 就用它，否則網頁用 `screenshot_web.py`，或用瀏覽器工具、引擎的截圖功能）。各模式能取得什麼請見 Step 0。
 - 執行：
   ```
   python <skill>/scripts/visual_diff.py design/<screen>.svg shots/<screen>.png --manifest design/<screen>.components.json [--scale <dpr>]
@@ -76,6 +97,7 @@ python <skill>/scripts/svg_manifest.py design/<screen>.svg
 | 「把整份 SVG 貼給每個 subagent」 | 只給清單列和單獨算圖的結果。 |
 | 「我看起來沒問題」 | 跑 visual_diff，回報數字。 |
 | 「整體差異才 1.8%，可以交了」 | 檢查每個元件的清單；任一元件超標就是未通過。 |
-| 給使用者看 SVG 原始標記 | 給即時預覽頁（沒有瀏覽器時給 PNG）。 |
+| 給使用者看 SVG 原始標記 | 給即時預覽；在沙盒中給靜態頁。 |
+| 「`--serve` 已在沙盒執行，使用者可以開」 | 使用者連不到。發佈靜態頁。 |
 | 「SVG 過時了，現在以程式為準」 | 更新 SVG 並取得核准，或修正程式。 |
 | 從 Figma/Illustrator 匯出、有數千個路徑點的 SVG | 用有 id 的基本圖形重畫，或請使用者匯出時保留圖層與 id。 |

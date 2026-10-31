@@ -4,6 +4,8 @@
 
 svg-ui-bridge 是**設計階段**的 skill。它從不取代 superpowers 的任何階段，只決定 UI 任務的設計產物是什麼（SVG 加元件清單），以及什麼算視覺證據。
 
+這份文件只在 superpowers 或 pstack 出現於可用 skill 清單時才適用。沒有它們時，照[工作流程](workflow.md)走，不需要安裝任何東西。在 sandbox 模式下，下文的「即時預覽」請理解為[執行環境](environments.md)說明的靜態頁。
+
 ## superpowers
 
 superpowers 的 brainstorming 把每個需求分類為 **spike**、**bounded** 或 **architectural**，而 architectural 路徑之後唯一交接的 skill 是 writing-plans。所以 svg-ui-bridge 必須在 brainstorming 的設計步驟*之內*執行，不能排在它之後。

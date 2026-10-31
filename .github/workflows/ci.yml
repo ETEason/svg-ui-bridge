@@ -30,5 +30,7 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Validate plugin manifests are well-formed JSON
         run: python -c "import json; [json.load(open(p, encoding='utf-8')) for p in ('.claude-plugin/plugin.json', '.claude-plugin/marketplace.json')]; print('json ok')"
+      - name: Report the environment
+        run: python skills/svg-ui-bridge/scripts/env_check.py
       - name: Smoke test
         run: python tests/smoke_test.py

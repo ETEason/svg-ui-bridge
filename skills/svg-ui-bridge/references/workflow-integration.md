@@ -3,6 +3,10 @@
 svg-ui-bridge is a **design-phase** skill. It never replaces a superpowers stage; it decides what
 the design artifact of a UI task is (an SVG + manifest) and what counts as visual evidence.
 
+This file applies only when superpowers or pstack appear among the available skills. Without them,
+follow the steps in SKILL.md; there is nothing to install. In sandbox mode, read "live preview" below
+as the static page described in `environments.md`.
+
 ## superpowers
 
 superpowers' brainstorming classifies every request as **spike**, **bounded** or **architectural**,

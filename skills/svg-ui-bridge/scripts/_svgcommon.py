@@ -75,6 +75,25 @@ def components(root: ET.Element):
     yield from walk(root, 0, None)
 
 
+# --------------------------------------------------------------------------- environment
+
+def has_gui() -> bool:
+    """Windows and macOS count as graphical; Linux needs DISPLAY or WAYLAND_DISPLAY."""
+    if sys.platform in ("win32", "darwin"):
+        return True
+    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+
+
+def detect_mode() -> str:
+    """'local' (live preview, can open a browser) or 'sandbox' (static preview only).
+
+    SVG_UI_MODE=local|sandbox overrides the detection."""
+    forced = os.environ.get("SVG_UI_MODE", "").strip().lower()
+    if forced in ("local", "sandbox"):
+        return forced
+    return "local" if has_gui() else "sandbox"
+
+
 # --------------------------------------------------------------------------- render
 
 def _which_renderer() -> list[str]:
@@ -109,20 +128,23 @@ def resolve_tokens(svg_bytes: bytes) -> bytes:
     return text.encode("utf-8")
 
 
-def _launch_browser(p):
+def _launch_browser(p, args: list[str] | None = None):
     """Launch Playwright's own Chromium if installed, else the system Chrome or Edge."""
     errors = []
     for channel in (None, "chrome", "msedge"):
         try:
-            return p.chromium.launch(channel=channel)
+            return p.chromium.launch(channel=channel, args=args or [])
         except Exception as e:
             errors.append(f"{channel or 'bundled chromium'}: {e}")
     raise RuntimeError("no usable browser\n" + "\n".join(errors))
 
 
 def render_svg_bytes(svg_bytes: bytes, out_png: str | Path, scale: float = 1.0,
-                     size: tuple[float, float] | None = None) -> str:
-    """Rasterise SVG bytes to PNG. Returns the renderer name that succeeded."""
+                     size: tuple[float, float] | None = None,
+                     renderers: list[str] | None = None) -> str:
+    """Rasterise SVG bytes to PNG. Returns the renderer name that succeeded.
+
+    `renderers` limits which ones are tried; by default all of them, or SVG_UI_RENDERER."""
     out_png = str(out_png)
     errors = []
     svg_bytes = resolve_tokens(svg_bytes)
@@ -130,7 +152,7 @@ def render_svg_bytes(svg_bytes: bytes, out_png: str | Path, scale: float = 1.0,
         src = os.path.join(td, "in.svg")
         with open(src, "wb") as f:
             f.write(svg_bytes)
-        for name in _which_renderer():
+        for name in renderers or _which_renderer():
             try:
                 if name == "resvg" and shutil.which("resvg"):
                     subprocess.run(["resvg", f"--zoom={scale}", src, out_png], check=True,

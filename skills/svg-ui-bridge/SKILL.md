@@ -1,16 +1,19 @@
 ---
 name: svg-ui-bridge
-description: Use for any work that changes what a user sees — new screens, UI components, layout or styling changes, game HUD/menus, sprite/asset layouts — in any stack (web, Rust egui/iced/Bevy, Qt, game engines). Designs the UI as a structured SVG spec first, gets the human's approval on the rendered image, decomposes it into a component manifest, implements per component, and proves fidelity with a visual diff. Use during brainstorming/design, not only at implementation time.
+description: Use for any change to what a user sees, such as screens, components, layout, styling or game HUDs, in any stack. Designs an SVG spec for approval first, then proves the build with a visual diff.
 ---
 
 # svg-ui-bridge
+
+Version: 0.2.0
 
 SVG is the shared language between the human's visual intent and the agent's code: the human
 judges a rendered picture, the agent reads named, layered, tokenised markup. Iterate on the
 picture, not on the code.
 
-Scripts live in `scripts/` next to this file (Python 3 + Pillow, plus one SVG renderer: resvg,
-rsvg-convert, Playwright with the system Chrome/Edge or cairosvg). Refer to them as `<skill>/scripts/…`.
+`<skill>` below means the folder that contains this SKILL.md. Work it out from where this file was
+loaded, because it differs per install. Scripts live in `<skill>/scripts/` (Python 3 + Pillow, plus
+one SVG renderer: resvg, rsvg-convert, Playwright with the system Chrome/Edge or cairosvg).
 
 ## When this applies
 
@@ -19,6 +22,27 @@ rsvg-convert, Playwright with the system Chrome/Edge or cairosvg). Refer to them
 - Inside superpowers: this runs **inside brainstorming's design step** and shapes the spec, the
   plan tasks and the verification evidence. It does not replace any superpowers stage. See
   `references/workflow-integration.md` (read it when superpowers or pstack skills are active).
+  Both are optional: when they are absent, follow the steps below without mentioning them.
+
+## Step 0: find out where you are
+
+```
+python <skill>/scripts/env_check.py
+```
+
+The last line is `MODE=local` or `MODE=sandbox`. Read `references/environments.md` when the mode is
+`sandbox` or when a tool is missing.
+
+| step | `MODE=local` | `MODE=sandbox` |
+|---|---|---|
+| Preview | `svg_preview.py design --serve`, tell the user the URL | Regenerate the static `_preview.html` after every SVG edit; publish it as an artifact or send the file |
+| Verify | Screenshot the app on the user's computer | Web: `screenshot_web.py` on a page started in the sandbox. Native or game: ask the user to upload a screenshot at the stated size |
+
+Two rules hold equally in both modes:
+
+- **Approval gate:** no product code until the user has seen the design and approved it.
+- **Evidence:** nothing is done until `visual_diff.py` has passed on a real screenshot. If no
+  screenshot can be had, say that the visual check is still open.
 
 ## The loop
 
@@ -35,7 +59,8 @@ rsvg-convert, Playwright with the system Chrome/Edge or cairosvg). Refer to them
 
 ```
 python <skill>/scripts/svg_lint.py design/<screen>.svg
-python <skill>/scripts/svg_preview.py design --serve        # human: live browser review page
+python <skill>/scripts/svg_preview.py design --serve        # human: live browser review page (local)
+python <skill>/scripts/svg_preview.py design --no-open       # human: static page to publish (sandbox)
 python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to look at with Read
 ```
 
@@ -76,8 +101,8 @@ gap: ask, then fix the SVG — the visual spec forces those decisions before cod
 ### 5. Verify visually
 
 - Screenshot the running implementation at the SVG's `data-target` size, cropped to the canvas
-  (use the project's verify skill if one exists, else Playwright / the browser tools / the
-  engine's screenshot facility).
+  (use the project's verify skill if one exists, else `screenshot_web.py` for web pages, or the
+  browser tools / the engine's screenshot facility). See Step 0 for what each mode can reach.
 - Run:
   ```
   python <skill>/scripts/visual_diff.py design/<screen>.svg shots/<screen>.png --manifest design/<screen>.components.json [--scale <dpr>]
@@ -107,6 +132,7 @@ SVG update — never let them drift silently.
 | "Paste the full SVG into each subagent" | Manifest row + isolated render only. |
 | "Looks right to me" | Run visual_diff; report the numbers. |
 | "Overall mismatch is only 1.8 %, ship it" | Check the per-component list; one component over the limit is a FAIL. |
-| Show the user raw SVG markup | Show the live preview page (or a PNG if no browser). |
+| Show the user raw SVG markup | Show the live preview, or in a sandbox the static page. |
+| "`--serve` is running in the sandbox, the user can open it" | They cannot reach it. Publish the static page. |
 | "The SVG is outdated, the code is the truth now" | Update the SVG and get approval, or fix the code. |
 | Exported Figma/Illustrator SVG with thousands of path points | Redraw as primitives with ids, or ask the user to export with layers/ids preserved. |

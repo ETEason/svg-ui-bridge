@@ -9,17 +9,22 @@ Works on a temporary copy of the bundled example, so the repository stays clean.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
+import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "svg-ui-bridge"
 SCRIPTS = SKILL / "scripts"
 EXAMPLE = SKILL / "templates" / "example-screen.svg"
+BUILD_ZIP = ROOT / "tools" / "build_skill_zip.py"
 
 BAD_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
   <rect x="0" y="0" width="400" height="200" fill="#222"/>
@@ -30,9 +35,15 @@ results: list[tuple[str, bool, str]] = []
 
 
 def run(name: str, args: list[str], expect: int = 0, stdin: str | None = None, cwd: Path | None = None,
-        must_contain: str | None = None) -> str:
-    p = subprocess.run([sys.executable, *args], input=stdin, capture_output=True, text=True,
-                       encoding="utf-8", errors="replace", cwd=cwd)
+        must_contain: str | None = None, env: dict[str, str] | None = None,
+        timeout: float | None = None) -> str:
+    try:
+        p = subprocess.run([sys.executable, *args], input=stdin, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", cwd=cwd, timeout=timeout,
+                           env={**os.environ, **env} if env else None)
+    except subprocess.TimeoutExpired:
+        results.append((name, False, f"still running after {timeout}s"))
+        return ""
     out = (p.stdout or "") + (p.stderr or "")
     ok = p.returncode == expect and (must_contain is None or must_contain in out)
     detail = f"exit {p.returncode} (expected {expect})"
@@ -97,9 +108,42 @@ def main() -> int:
         run("preview html", [s("svg_preview.py"), str(design), "--no-open"])
         html = (design / "_preview.html").read_text(encoding="utf-8")
         check("preview content", "SearchButton" in html and "attachShadow" in html, "page missing data")
+        urls = {u for u in re.findall(r"https?://[^\s\"'`<>\\]+", html) if "www.w3.org/" not in u}
+        check("preview self-contained", not urls, str(sorted(urls)[:5]))
+
+        # 6. environment report, and --serve falling back to a static page in sandbox mode
+        run("env_check", [s("env_check.py")], must_contain="MODE=", timeout=120)
+        out = run("env_check json", [s("env_check.py"), "--json"], env={"SVG_UI_MODE": "sandbox"}, timeout=120)
+        report = json.loads(out)
+        check("env_check forced mode", report["mode"] == "sandbox" and report["mode_source"] == "SVG_UI_MODE",
+              str(report.get("mode")))
+        (design / "_preview.html").unlink()
+        run("serve in sandbox goes static", [s("svg_preview.py"), str(design), "--serve"],
+            env={"SVG_UI_MODE": "sandbox"}, must_contain="改用靜態頁", timeout=30)
+        check("serve in sandbox wrote page", (design / "_preview.html").exists())
+
+        # 7. skill zip: right layout, nothing excluded, same bytes every time
+        stray = SKILL / "templates" / "_smoke.png"
+        stray.write_bytes(b"not an image")
+        try:
+            zip_a, zip_b = work / "a.zip", work / "b.zip"
+            run("build skill zip", [str(BUILD_ZIP), "--out", str(zip_a)], must_contain="wrote")
+            run("rebuild skill zip", [str(BUILD_ZIP), "--out", str(zip_b)])
+        finally:
+            stray.unlink()
+        names = zipfile.ZipFile(zip_a).namelist() if zip_a.exists() else []
+        check("zip layout", all(n.startswith("svg-ui-bridge/") for n in names) and {
+            "svg-ui-bridge/SKILL.md", "svg-ui-bridge/scripts/env_check.py",
+            "svg-ui-bridge/references/environments.md",
+            "svg-ui-bridge/templates/example-screen.svg"} <= set(names), str(names[:5]))
+        banned = [n for n in names if re.search(r"__pycache__|\.pyc$|\.png$|\.html$|\.components\.|"
+                                                r"/tests/|/docs/|\.claude-plugin", n)]
+        check("zip excludes generated files", names and not banned, str(banned[:5]))
+        check("zip is repeatable", zip_a.exists() and zip_b.exists()
+              and zip_a.read_bytes() == zip_b.read_bytes())
 
         if not a.no_render:
-            # 6. render all states
+            # 8. render all states
             out = run("render all states", [s("svg_render.py"), str(svg), "--all-states"], must_contain="rendered")
             for st in ("", ".hover", ".disabled", ".selected"):
                 check(f"png exists{st or ' default'}", (design / f"example{st}.png").exists())
@@ -109,14 +153,14 @@ def main() -> int:
             check("tokens resolved (not black)", px != (0, 0, 0), f"pixel {px}")
             check("canvas size", im.size == (1280, 800), str(im.size))
 
-            # 7. manifest with measured bboxes
+            # 9. manifest with measured bboxes
             run("manifest (bbox)", [s("svg_manifest.py"), str(svg)])
             man = json.loads((design / "example.components.json").read_text(encoding="utf-8"))
             btn = next(c for c in man["components"] if c["id"] == "SearchButton")
             bb = btn["bbox"] or [0, 0, 0, 0]
             check("bbox SearchButton", abs(bb[0] - 1120) <= 2 and abs(bb[2] - 136) <= 2, str(bb))
 
-            # 8. visual diff: identical -> PASS; broken button -> FAIL naming SearchButton
+            # 10. visual diff: identical -> PASS; broken button -> FAIL naming SearchButton
             shots = work / "shots"
             shots.mkdir()
             same = shots / "same.png"
@@ -134,6 +178,26 @@ def main() -> int:
                       expect=1, must_contain="FAIL")
             check("diff names SearchButton", "SearchButton" in out and "over limit" in out, "component not flagged")
             check("diff image written", (shots / "broken.diff.png").exists())
+
+            # 11. web screenshot of a page showing the example, compared with the SVG
+            if importlib.util.find_spec("playwright"):
+                page = design / "page.html"
+                page.write_text("<!doctype html><meta charset=utf-8><body style='margin:0'>"
+                                + EXAMPLE.read_text(encoding="utf-8"), encoding="utf-8")
+                web = shots / "web.png"
+                run("screenshot page", [s("screenshot_web.py"), str(page), "-o", str(web),
+                                        "--size", "1280x800"], must_contain="wrote")
+                run("diff web screenshot passes", [s("visual_diff.py"), str(svg), str(web),
+                                                   "--manifest", str(design / "example.components.json")],
+                    env={"SVG_UI_RENDERER": "playwright"}, must_contain="PASS")
+                run("screenshot rejects other schemes", [s("screenshot_web.py"), "ftp://example.invalid/x",
+                                                         "-o", str(web)], expect=2)
+                leak = design / "leak.html"
+                leak.write_text("<img src='http://example.invalid/x.png'>", encoding="utf-8")
+                run("screenshot blocks other origins", [s("screenshot_web.py"), str(leak), "-o", str(web)],
+                    must_contain="blocked http://example.invalid/x.png")
+            else:
+                print("SKIP  web screenshot checks: Playwright is not installed")
 
     width = max(len(n) for n, _, _ in results)
     failed = [r for r in results if not r[1]]

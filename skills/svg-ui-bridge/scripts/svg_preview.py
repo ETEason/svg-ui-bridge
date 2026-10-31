@@ -10,12 +10,17 @@ Builds one self-contained HTML page with every SVG side by side:
   python svg_preview.py design/*.svg --no-open
   python svg_preview.py design --serve                   # live: http://localhost:8765, auto-reloads
                                                          # whenever an SVG in design/ changes
+
+In sandbox mode (no graphical interface, or SVG_UI_MODE=sandbox) the browser is never opened and
+--serve writes the static page instead. The static page is self-contained: no external URLs or
+CDN, so it can be published as an artifact as is.
 """
 from __future__ import annotations
 
 import argparse
 import http.server
 import json
+import re
 import socketserver
 import sys
 import threading
@@ -23,7 +28,12 @@ import webbrowser
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _svgcommon import components, load_svg  # noqa: E402
+from _svgcommon import components, detect_mode, load_svg  # noqa: E402
+
+# references an SVG can make to something outside itself; '#id' and data: URIs stay self-contained
+_EXTERNAL = re.compile(r"""(?:href|src)\s*=\s*["']((?![#"']|data:)[^"']+)"""
+                       r"""|url\(\s*["']?((?![#"')]|data:)[^"')]+)"""
+                       r"""|@import\s+(?:url\()?\s*["']?([^"')\s;]+)""", re.I)
 
 PAGE = r"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -133,6 +143,16 @@ def version(targets: list[str]) -> str:
     return ",".join(f"{p.name}:{p.stat().st_mtime_ns}" for p in svg_files(targets))
 
 
+def external_refs(paths: list[Path]) -> list[str]:
+    """Warnings for resources a static page or artifact could not load."""
+    out = []
+    for p in paths:
+        for groups in _EXTERNAL.findall(p.read_text(encoding="utf-8", errors="replace")):
+            ref = next(g for g in groups if g)
+            out.append(f"warn: {p.name} references '{ref}', which a static page cannot load")
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("targets", nargs="+", help="SVG files and/or folders")
@@ -145,6 +165,12 @@ def main() -> int:
     if not svg_files(a.targets):
         print("no .svg files found", file=sys.stderr)
         return 1
+
+    mode = detect_mode()
+    open_browser = mode == "local" and not a.no_open
+    if a.serve and mode == "sandbox":
+        print("此環境我看不到預覽，改用靜態頁")
+        a.serve = False
 
     if a.serve:
         targets = a.targets
@@ -165,7 +191,7 @@ def main() -> int:
         url = f"http://localhost:{a.port}/"
         with socketserver.ThreadingTCPServer(("127.0.0.1", a.port), H) as srv:
             print(f"live preview at {url}  (Ctrl+C to stop; page reloads when an SVG changes)")
-            if not a.no_open:
+            if open_browser:
                 threading.Timer(0.5, lambda: webbrowser.open(url)).start()
             try:
                 srv.serve_forever()
@@ -177,7 +203,9 @@ def main() -> int:
     out = Path(a.out) if a.out else first.parent / "_preview.html"
     out.write_text(build(a.targets, False), encoding="utf-8")
     print(f"wrote {out}")
-    if not a.no_open:
+    for w in external_refs(svg_files(a.targets)):
+        print(w)
+    if open_browser:
         webbrowser.open(out.resolve().as_uri())
     return 0
 

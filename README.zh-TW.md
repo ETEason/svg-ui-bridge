@@ -103,10 +103,29 @@ npx skills add ETEason/svg-ui-bridge
 
 </details>
 
+## 💻 在桌面 app／claude.ai 使用
+
+一般對話與雲端任務在沙盒裡執行，要把 skill 上傳到帳號：
+
+1. 從最新版本下載 [svg-ui-bridge-skill.zip](https://github.com/ETEason/svg-ui-bridge/releases/latest/download/svg-ui-bridge-skill.zip)。
+2. 開啟 **Customize > Skills**（[claude.ai/customize/skills](https://claude.ai/customize/skills)），上傳 zip 並啟用。
+3. 問一句「你載入的 svg-ui-bridge 是哪個版本？」確認，答案是 `SKILL.md` 裡的 `Version:` 那一行。
+
+要更新時，下載最新的 zip 重新上傳。skill 會用 `scripts/env_check.py` 判斷自己在哪裡執行：
+
+| | 電腦上的 Claude Code（`MODE=local`） | 沙盒（`MODE=sandbox`） |
+|---|---|---|
+| Skill 名稱 | `/svg-ui-bridge:svg-ui-bridge` | `svg-ui-bridge` |
+| 審閱 | `localhost:8765` 的即時頁面 | 靜態頁，發佈成 artifact 或以檔案傳送 |
+| 驗證 | 截取你執行中的 app | 網頁：沙盒內啟動的頁面。原生 app 或遊戲：你上傳的截圖 |
+| superpowers、pstack | 有安裝就使用 | 不需要 |
+
+兩邊的核准關卡和視覺比對證據同樣嚴格。細節見[執行環境](docs/zh-TW/environments.md)。
+
 ## 🔒 安全性
 
 - plugin 不含 hooks、MCP server 或執行檔。lint hook 是選用的，要自己加才會執行。
-- 腳本本身只讀寫本機檔案，執行時不會下載或上傳。`svg_preview.py --serve` 只綁定 `127.0.0.1`。
+- 腳本本身只讀寫本機檔案，執行時不會下載或上傳。`svg_preview.py --serve` 只綁定 `127.0.0.1`。`screenshot_web.py` 只開啟你指定的網址或檔案，並封鎖對其他來源的請求。
 - **不要用預覽頁開來源不明的 SVG。** 預覽頁會把 SVG 內容直接放進網頁，惡意 SVG 可能在頁面裡執行 JS 或連到外部網址。
 - 安裝任何 skill 前都建議先看過程式碼，也可以固定 tag，只在你決定時才更新。
 
@@ -127,14 +146,17 @@ python tests/smoke_test.py
 |---|---|
 | `.claude-plugin/` | plugin 與 marketplace 設定 |
 | `skills/svg-ui-bridge/SKILL.md` | Claude 遵循的工作流程（6 個階段、關卡、常見錯誤想法） |
-| `skills/svg-ui-bridge/references/` | SVG 規範、superpowers/pstack 整合、SVG 到各框架的對照 |
+| `skills/svg-ui-bridge/references/` | SVG 規範、執行環境、superpowers/pstack 整合、SVG 到各框架的對照 |
+| `scripts/env_check.py` | 回報作業系統、Python、Pillow、可用的算圖器，以及 `MODE=local` 或 `MODE=sandbox` |
 | `scripts/svg_lint.py` | 檢查 SVG 是否符合規範 |
 | `scripts/svg_preview.py` | 瀏覽器預覽頁，`--serve` 會在 SVG 變更時自動重新載入 |
 | `scripts/svg_render.py` | 輸出 PNG 給 Claude 自我檢查（可指定狀態或單一元件） |
 | `scripts/svg_manifest.py` | 產生元件清單與實作順序 |
 | `scripts/tokens_export.py` | 匯出 token 為 CSS、TS、egui、Bevy 或 JSON |
+| `scripts/screenshot_web.py` | 截取網址或 HTML 檔，供 `visual_diff.py` 比對 |
 | `scripts/visual_diff.py` | 比對截圖與設計稿，輸出差異圖與結束碼 |
 | `scripts/lint_hook.py` | 選用的 PostToolUse hook，自動檢查 Claude 寫出的 SVG |
+| `tools/build_skill_zip.py` | 驗證 `SKILL.md` 並產生上傳用的 zip |
 | `tests/smoke_test.py` | 端對端冒煙測試 |
 
 `scripts/` 都在 `skills/svg-ui-bridge/` 底下。
@@ -145,6 +167,7 @@ python tests/smoke_test.py
 
 - [工作流程](docs/zh-TW/workflow.md)：每個階段的完整步驟與關卡
 - [SVG 規範](docs/zh-TW/svg-conventions.md)：設計稿該怎麼寫
+- [執行環境](docs/zh-TW/environments.md)：本機與沙盒的流程差異
 - [框架對照](docs/zh-TW/framework-mapping.md)：SVG 屬性如何對應到各框架
 - [整合 superpowers 與 pstack](docs/zh-TW/workflow-integration.md)：為什麼放在設計階段，以及各階段怎麼銜接
 - [專案 CLAUDE.md 範本](docs/zh-TW/project-CLAUDE.md)、[全域 CLAUDE.md 片段](docs/zh-TW/global-CLAUDE.md)

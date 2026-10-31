@@ -47,6 +47,31 @@ works in cloud sessions) or `~/.claude/skills/` (this machine only). Install it 
 As a plugin the skill is invoked as `/svg-ui-bridge:svg-ui-bridge`; Claude also loads it on its own
 for UI work.
 
+## Use in the desktop app or claude.ai
+
+Ordinary conversations and cloud tasks run in a sandbox, so they need the skill uploaded to your
+account:
+
+1. Download [svg-ui-bridge-skill.zip](https://github.com/ETEason/svg-ui-bridge/releases/latest/download/svg-ui-bridge-skill.zip)
+   from the latest release.
+2. Open **Customize > Skills** ([claude.ai/customize/skills](https://claude.ai/customize/skills)),
+   upload the zip, and turn the skill on.
+3. Ask "which version of svg-ui-bridge did you load?" to confirm. The answer is the `Version:` line
+   in `SKILL.md`.
+
+To update, download the newest zip and upload it again. The skill detects where it runs with
+`scripts/env_check.py`:
+
+| | Claude Code on your computer (`MODE=local`) | Sandbox (`MODE=sandbox`) |
+|---|---|---|
+| Skill name | `/svg-ui-bridge:svg-ui-bridge` | `svg-ui-bridge` |
+| Review | Live page at `localhost:8765` | Static page, published as an artifact or sent as a file |
+| Verify | Screenshot your running app | Web: a page started in the sandbox. Native or games: a screenshot you upload |
+| superpowers, pstack | Used when installed | Not needed |
+
+The approval gate and the visual diff evidence are equally strict in both.
+Details: [environments.md](skills/svg-ui-bridge/references/environments.md).
+
 ## Requirements
 
 Python 3.10+, Pillow, and one SVG rasteriser (tried in this order: resvg, rsvg-convert, Playwright,
@@ -74,19 +99,25 @@ rendered by the same engine as your app.
 | path | purpose |
 |---|---|
 | `skills/svg-ui-bridge/SKILL.md` | the workflow the agent follows (6 steps, gates, red flags) |
-| `references/` | SVG conventions, superpowers/pstack integration, SVG → framework mapping |
+| `references/` | SVG conventions, environments, superpowers/pstack integration, SVG → framework mapping |
+| `scripts/env_check.py` | reports the OS, Python, Pillow, working renderers and `MODE=local` or `MODE=sandbox` |
 | `scripts/svg_lint.py` | checks an SVG against the conventions |
 | `scripts/svg_preview.py` | browser review page; `--serve` live-reloads on every SVG change (localhost only) |
 | `scripts/svg_render.py` | PNG renders for the agent (all states / one component) |
 | `scripts/svg_manifest.py` | component tree, measured bboxes, tokens, states, build order |
 | `scripts/tokens_export.py` | design tokens → CSS / TS / egui / Bevy / JSON |
+| `scripts/screenshot_web.py` | screenshots a URL or HTML file for `visual_diff.py` |
 | `scripts/visual_diff.py` | screenshot vs design: overall and per-component mismatch, diff image, exit code |
 | `scripts/lint_hook.py` | optional PostToolUse hook that lints SVGs the agent writes |
+| `tools/build_skill_zip.py` | validates `SKILL.md` and builds the upload zip |
 
 ## Security notes
 
 - The scripts only read and write local files. `svg_preview.py --serve` binds to `127.0.0.1` only.
-  Nothing is downloaded or uploaded at run time.
+  Nothing is downloaded or uploaded at run time. `screenshot_web.py` opens only the URL or file you
+  name and blocks requests to other origins.
+- Do not open SVGs from untrusted sources in the preview page: their content goes into the page
+  as is, so a malicious SVG could run scripts or reach external URLs there.
 - The plugin ships **no hooks, MCP servers or binaries**; the lint hook is opt-in (see
   `skills/svg-ui-bridge/references/workflow-integration.md`).
 - Review the code before installing any skill, including this one, and pin a tag if you want
