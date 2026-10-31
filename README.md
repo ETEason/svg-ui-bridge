@@ -1,5 +1,7 @@
 # svg-ui-bridge
 
+[繁體中文](README.zh-TW.md)
+
 SVG-first UI workflow for Claude Code. The agent designs every screen as a structured SVG spec,
 you review it live in the browser, the SVG is decomposed into a component manifest, and the
 implementation is proven against the design with a per-component visual diff.
