@@ -5,7 +5,7 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.2.0
+Version: 0.2.1
 
 SVG is the shared language between the human's visual intent and the agent's code: the human
 judges a rendered picture, the agent reads named, layered, tokenised markup. Iterate on the
