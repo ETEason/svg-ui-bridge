@@ -31,6 +31,14 @@ BAD_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
   <g id="saveBtn"><rect x="10" y="10" width="80" height="30" fill="#4f8cff"/></g>
 </svg>"""
 
+MIXED_STATE_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40" width="100" height="40">
+  <g id="Field" data-component="Input">
+    <text x="2" y="12" font-size="10" fill="#000000">Label</text>
+    <g data-state="default"><rect x="0" y="20" width="100" height="20" fill="#00aa00"/></g>
+    <g data-state="error" display="none"><rect x="0" y="20" width="100" height="20" fill="#cc0000"/></g>
+  </g>
+</svg>"""
+
 results: list[tuple[str, bool, str]] = []
 
 
@@ -152,6 +160,16 @@ def main() -> int:
             px = im.getpixel((640, 400))
             check("tokens resolved (not black)", px != (0, 0, 0), f"pixel {px}")
             check("canvas size", im.size == (1280, 800), str(im.size))
+
+            # a state layer next to plain siblings: the default layer must stay visible
+            mixed = work / "mixed.svg"
+            mixed.write_text(MIXED_STATE_SVG, encoding="utf-8")
+            run("render mixed default", [s("svg_render.py"), str(mixed), "-o", str(work / "mixed.png")])
+            run("render mixed error", [s("svg_render.py"), str(mixed), "--state", "error",
+                                       "-o", str(work / "mixed.error.png")])
+            for png, want in (("mixed.png", (0, 170, 0, 255)), ("mixed.error.png", (204, 0, 0, 255))):
+                pixel = Image.open(work / png).convert("RGBA").getpixel((50, 30))
+                check(f"state layer in {png}", pixel == want, f"pixel {pixel}, wanted {want}")
 
             # 9. manifest with measured bboxes
             run("manifest (bbox)", [s("svg_manifest.py"), str(svg)])

@@ -2,7 +2,7 @@
 
 [English](../../skills/svg-ui-bridge/SKILL.md)
 
-版本：0.2.1
+版本：0.2.2
 
 SVG 是人的視覺意圖和 agent 程式碼之間的共同語言：人判斷渲染出來的畫面，agent 讀有命名、有分層、用 token 表示的標記。要反覆修改的是畫面，不是程式碼。
 

@@ -237,7 +237,7 @@ def show_state(tree: ET.ElementTree, state: str | None) -> bytes:
         s = e.get("data-state")
         if s is None:
             continue
-        siblings = {c.get("data-state") for c in parent_of.get(e, [])}
+        siblings = {c.get("data-state") for c in parent_of.get(e, []) if c.get("data-state")}
         want = state if state in siblings else "default"
         visible = s == want
         if not visible:
