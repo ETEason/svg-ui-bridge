@@ -8,7 +8,7 @@
   <a href="docs/zh-TW/svg-conventions.md">SVG 規範</a> ·
   <a href="docs/zh-TW/framework-mapping.md">框架對照</a> ·
   <a href="docs/zh-TW/workflow-integration.md">整合 superpowers</a> ·
-  <a href="docs/zh-TW/CHANGELOG.md">更新紀錄</a>
+  <a href="https://github.com/ETEason/svg-ui-bridge/releases">版本發佈</a>
 </p>
 
 <p align="center">
@@ -147,7 +147,6 @@ python tests/smoke_test.py
 - [SVG 規範](docs/zh-TW/svg-conventions.md)：設計稿該怎麼寫
 - [框架對照](docs/zh-TW/framework-mapping.md)：SVG 屬性如何對應到各框架
 - [整合 superpowers 與 pstack](docs/zh-TW/workflow-integration.md)：為什麼放在設計階段，以及各階段怎麼銜接
-- [更新紀錄](docs/zh-TW/CHANGELOG.md)
 - [專案 CLAUDE.md 範本](docs/zh-TW/project-CLAUDE.md)、[全域 CLAUDE.md 片段](docs/zh-TW/global-CLAUDE.md)
 
 ## ⚠️ 限制
