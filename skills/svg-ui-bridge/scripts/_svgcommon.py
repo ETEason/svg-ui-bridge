@@ -3,7 +3,8 @@
 Only needs the Python standard library + Pillow. SVG rasterising tries, in order:
   1. resvg CLI            (fastest, most accurate; `cargo install resvg` or a release binary)
   2. rsvg-convert CLI     (librsvg; common on Linux, `choco install rsvg-convert` / MSYS2 on Windows)
-  3. Playwright Chromium  (`pip install playwright && playwright install chromium`)
+  3. Playwright           (`pip install playwright`; drives its own Chromium if installed,
+                          else the system Chrome or Edge, so no browser download is needed)
   4. cairosvg            (`pip install cairosvg`, needs the cairo DLL on Windows)
 Set SVG_UI_RENDERER=resvg|rsvg|playwright|cairosvg to force one.
 """
@@ -108,6 +109,17 @@ def resolve_tokens(svg_bytes: bytes) -> bytes:
     return text.encode("utf-8")
 
 
+def _launch_browser(p):
+    """Launch Playwright's own Chromium if installed, else the system Chrome or Edge."""
+    errors = []
+    for channel in (None, "chrome", "msedge"):
+        try:
+            return p.chromium.launch(channel=channel)
+        except Exception as e:
+            errors.append(f"{channel or 'bundled chromium'}: {e}")
+    raise RuntimeError("no usable browser\n" + "\n".join(errors))
+
+
 def render_svg_bytes(svg_bytes: bytes, out_png: str | Path, scale: float = 1.0,
                      size: tuple[float, float] | None = None) -> str:
     """Rasterise SVG bytes to PNG. Returns the renderer name that succeeded."""
@@ -140,7 +152,7 @@ def render_svg_bytes(svg_bytes: bytes, out_png: str | Path, scale: float = 1.0,
                     with open(hp, "w", encoding="utf-8") as f:
                         f.write(html)
                     with sync_playwright() as p:
-                        b = p.chromium.launch()
+                        b = _launch_browser(p)
                         pg = b.new_page(viewport={"width": w, "height": h},
                                         device_scale_factor=scale)
                         pg.goto(Path(hp).as_uri())

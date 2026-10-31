@@ -49,13 +49,15 @@ for UI work.
 
 ## Requirements
 
-Python 3.10+, Pillow, and one SVG rasteriser (tried in this order: resvg, rsvg-convert, Playwright
-Chromium, cairosvg). Easiest everywhere:
+Python 3.10+, Pillow, and one SVG rasteriser (tried in this order: resvg, rsvg-convert, Playwright,
+cairosvg). Easiest everywhere:
 
 ```
 python -m pip install pillow playwright
-python -m playwright install chromium
 ```
+
+Playwright uses the system Chrome or Edge, so no browser download is needed. Only if neither is
+installed, add `python -m playwright install chromium`.
 
 (Windows: `py -m pip …`.) For web projects set `SVG_UI_RENDERER=playwright` so the reference image is
 rendered by the same engine as your app.

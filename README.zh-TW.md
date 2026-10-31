@@ -49,14 +49,13 @@ claude plugin install svg-ui-bridge --marketplace ETEason/svg-ui-bridge
 
 ```
 python -m pip install pillow playwright
-python -m playwright install chromium
 ```
 
 Windows 請把 `python` 換成 `py`。需要 Python 3.10 以上。
 
 接著開新的 Claude Code session，直接提 UI 需求，Claude 會自行載入這個 skill；也可以用 `/svg-ui-bridge:svg-ui-bridge` 手動呼叫。
 
-> **已經有 Chrome 也要裝 Chromium 嗎？** 目前要。腳本用 Playwright 自己管理的瀏覽器，不會去找系統的 Chrome。不想裝的話，改裝 resvg（`cargo install resvg`），它不需要瀏覽器，而且腳本會優先使用。但網頁專案仍建議用 Playwright，因為參考圖和你的 App 由同一種引擎算圖，文字誤差較小（設定 `SVG_UI_RENDERER=playwright`）。
+預覽頁用預設瀏覽器開啟。腳本算 PNG 時透過 Playwright 使用電腦裡的 Chrome 或 Edge；兩者都沒有時，請執行 `python -m playwright install chromium`。網頁專案建議設定 `SVG_UI_RENDERER=playwright`，讓參考圖和 App 由同一種引擎算圖，文字誤差較小。
 
 <details>
 <summary>其他安裝方式</summary>
@@ -149,7 +148,7 @@ python tests/smoke_test.py
 - [框架對照](skills/svg-ui-bridge/references/framework-mapping.md)：SVG 屬性如何對應到各框架
 - [整合 superpowers 與 pstack](skills/svg-ui-bridge/references/workflow-integration.md)：為什麼放在設計階段，以及各階段怎麼銜接
 
-以上文件目前都是英文。
+以上文件為英文。
 
 ## ⚠️ 限制
 

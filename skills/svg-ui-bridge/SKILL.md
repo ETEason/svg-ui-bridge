@@ -10,7 +10,7 @@ judges a rendered picture, the agent reads named, layered, tokenised markup. Ite
 picture, not on the code.
 
 Scripts live in `scripts/` next to this file (Python 3 + Pillow, plus one SVG renderer: resvg,
-rsvg-convert, Playwright Chromium or cairosvg). Refer to them as `<skill>/scripts/…`.
+rsvg-convert, Playwright with the system Chrome/Edge or cairosvg). Refer to them as `<skill>/scripts/…`.
 
 ## When this applies
 
