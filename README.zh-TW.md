@@ -4,11 +4,11 @@
 
 <p align="center">
   <a href="README.md">English</a> ·
-  <a href="skills/svg-ui-bridge/SKILL.md">工作流程</a> ·
-  <a href="skills/svg-ui-bridge/references/svg-conventions.md">SVG 規範</a> ·
-  <a href="skills/svg-ui-bridge/references/framework-mapping.md">框架對照</a> ·
-  <a href="skills/svg-ui-bridge/references/workflow-integration.md">整合 superpowers</a> ·
-  <a href="CHANGELOG.md">更新紀錄</a>
+  <a href="docs/zh-TW/workflow.md">工作流程</a> ·
+  <a href="docs/zh-TW/svg-conventions.md">SVG 規範</a> ·
+  <a href="docs/zh-TW/framework-mapping.md">框架對照</a> ·
+  <a href="docs/zh-TW/workflow-integration.md">整合 superpowers</a> ·
+  <a href="docs/zh-TW/CHANGELOG.md">更新紀錄</a>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 
 | 階段 | 做什麼 | 工具 |
 |---|---|---|
-| 1. 繪製 | 把畫面寫成結構化 SVG：每個元件有名稱，顏色與間距是設計 token，hover、disabled 等狀態是獨立圖層 | Claude 依 [SVG 規範](skills/svg-ui-bridge/references/svg-conventions.md) 撰寫 |
+| 1. 繪製 | 把畫面寫成結構化 SVG：每個元件有名稱，顏色與間距是設計 token，hover、disabled 等狀態是獨立圖層 | Claude 依 [SVG 規範](docs/zh-TW/svg-conventions.md) 撰寫 |
 | 2. 檢查與核准 | 檢查規範，在瀏覽器即時預覽；**你核准前不寫產品程式** | `svg_lint.py`、`svg_preview.py`、`svg_render.py` |
 | 3. 拆解 | 產生元件清單：樹狀結構、實測位置大小、token、狀態、建議實作順序 | `svg_manifest.py` |
 | 4. 實作 | 從 SVG 匯出主題檔，再逐元件實作，每個任務只給該元件的資料以節省 token | `tokens_export.py` |
@@ -98,8 +98,8 @@ npx skills add ETEason/svg-ui-bridge
 <details>
 <summary>安裝後的選用設定</summary>
 
-1. 要讓所有專案的 UI 工作都走這個流程：把 `skills/svg-ui-bridge/templates/global-CLAUDE.md.snippet` 附加到 `~/.claude/CLAUDE.md`。這會讓小改動也要先畫 SVG。
-2. 個別專案：把 `templates/project-CLAUDE.md.template` 貼進專案的 `CLAUDE.md` 並填好，再把 `templates/gitignore.snippet` 加進 `.gitignore`。
+1. 要讓所有專案的 UI 工作都走這個流程：把 [全域片段](docs/zh-TW/global-CLAUDE.md) 附加到 `~/.claude/CLAUDE.md`。這會讓小改動也要先畫 SVG。
+2. 個別專案：把 [專案範本](docs/zh-TW/project-CLAUDE.md) 貼進專案的 `CLAUDE.md` 並填好，再把 `skills/svg-ui-bridge/templates/gitignore.snippet` 加進 `.gitignore`。
 
 </details>
 
@@ -143,12 +143,12 @@ python tests/smoke_test.py
 
 ## 📚 文件
 
-- [工作流程](skills/svg-ui-bridge/SKILL.md)：每個階段的完整步驟與關卡
-- [SVG 規範](skills/svg-ui-bridge/references/svg-conventions.md)：設計稿該怎麼寫
-- [框架對照](skills/svg-ui-bridge/references/framework-mapping.md)：SVG 屬性如何對應到各框架
-- [整合 superpowers 與 pstack](skills/svg-ui-bridge/references/workflow-integration.md)：為什麼放在設計階段，以及各階段怎麼銜接
-
-以上文件為英文。
+- [工作流程](docs/zh-TW/workflow.md)：每個階段的完整步驟與關卡
+- [SVG 規範](docs/zh-TW/svg-conventions.md)：設計稿該怎麼寫
+- [框架對照](docs/zh-TW/framework-mapping.md)：SVG 屬性如何對應到各框架
+- [整合 superpowers 與 pstack](docs/zh-TW/workflow-integration.md)：為什麼放在設計階段，以及各階段怎麼銜接
+- [更新紀錄](docs/zh-TW/CHANGELOG.md)
+- [專案 CLAUDE.md 範本](docs/zh-TW/project-CLAUDE.md)、[全域 CLAUDE.md 片段](docs/zh-TW/global-CLAUDE.md)
 
 ## ⚠️ 限制
 

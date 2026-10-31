@@ -1,5 +1,10 @@
 # Changelog
 
+[繁體中文](docs/zh-TW/CHANGELOG.md)
+
+## Unreleased
+- Add a Traditional Chinese version of all documentation (`docs/zh-TW/`).
+
 ## 0.1.1
 - Playwright rendering falls back to the system Chrome or Edge when its own Chromium is not
   installed, so no browser download is needed.
