@@ -2,8 +2,9 @@
 """Build dist/svg-ui-bridge-skill.zip, the package uploaded in Customize > Skills on claude.ai.
 
 The zip holds one svg-ui-bridge/ folder with SKILL.md, scripts/, references/ and templates/.
-SKILL.md is checked first and the build fails on any problem. The same sources always give the
-same bytes.
+SKILL.md is checked first and the build fails on any problem. The same sources give the same file
+contents everywhere, and the same bytes on the same Python build (zlib compresses differently
+between builds).
 
   python tools/build_skill_zip.py
   python tools/build_skill_zip.py --out somewhere/skill.zip
