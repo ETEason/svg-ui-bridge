@@ -5,7 +5,7 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.2.2
+Version: 0.3.0
 
 SVG is the shared language between the human's visual intent and the agent's code: the human
 judges a rendered picture, the agent reads named, layered, tokenised markup. Iterate on the
@@ -73,6 +73,14 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
 - **The agent checks its own drawing** by rendering a PNG and reading it (look for overlaps,
   clipped text, misalignment) before asking the user to look. `--all-states` renders each state.
 - Ask for feedback in visual terms. Apply it to the SVG → re-lint → (preview refreshes) → repeat.
+- Tell the user they can click components in the preview, write a change in Quick Edit and copy it
+  to you. The panel sits at the bottom of the window, so nothing in the design is compressed.
+- When a message contains `Snapshot JSON (svg_render.py --job)` and a `.svg#` reference: first run
+  `python <skill>/scripts/svg_render.py --job '<json>'` and read the PNG to confirm you see what the
+  user saw, then find each component or region from its reference and follow this loop. The syntax
+  is in `references/svg-conventions.md`.
+- With `--serve`, the "送給 Agent" button writes to `design/_feedback.md`. During review, read new
+  entries in that file before each reply. Mark handled entries `[done]`; do not delete them.
 - **Gate:** no product code until the user approves the design (this is the design approval in
   superpowers terms).
 

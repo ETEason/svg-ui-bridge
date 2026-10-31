@@ -69,7 +69,23 @@ that button's `<g>`. Purely decorative groups don't need `data-component`.
 - Animated parts: draw keyframes as states (`data-state="frame-1"`…) and note timing in `data-note`.
 - Layering order in the SVG = z-order in the engine; say so in the project CLAUDE.md mapping.
 
-## 5. What the agent reads vs. what the human reads
+## 5. Quick Edit references
+
+A change request copied from the preview page points at parts of a design like this. Paths are
+relative to the folder `svg_preview.py` ran in, or absolute with `--absolute-paths`.
+
+| form | meaning |
+|---|---|
+| `design/login.svg#SignInButton` | one component |
+| `design/login.svg#SignInButton,RememberMe` | several components selected together; split on commas after `#` (ids never contain commas) |
+| `design/login.svg#SignInButton?state=hover` | not the default state; `?state=` goes last and applies to the whole line |
+| `design/login.svg#region(480,600,320,40)@LoginCard` | a region in SVG coordinates, rounded to integers, and the component it falls in. Each region has its own line |
+
+A selection across files gets one line per file. The `Snapshot JSON (svg_render.py --job)` block
+reproduces what the user saw: `view.visible` is `[x, y, w, h]` in SVG coordinates, and `selection`
+holds `ref`, `kind`, `path` and `bbox`. When files differ it is a list with one job per file.
+
+## 6. What the agent reads vs. what the human reads
 
 - Human reviews the **rendered PNG** (`svg_render.py`), never the XML.
 - Agent implementing a component reads **only that component**: its row in `<name>.components.md`

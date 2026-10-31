@@ -103,6 +103,22 @@ npx skills add ETEason/svg-ui-bridge
 
 </details>
 
+## ✏️ 用 Quick Edit 指出要改的地方
+
+在預覽頁直接指給 Claude 看，不用文字描述位置。面板在視窗底部，頁面會預留同樣的高度，所以設計稿大小不變，也能捲到面板上方。
+
+| 動作 | 操作 |
+|---|---|
+| 選取元件 | 點一下，選到滑鼠下最深層的元件 |
+| 多選 | Shift 或 Ctrl＋點擊 |
+| 擴大選取範圍 | 點 breadcrumb 的任一層，例如 `App › SearchBar › SearchButton` |
+| 標出空白區域 | 按住 Alt 拖曳 |
+| 累積多筆修改 | 寫好一筆後按「加入清單」，再選下一處 |
+| 複製給 Claude | Copy Prompt，或 Ctrl/Cmd＋Enter |
+| 收合面板 | 點面板上方的把手；Esc 關閉 |
+
+把複製的文字貼給 Claude，它會先用 `svg_render.py --job` 重現你看到的畫面確認位置，再改 SVG。剪貼簿被擋時，面板會顯示全文讓你手動複製。`--serve` 模式下可按「送給 Agent」，內容會寫到 `design/_feedback.md`。prompt 預設用相對路徑，加 `--absolute-paths` 才是絕對路徑。
+
 ## 💻 在桌面 app／claude.ai 使用
 
 一般對話與雲端任務在沙盒裡執行，要把 skill 上傳到帳號：

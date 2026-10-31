@@ -2,7 +2,7 @@
 
 [English](../../skills/svg-ui-bridge/SKILL.md)
 
-版本：0.2.2
+版本：0.3.0
 
 SVG 是人的視覺意圖和 agent 程式碼之間的共同語言：人判斷渲染出來的畫面，agent 讀有命名、有分層、用 token 表示的標記。要反覆修改的是畫面，不是程式碼。
 
@@ -54,6 +54,9 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent：用 Read 
   不想讓程序長時間執行時：`svg_preview.py design` 會寫出 `design/_preview.html` 並開啟。
 - **Agent 先檢查自己的畫稿**：請使用者看之前，先算出 PNG 並讀取（檢查重疊、文字被裁切、對不齊）。`--all-states` 會算出每種狀態。
 - 用視覺語言徵求回饋。把回饋改進 SVG → 重新檢查 →（預覽自動更新）→ 重複。
+- 告訴使用者可以在預覽頁點選元件，用 Quick Edit 寫修改建議並複製給你。面板在視窗底部，不會壓縮設計稿。
+- 收到含 `Snapshot JSON (svg_render.py --job)` 與 `.svg#` reference 的文字時：先執行 `python <skill>/scripts/svg_render.py --job '<json>'` 並看圖，確認和使用者看到的一致，再依 reference 找到元件或區域，照本流程修改。語法見 [SVG 規範](svg-conventions.md)。
+- `--serve` 模式下，「送給 Agent」會寫到 `design/_feedback.md`。審稿期間每次回應前先讀新內容；處理完的項目標記 `[done]`，不要刪掉。
 - **關卡：** 使用者核准設計前，不寫產品程式（這就是 superpowers 所說的設計核准）。
 
 ### 3. 拆解

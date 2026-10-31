@@ -29,6 +29,10 @@ browser can open here, so a live server shows nobody anything.
 
 `--serve` in sandbox mode prints a notice, writes the same static page and exits.
 
+Quick Edit works inside an artifact as well. If the iframe blocks the clipboard, the panel shows the
+full text for the user to copy by hand. Artifact comments stay available. The "送給 Agent" button
+needs `--serve`, so it does not appear on a static page.
+
 The user's approval is what passes the gate, in the same way as in local mode. Do not write product
 code until they have seen the page and approved it.
 

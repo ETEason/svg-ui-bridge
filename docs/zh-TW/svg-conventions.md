@@ -65,7 +65,20 @@
 - 動畫部分：把關鍵影格畫成狀態（`data-state="frame-1"`…），並在 `data-note` 註明時間。
 - SVG 裡的圖層順序就是引擎裡的 z-order；請在專案 CLAUDE.md 的對照表註明。
 
-## 5. Agent 讀什麼、人看什麼
+## 5. Quick Edit reference
+
+從預覽頁複製的修改請求，用下列語法指出設計稿的位置。路徑相對於執行 `svg_preview.py` 的資料夾，加 `--absolute-paths` 時為絕對路徑。
+
+| 形式 | 意義 |
+|---|---|
+| `design/login.svg#SignInButton` | 一個元件 |
+| `design/login.svg#SignInButton,RememberMe` | 一起選取的多個元件；`#` 後面以逗號拆分（id 不含逗號） |
+| `design/login.svg#SignInButton?state=hover` | 不是預設狀態；`?state=` 放最後，套用到整行 |
+| `design/login.svg#region(480,600,320,40)@LoginCard` | 區域的 SVG 座標（四捨五入成整數）與所在元件。每個區域獨立一行 |
+
+跨檔案選取時，每個檔案一行。`Snapshot JSON (svg_render.py --job)` 區塊可重現使用者看到的畫面：`view.visible` 是 SVG 座標的 `[x, y, w, h]`，`selection` 含 `ref`、`kind`、`path`、`bbox`。跨檔案時它是清單，每個檔案一個 job。
+
+## 6. Agent 讀什麼、人看什麼
 
 - 人審閱的是**渲染結果**，絕不是 XML。
 - 實作元件的 agent **只讀該元件**：它在 `<name>.components.md` 的那一列，加上 `svg_render.py --component <Id>` 的輸出或 `<g>` 子樹。絕不要把整份 SVG 貼進每個 subagent 的提示，token 就是這樣省下來的。

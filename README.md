@@ -47,6 +47,26 @@ works in cloud sessions) or `~/.claude/skills/` (this machine only). Install it 
 As a plugin the skill is invoked as `/svg-ui-bridge:svg-ui-bridge`; Claude also loads it on its own
 for UI work.
 
+## Quick Edit in the preview page
+
+Point at the design instead of describing it. A panel opens at the bottom of the window, and the
+page reserves its height so the design keeps its size and can scroll clear of the panel.
+
+| action | how |
+|---|---|
+| Select a component | click it; the deepest component under the pointer is chosen |
+| Select several | Shift or Ctrl + click |
+| Widen the selection | click a level in the breadcrumb, such as `App › SearchBar › SearchButton` |
+| Mark an empty area | hold Alt and drag |
+| Queue several requests | write one, press 加入清單, select the next |
+| Copy for the agent | Copy Prompt, or Ctrl/Cmd + Enter |
+| Collapse the panel | click its top handle; Esc closes it |
+
+Paste the copied text to the agent. It renders what you saw with `svg_render.py --job`, confirms the
+position, then edits the SVG. If the clipboard is blocked, the panel shows the text for you to copy
+by hand. With `--serve`, 送給 Agent writes the request to `design/_feedback.md` instead. Prompts use
+relative paths unless you pass `--absolute-paths`.
+
 ## Use in the desktop app or claude.ai
 
 Ordinary conversations and cloud tasks run in a sandbox, so they need the skill uploaded to your

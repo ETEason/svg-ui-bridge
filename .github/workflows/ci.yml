@@ -34,3 +34,5 @@ jobs:
         run: python skills/svg-ui-bridge/scripts/env_check.py
       - name: Smoke test
         run: python tests/smoke_test.py
+      - name: Quick Edit browser test
+        run: python tests/test_quick_edit.py
