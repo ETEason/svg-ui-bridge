@@ -94,6 +94,17 @@ Details: [environments.md](skills/svg-ui-bridge/references/environments.md).
 
 ## Requirements
 
+### Optional HTML/CSS design drafts
+
+For text-heavy and responsive layouts, use the [HTML workflow](skills/svg-ui-bridge/references/html-design.md).
+Copy `templates/html-design/` from the skill, open `review.html` directly, and keep `theme.css` beside it.
+No npm, JavaScript or server is needed. Python + Playwright capture individual screens and check
+DOM ids, resources and basic overflow with `scripts/html_review.py`. A structural PASS still needs
+visual inspection; it is not production pixel-diff evidence. SVG Quick Edit, manifests and visual
+diff remain SVG-only. This optional route does not require the TSX proposal in PR #1.
+
+### SVG rendering dependencies
+
 Python 3.10+, Pillow, and one SVG rasteriser (tried in this order: resvg, rsvg-convert, Playwright,
 cairosvg). Easiest everywhere:
 

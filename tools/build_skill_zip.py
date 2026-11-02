@@ -25,6 +25,8 @@ SKILL = ROOT / "skills" / NAME
 INCLUDE_DIRS = ("scripts", "references", "templates")
 EXCLUDE_DIR_NAMES = {"__pycache__"}
 EXCLUDE_SUFFIXES = {".pyc", ".png", ".html"}
+# Authored HTML is a shipped template; generated preview pages must stay excluded.
+HTML_TEMPLATES = {SKILL / "templates" / "html-design" / "review.html"}
 
 # Agent Skills specification and claude.ai upload rules
 ALLOWED_KEYS = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
@@ -81,7 +83,7 @@ def check_skill(text: str, version: str) -> list[str]:
 
 def skill_files() -> list[Path]:
     def wanted(p: Path) -> bool:
-        return (p.is_file() and p.suffix.lower() not in EXCLUDE_SUFFIXES
+        return (p.is_file() and (p.suffix.lower() not in EXCLUDE_SUFFIXES or p in HTML_TEMPLATES)
                 and not p.name.endswith(".pyc") and ".components." not in p.name
                 and not EXCLUDE_DIR_NAMES & set(p.parts))
 

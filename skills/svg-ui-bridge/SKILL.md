@@ -1,15 +1,15 @@
 ---
 name: svg-ui-bridge
-description: Use for any change to what a user sees, such as screens, components, layout, styling or game HUDs, in any stack. Designs an SVG spec for approval first, then proves the build with a visual diff.
+description: Design and review UI changes using HTML/CSS for flowing layouts or SVG for precise graphics. Use for screens, components and game HUDs; inspect rendered drafts before implementation.
 ---
 
 # svg-ui-bridge
 
 Version: 0.3.1
 
-SVG is the shared language between the human's visual intent and the agent's code: the human
-judges a rendered picture, the agent reads named, layered, tokenised markup. Iterate on the
-picture, not on the code.
+The human judges rendered drafts; the agent reads named components and shared design tokens.
+Structured SVG supports the original design-to-implementation pipeline; static HTML/CSS is an
+optional route for flowing layouts with its own inspection and handoff limits.
 
 `<skill>` below means the folder that contains this SKILL.md. Work it out from where this file was
 loaded, because it differs per install. Scripts live in `<skill>/scripts/` (Python 3 + Pillow, plus
@@ -24,7 +24,20 @@ one SVG renderer: resvg, rsvg-convert, Playwright with the system Chrome/Edge or
   `references/workflow-integration.md` (read it when superpowers or pstack skills are active).
   Both are optional: when they are absent, follow the steps below without mentioning them.
 
-## Step 0: find out where you are
+## Choose the design format
+
+- Respect the project's existing format and user constraints. Prefer HTML/CSS for forms, long text,
+  content-driven sizing and responsive pages; use inline SVG for graphics. Follow
+  [the HTML workflow](references/html-design.md) instead of the SVG-only steps below.
+- Prefer structured SVG for fixed-coordinate scenes, diagrams and HUDs, or when the existing SVG
+  manifest, Quick Edit and per-component visual diff are required. Follow the steps below.
+- HTML versus SVG is an output choice; JSX/TSX is an optional authoring choice for either.
+  Do not introduce a build chain just to make a small static draft. If using TypeScript, run an
+  actual type checker; successful transpilation alone does not prove type correctness.
+- Design-only requests end after inspected drafts and review. Continue into product implementation
+  only when requested. Existing approval remains valid for its agreed scope.
+
+## Step 0: find out where you are (SVG route)
 
 ```
 python <skill>/scripts/env_check.py
@@ -41,7 +54,7 @@ The last line is `MODE=local` or `MODE=sandbox`. Read `references/environments.m
 Two rules hold equally in both modes:
 
 - **Approval gate:** no product code until the user has seen the design and approved it.
-- **Evidence:** nothing is done until `visual_diff.py` has passed on a real screenshot. If no
+- **Implementation evidence (SVG route):** visual verification requires `visual_diff.py` to pass on a real screenshot. If no
   screenshot can be had, say that the visual check is still open.
 
 ## The loop

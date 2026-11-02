@@ -16,6 +16,11 @@ SVG 是人的視覺意圖和 agent 程式碼之間的共同語言：人判斷渲
 
 ## Step 0：判斷環境
 
+先選擇格式：表單、長文字與響應式畫面可採用 HTML/CSS，圖形部分嵌入 SVG；固定座標畫面或需要既有 SVG Quick Edit 與像素比對時，保留 SVG。
+HTML 請改走 [HTML 設計流程](../../skills/svg-ui-bridge/references/html-design.md)，不要套用下文的 SVG 專用指令。
+只要求設計時，完成算圖、目視檢查及交付即可；要求實作時才繼續產品驗證。
+HTML 的結構檢查不等於 SVG 的像素比對，不能宣稱已達到其 2%／10% 驗收門檻。
+
 ```
 python <skill>/scripts/env_check.py
 ```

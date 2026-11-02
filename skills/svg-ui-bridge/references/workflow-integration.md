@@ -9,6 +9,11 @@ as the static page described in `environments.md`.
 
 ## superpowers
 
+The table below describes the SVG route. When HTML/CSS is selected, use `html-design.md`:
+link the HTML source, review report and approved PNGs in the spec. Use the project's implementation
+screenshot tooling; do not require SVG manifests or claim `html_review.py` supplies pixel-diff PASS.
+Design-only requests end with inspected drafts and review, regardless of the selected format.
+
 superpowers' brainstorming classifies every request as **spike**, **bounded** or **architectural**,
 and on the architectural path the only skill it hands off to afterwards is writing-plans. So
 svg-ui-bridge must run *inside* brainstorming's design step, not after it.

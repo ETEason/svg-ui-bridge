@@ -1,5 +1,10 @@
 <h1 align="center">svg-ui-bridge</h1>
 
+文字較多或響應式設計可選用 [HTML/CSS 流程](skills/svg-ui-bridge/references/html-design.md)：
+複製 skill 的 `templates/html-design/`，保留旁邊的 `theme.css`，即可直接開啟 `review.html`，不需要 npm、JavaScript 或伺服器。
+新增 `html_review.py` 以 Python 與 Playwright 產生每個畫面的截圖、元件位置及基本溢出報告。
+通過代表草稿結構檢查完成，仍須目視檢查，不代表產品已通過像素比對。SVG 的 Quick Edit、manifest 與 visual diff 仍只支援 SVG。
+
 <p align="center">讓 Claude Code 先畫出 SVG 設計稿、經你核准再寫程式，最後用像素比對證明成品符合設計。</p>
 
 <p align="center">
