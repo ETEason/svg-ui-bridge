@@ -36,3 +36,8 @@ jobs:
         run: python tests/smoke_test.py
       - name: Quick Edit browser test
         run: python tests/test_quick_edit.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: TSX design starter integration test
+        run: python tests/test_tsx_design.py

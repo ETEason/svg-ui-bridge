@@ -94,6 +94,13 @@ Details: [environments.md](skills/svg-ui-bridge/references/environments.md).
 
 ## Requirements
 
+Repeated UI can optionally use shared TSX components and a theme, exported to structured SVG at
+build time. Existing Python tools still consume SVG, and small edits need no JavaScript toolchain.
+Show important states as static views together; design-only requests end with inspected drafts.
+Production screenshot verification applies when implementation is requested.
+See [component authoring](skills/svg-ui-bridge/references/component-authoring.md) for the
+[runnable starter](skills/svg-ui-bridge/templates/tsx-design), rebuild commands and artifact policy.
+
 Python 3.10+, Pillow, and one SVG rasteriser (tried in this order: resvg, rsvg-convert, Playwright,
 cairosvg). Easiest everywhere:
 

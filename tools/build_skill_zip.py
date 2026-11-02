@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NAME = "svg-ui-bridge"
 SKILL = ROOT / "skills" / NAME
 INCLUDE_DIRS = ("scripts", "references", "templates")
-EXCLUDE_DIR_NAMES = {"__pycache__"}
+EXCLUDE_DIR_NAMES = {"__pycache__", "node_modules"}
 EXCLUDE_SUFFIXES = {".pyc", ".png", ".html"}
 
 # Agent Skills specification and claude.ai upload rules

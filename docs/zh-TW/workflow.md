@@ -30,11 +30,17 @@ python <skill>/scripts/env_check.py
 兩條規則在兩種模式下同樣嚴格：
 
 - **核准關卡：** 使用者看過設計並核准前，不寫產品程式。
-- **證據：** `visual_diff.py` 在真實截圖上通過前，都不算完成。拿不到截圖時，要說明視覺檢查尚未完成。
+- **範圍：** 只要求設計時，交付經檢視的草稿並停在審閱；要求實作時才繼續產品開發與截圖驗證。既有核准在約定範圍內持續有效。
+- **實作證據：** `visual_diff.py` 在真實截圖上通過前，不能宣稱實作已通過視覺驗證。拿不到截圖時，要說明視覺檢查尚未完成。
 
 ## 流程
 
 ### 1. 繪製 SVG（設計階段，還沒有產品程式）
+
+- 重複元件與多方案可用 TSX、共用主題及資料陣列在建置時產生 SVG；小型 SVG 仍可直接編輯。
+  詳見[元件化撰寫指南](../../skills/svg-ui-bridge/references/component-authoring.md)。
+  生成模式下，下文的「修改 SVG」指修改 TSX 來源並重新建置，Quick Edit 也須依穩定 id 回到來源修改。
+  提交來源、建置設定與 lockfile；生成的 SVG 保留為審閱快照，核准版本才是實作比對基準。
 
 - 在一個 session 寫第一份 SVG 前，先讀 [SVG 規範](svg-conventions.md)。
 - 寫出 `design/<畫面>.svg`（或專案 CLAUDE.md 指定的資料夾）。專案已有畫面或 token 時，沿用它們並延續既有外觀；使用者提供截圖或草圖時，描出它的結構。
@@ -49,6 +55,7 @@ python <skill>/scripts/svg_preview.py design --no-open       # 人：要發佈�
 python <skill>/scripts/svg_render.py design/<screen>.svg     # agent：用 Read 查看的 PNG
 ```
 
+- 每次來源修改後先重新建置，再檢查、預覽或產生元件清單。重要狀態與方案以同尺寸的獨立 SVG 並列比較，說明放在畫面外，記錄核准的檔案、狀態與尺寸。
 - 修正所有 ERROR；warning 也要修，除非有明確理由。
 - **人在瀏覽器上審閱**，不看 XML，也不看 PNG：`svg_preview.py --serve` 會開啟 http://localhost:8765 的頁面，`design/` 裡的 SVG 一變更就自動重新載入，並提供狀態切換（default/hover/disabled…）、滑過辨識元件（id、layout、note）和縮放。設計工作開始時在背景啟動一次，並把網址告訴使用者。
   不想讓程序長時間執行時：`svg_preview.py design` 會寫出 `design/_preview.html` 並開啟。

@@ -9,6 +9,10 @@ as the static page described in `environments.md`.
 
 ## superpowers
 
+For generated designs, every "edit SVG" below means edit the TSX/theme/data source and rebuild.
+See `component-authoring.md`. Design-only requests end with inspected drafts; implementation stages
+and production screenshot evidence apply when implementation is in scope.
+
 superpowers' brainstorming classifies every request as **spike**, **bounded** or **architectural**,
 and on the architectural path the only skill it hands off to afterwards is writing-plans. So
 svg-ui-bridge must run *inside* brainstorming's design step, not after it.

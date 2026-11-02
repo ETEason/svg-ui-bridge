@@ -3,6 +3,10 @@
 ## Visual design (svg-ui-bridge)
 
 - Design specs: `design/<screen>.svg` (+ generated `<screen>.components.md/.json`). Screenshots: `shots/`.
+- Authoring: <hand-authored SVG | TSX in `design/system/`>; build: <none | `npm run build` in `design/system`>.
+  For generated SVG, edit source and rebuild before preview/verification, including Quick Edit changes.
+- Review important states/options together; record the approved file, state and viewport.
+  Design-only requests end at inspected drafts; implementation verification applies when requested.
 - Target stack: <React 19 + Tailwind | Rust egui 0.3x | Bevy 0.1x UI | Qt 6 QML | …>
 - Canvas sizes: desktop `<1280x800>`, mobile `<390x844>` — one SVG per breakpoint that changes layout.
 - Tokens live in `<src/styles/tokens.css | src/theme.rs | …>`, generated from the SVG `<style>` tokens.
@@ -26,5 +30,7 @@
 - verification-before-completion: visual claims need fresh visual_diff PASS output + diff image path.
 
 ### Housekeeping
+- For TSX, also commit source, build configuration and lockfile; ignore `node_modules/`.
+  Generated SVGs are review snapshots, not editable source.
 - Commit `design/*.svg` and `design/*.components.*`; ignore generated images:
   `.gitignore` → `design/*.png`, `design/_preview.html`, `shots/*.diff.*`

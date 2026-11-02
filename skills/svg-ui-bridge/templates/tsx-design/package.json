@@ -1,0 +1,7 @@
+{
+  "name": "svg-ui-design-source",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "tsx build.tsx" },
+  "devDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0", "tsx": "^4.20.0" }
+}

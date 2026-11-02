@@ -38,10 +38,13 @@ The last line is `MODE=local` or `MODE=sandbox`. Read `references/environments.m
 | Preview | `svg_preview.py design --serve`, tell the user the URL | Regenerate the static `_preview.html` after every SVG edit; publish it as an artifact or send the file |
 | Verify | Screenshot the app on the user's computer | Web: `screenshot_web.py` on a page started in the sandbox. Native or game: ask the user to upload a screenshot at the stated size |
 
-Two rules hold equally in both modes:
+These rules hold equally in both modes:
 
 - **Approval gate:** no product code until the user has seen the design and approved it.
-- **Evidence:** nothing is done until `visual_diff.py` has passed on a real screenshot. If no
+- **Scope:** for design-only requests, deliver inspected drafts and stop at review. Continue to
+  decomposition, product implementation and screenshot verification only when requested. Existing
+  user approval remains valid for its agreed scope.
+- **Implementation evidence:** an implementation is not visually verified until `visual_diff.py` has passed on a real screenshot. If no
   screenshot can be had, say that the visual check is still open.
 
 ## The loop
@@ -49,7 +52,11 @@ Two rules hold equally in both modes:
 ### 1. Draft the SVG (design phase — no product code yet)
 
 - Read `references/svg-conventions.md` before writing the first SVG of a session.
-- Write `design/<screen>.svg` (or the folder the project CLAUDE.md names). If the project has
+- Choose authoring by repetition: edit small SVGs directly; use build-time TSX components, shared
+  theme values and data-driven variants for repeated UI. Read `references/component-authoring.md`
+  for that route, its optional runnable starter, and source/build ownership. Generated SVG must
+  retain the same structured attributes used by the tools below.
+- Write or generate `design/<screen>.svg` (or the folder the project CLAUDE.md names). If the project has
   existing screens/tokens, reuse their tokens and copy the existing look; if the user gave a
   screenshot or sketch, trace its structure.
 - Every component is a `<g id="PascalCase" data-component="Kind">`; children flow per `data-layout`;
@@ -64,6 +71,10 @@ python <skill>/scripts/svg_preview.py design --no-open       # human: static pag
 python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to look at with Read
 ```
 
+- Rebuild generated SVG after source changes, before running these commands.
+- Present important states/options as separate static SVGs at matching viewports for simultaneous
+  comparison. Keep captions outside the UI; record the approved file/state/viewport. Use the state
+  switcher for inspection, not as the only way to discover alternatives.
 - Fix every ERROR; fix warnings unless there is a stated reason.
 - **The human reviews in the browser**, not the XML and not a PNG: `svg_preview.py --serve` opens
   a page at http://localhost:8765 that reloads by itself whenever an SVG in `design/` changes, with a
@@ -72,7 +83,7 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
   Without a long-running process: `svg_preview.py design` writes `design/_preview.html` and opens it.
 - **The agent checks its own drawing** by rendering a PNG and reading it (look for overlaps,
   clipped text, misalignment) before asking the user to look. `--all-states` renders each state.
-- Ask for feedback in visual terms. Apply it to the SVG → re-lint → (preview refreshes) → repeat.
+- Ask for feedback in visual terms. Apply it to the editable source (rebuild generated SVG) → re-lint → (preview refreshes) → repeat.
 - Tell the user they can click components in the preview, write a change in Quick Edit and copy it
   to you. The panel sits at the bottom of the window, so nothing in the design is compressed.
 - When a message contains `Snapshot JSON (svg_render.py --job)` and a `.svg#` reference: first run
@@ -127,15 +138,16 @@ gap: ask, then fix the SVG — the visual spec forces those decisions before cod
 
 ### 6. Later changes
 
-Visual change requests go to the SVG first (step 1 → 5 for the touched components). The SVG stays
-the source of truth; if code and SVG disagree, either fix the code or get the user to approve an
-SVG update — never let them drift silently.
+Visual change requests go to the design source first (step 1 → 5 for the touched components).
+For generated SVG, edit TSX/theme/data and rebuild all affected views; never hand-patch the output.
+The approved SVG is the visual acceptance baseline; if code and SVG disagree, fix code or obtain
+the user's approval for an SVG update — never let them drift silently.
 
 ## Red flags
 
 | thought | instead |
 |---|---|
-| "It's a small UI tweak, I'll just change the CSS" | Edit the component's `<g>`, render, get a nod. Two minutes. |
+| "It's a small UI tweak, I'll just change the CSS" | Edit its SVG or TSX source, rebuild if needed, render, get a nod. |
 | "I'll describe the layout in words" | Draw it. Words are exactly what this skill replaces. |
 | "Paste the full SVG into each subagent" | Manifest row + isolated render only. |
 | "Looks right to me" | Run visual_diff; report the numbers. |

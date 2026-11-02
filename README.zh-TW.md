@@ -1,5 +1,9 @@
 <h1 align="center">svg-ui-bridge</h1>
 
+重複 UI 現可選用共用 TSX 元件與主題，在建置時產生結構化 SVG；小型修改仍只需原有 Python 工具。
+重要狀態與方案以靜態畫面並列比較。只要求設計時交付經檢視的草稿；要求實作時才繼續產品開發與截圖驗證。
+詳見[元件化撰寫指南](skills/svg-ui-bridge/references/component-authoring.md)與[可執行範本](skills/svg-ui-bridge/templates/tsx-design)。
+
 <p align="center">讓 Claude Code 先畫出 SVG 設計稿、經你核准再寫程式，最後用像素比對證明成品符合設計。</p>
 
 <p align="center">

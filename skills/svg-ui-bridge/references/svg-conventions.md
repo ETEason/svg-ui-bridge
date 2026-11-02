@@ -60,7 +60,9 @@ that button's `<g>`. Purely decorative groups don't need `data-component`.
 - No exported "path soup", no flattened text-to-outline, no embedded base64 images. Icons: keep them
   small (`<g data-component="Icon" id="Icon-Search">`), or reference an asset (`<use href="icons.svg#search">`).
 - Coordinates are absolute and integer where possible (keeps the diff stable).
-- Keep the file under ~60 KB. Bigger means it is no longer saving tokens.
+- Aim to keep hand-authored SVG under ~60 KB. For repetition, use `component-authoring.md`.
+  Generated output may be larger: inspect source repetition and geometry separately, avoid loading
+  expanded output into prompts, and document any accepted size warning.
 
 ## 4. Game / canvas UI
 
@@ -87,7 +89,8 @@ holds `ref`, `kind`, `path` and `bbox`. When files differ it is a list with one 
 
 ## 6. What the agent reads vs. what the human reads
 
-- Human reviews the **rendered PNG** (`svg_render.py`), never the XML.
+- Human reviews the browser preview or delivered static page. The agent inspects PNG renders
+  (`svg_render.py`) before sharing. Show compared states together, not only through a switcher.
 - Agent implementing a component reads **only that component**: its row in `<name>.components.md`
   plus `svg_render.py --component <Id>` output, or the `<g>` subtree. Never paste the whole SVG
   into every subagent prompt — that is where the token saving comes from.
