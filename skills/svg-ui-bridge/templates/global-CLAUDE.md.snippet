@@ -1,6 +1,7 @@
 ## UI / visual work
-- Anything that changes what a user sees: design it first as an SVG spec with the svg-ui-bridge
-  skill (`/svg-ui-bridge:svg-ui-bridge` when installed as a plugin, `svg-ui-bridge` when uploaded to
-  the account), get my approval in its browser preview, then implement per component and prove it
-  with visual_diff. With superpowers this happens inside brainstorming's design step, not instead of it.
-- Visual change requests edit the SVG first; the SVG in `design/` is the source of truth for looks.
+- Anything that changes what a user sees: design it first as an SVG or HTML/CSS draft with the
+  svg-ui-bridge skill (`/svg-ui-bridge:svg-ui-bridge` when installed as a plugin, `svg-ui-bridge` when
+  uploaded to the account) and get my approval in its browser preview. A design-only request ends
+  there. When I ask for implementation, build it per component and verify it (visual_diff on the SVG
+  route). With superpowers this happens inside brainstorming's design step, not instead of it.
+- Visual change requests edit the design first; the approved draft in `design/` is the source of truth for looks.

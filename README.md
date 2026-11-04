@@ -2,9 +2,10 @@
 
 [繁體中文](README.zh-TW.md)
 
-SVG-first UI workflow for Claude Code. The agent designs every screen as a structured SVG spec,
-you review it live in the browser, the SVG is decomposed into a component manifest, and the
-implementation is proven against the design with a per-component visual diff.
+Design-first UI workflow for Claude Code. The agent drafts every screen as a structured SVG spec,
+or as static HTML/CSS for text-heavy responsive pages, and you review it in the browser. A
+design-only request ends there. When you ask for implementation, the SVG is decomposed into a
+component manifest and the build is proven against the design with a per-component visual diff.
 
 Works for web and non-web UIs (React, Rust egui/iced/Bevy, Qt, game HUDs) and slots into
 [superpowers](https://github.com/obra/superpowers) (inside brainstorming's design step) and
@@ -67,6 +68,20 @@ position, then edits the SVG. If the clipboard is blocked, the panel shows the t
 by hand. With `--serve`, 送給 Agent writes the request to `design/_feedback.md` instead. Prompts use
 relative paths unless you pass `--absolute-paths`.
 
+## Choose a format
+
+| design | format | what you get |
+|---|---|---|
+| Fixed-coordinate screens, diagrams, game HUDs | Structured SVG | live preview, Quick Edit, component manifest, per-component visual diff |
+| Forms, long text, responsive pages | Static HTML/CSS with inline SVG | one PNG per screen and state, component boxes, and checks for ids, resources and overflow via `html_review.py` |
+
+The HTML route has no Quick Edit, manifest or built-in pixel diff yet; implementation is compared
+with the project's own screenshot tooling. See [html-design.md](skills/svg-ui-bridge/references/html-design.md).
+
+For repeated components or many variants, write TSX components with a shared theme and generate the
+design at build time. [examples/tsx-design](examples/tsx-design) has a pinned, type-checked example;
+see [component-authoring.md](skills/svg-ui-bridge/references/component-authoring.md).
+
 ## Use in the desktop app or claude.ai
 
 Ordinary conversations and cloud tasks run in a sandbox, so they need the skill uploaded to your
@@ -107,6 +122,8 @@ installed, add `python -m playwright install chromium`.
 (Windows: `py -m pip …`.) For web projects set `SVG_UI_RENDERER=playwright` so the reference image is
 rendered by the same engine as your app.
 
+The TSX example also needs Node.js and npm; nothing else does.
+
 ## After installing
 
 1. Append `skills/svg-ui-bridge/templates/global-CLAUDE.md.snippet` to `~/.claude/CLAUDE.md`.
@@ -119,7 +136,7 @@ rendered by the same engine as your app.
 | path | purpose |
 |---|---|
 | `skills/svg-ui-bridge/SKILL.md` | the workflow the agent follows (6 steps, gates, red flags) |
-| `references/` | SVG conventions, environments, superpowers/pstack integration, SVG → framework mapping |
+| `references/` | SVG conventions, HTML route, component authoring, environments, superpowers/pstack integration, SVG → framework mapping |
 | `scripts/env_check.py` | reports the OS, Python, Pillow, working renderers and `MODE=local` or `MODE=sandbox` |
 | `scripts/svg_lint.py` | checks an SVG against the conventions |
 | `scripts/svg_preview.py` | browser review page; `--serve` live-reloads on every SVG change (localhost only) |
@@ -128,6 +145,9 @@ rendered by the same engine as your app.
 | `scripts/tokens_export.py` | design tokens → CSS / TS / egui / Bevy / JSON |
 | `scripts/screenshot_web.py` | screenshots a URL or HTML file for `visual_diff.py` |
 | `scripts/visual_diff.py` | screenshot vs design: overall and per-component mismatch, diff image, exit code |
+| `scripts/html_review.py` | static HTML drafts: screen PNGs, component boxes, id, resource and overflow checks |
+| `templates/html-design/` | offline HTML/CSS draft with two states |
+| `examples/tsx-design/` | TSX components generating SVG; not part of the installed skill |
 | `scripts/lint_hook.py` | optional PostToolUse hook that lints SVGs the agent writes |
 | `tools/build_skill_zip.py` | validates `SKILL.md` and builds the upload zip |
 

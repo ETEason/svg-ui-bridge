@@ -1,6 +1,6 @@
 <h1 align="center">svg-ui-bridge</h1>
 
-<p align="center">讓 Claude Code 先畫出 SVG 設計稿、經你核准再寫程式，最後用像素比對證明成品符合設計。</p>
+<p align="center">讓 Claude Code 先畫出 SVG 或 HTML 設計稿、經你核准再寫程式，最後用比對證明成品符合設計。</p>
 
 <p align="center">
   <a href="README.md">English</a> ·
@@ -35,7 +35,7 @@
 | 5. 驗證 | 把實際畫面截圖與設計稿比對，整體與每個元件都要過門檻（預設整體 ≤ 2%、單一元件 ≤ 10%） | `visual_diff.py` |
 | 6. 後續修改 | 視覺調整一律先改 SVG，SVG 是外觀的唯一依據 | 回到階段 1 |
 
-適用網頁，也適用 Rust egui/iced/Bevy、Qt、遊戲 HUD 等非網頁介面。可以放進 [superpowers](https://github.com/obra/superpowers) 的 brainstorming 設計步驟裡使用。
+只要求設計時，到你核准設計稿就結束；要求實作時才進行階段 3 到 5。適用網頁，也適用 Rust egui/iced/Bevy、Qt、遊戲 HUD 等非網頁介面。可以放進 [superpowers](https://github.com/obra/superpowers) 的 brainstorming 設計步驟裡使用。
 
 ## 🚀 快速開始
 
@@ -51,7 +51,7 @@ claude plugin install svg-ui-bridge --marketplace ETEason/svg-ui-bridge
 python -m pip install pillow playwright
 ```
 
-Windows 請把 `python` 換成 `py`。需要 Python 3.10 以上。
+Windows 請把 `python` 換成 `py`。需要 Python 3.10 以上。TSX 範例另外需要 Node.js 與 npm，其他功能都不需要。
 
 接著開新的 Claude Code session，直接提 UI 需求，Claude 會自行載入這個 skill；也可以用 `/svg-ui-bridge:svg-ui-bridge` 手動呼叫。
 
@@ -119,6 +119,17 @@ npx skills add ETEason/svg-ui-bridge
 
 把複製的文字貼給 Claude，它會先用 `svg_render.py --job` 重現你看到的畫面確認位置，再改 SVG。剪貼簿被擋時，面板會顯示全文讓你手動複製。`--serve` 模式下可按「送給 Agent」，內容會寫到 `design/_feedback.md`。prompt 預設用相對路徑，加 `--absolute-paths` 才是絕對路徑。
 
+## 🧭 選擇設計格式
+
+| 設計內容 | 格式 | 提供的功能 |
+|---|---|---|
+| 固定座標的畫面、圖表、遊戲 HUD | 結構化 SVG | 即時預覽、Quick Edit、元件清單、逐元件視覺比對 |
+| 表單、長文字、響應式頁面 | 靜態 HTML/CSS，圖形用內嵌 SVG | `html_review.py` 輸出每個畫面與狀態的 PNG、元件位置，並檢查 id、資源與溢出 |
+
+HTML 路線目前沒有 Quick Edit、元件清單或內建的像素比對，實作時改用專案自己的截圖比對工具。詳見 [HTML 設計路線](docs/zh-TW/html-design.md)。
+
+元件重複或變體很多時，可用 TSX 元件搭配共用主題，在建置時產生設計稿。[examples/tsx-design](examples/tsx-design) 是鎖定版本、有型別檢查的範例；詳見[元件化撰寫](docs/zh-TW/component-authoring.md)。
+
 ## 💻 在桌面 app／claude.ai 使用
 
 一般對話與雲端任務在沙盒裡執行，要把 skill 上傳到帳號：
@@ -162,7 +173,7 @@ python tests/smoke_test.py
 |---|---|
 | `.claude-plugin/` | plugin 與 marketplace 設定 |
 | `skills/svg-ui-bridge/SKILL.md` | Claude 遵循的工作流程（6 個階段、關卡、常見錯誤想法） |
-| `skills/svg-ui-bridge/references/` | SVG 規範、執行環境、superpowers/pstack 整合、SVG 到各框架的對照 |
+| `skills/svg-ui-bridge/references/` | SVG 規範、HTML 路線、元件化撰寫、執行環境、superpowers/pstack 整合、SVG 到各框架的對照 |
 | `scripts/env_check.py` | 回報作業系統、Python、Pillow、可用的算圖器，以及 `MODE=local` 或 `MODE=sandbox` |
 | `scripts/svg_lint.py` | 檢查 SVG 是否符合規範 |
 | `scripts/svg_preview.py` | 瀏覽器預覽頁，`--serve` 會在 SVG 變更時自動重新載入 |
@@ -171,6 +182,9 @@ python tests/smoke_test.py
 | `scripts/tokens_export.py` | 匯出 token 為 CSS、TS、egui、Bevy 或 JSON |
 | `scripts/screenshot_web.py` | 截取網址或 HTML 檔，供 `visual_diff.py` 比對 |
 | `scripts/visual_diff.py` | 比對截圖與設計稿，輸出差異圖與結束碼 |
+| `scripts/html_review.py` | 檢查靜態 HTML 草稿：輸出畫面 PNG、元件位置，並檢查 id、資源與溢出 |
+| `templates/html-design/` | 可離線開啟、含兩種狀態的 HTML/CSS 草稿範本 |
+| `examples/tsx-design/` | 用 TSX 元件產生 SVG 的範例；不屬於安裝後的 skill |
 | `scripts/lint_hook.py` | 選用的 PostToolUse hook，自動檢查 Claude 寫出的 SVG |
 | `tools/build_skill_zip.py` | 驗證 `SKILL.md` 並產生上傳用的 zip |
 | `tests/smoke_test.py` | 端對端冒煙測試 |
@@ -184,6 +198,8 @@ python tests/smoke_test.py
 - [工作流程](docs/zh-TW/workflow.md)：每個階段的完整步驟與關卡
 - [SVG 規範](docs/zh-TW/svg-conventions.md)：設計稿該怎麼寫
 - [執行環境](docs/zh-TW/environments.md)：本機與沙盒的流程差異
+- [HTML 設計路線](docs/zh-TW/html-design.md)：文字多、響應式畫面的設計與檢查
+- [元件化撰寫](docs/zh-TW/component-authoring.md)：用 TSX 元件與共用主題產生設計稿
 - [框架對照](docs/zh-TW/framework-mapping.md)：SVG 屬性如何對應到各框架
 - [整合 superpowers 與 pstack](docs/zh-TW/workflow-integration.md)：為什麼放在設計階段，以及各階段怎麼銜接
 - [專案 CLAUDE.md 範本](docs/zh-TW/project-CLAUDE.md)、[全域 CLAUDE.md 片段](docs/zh-TW/global-CLAUDE.md)

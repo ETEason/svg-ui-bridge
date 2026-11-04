@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notification settings — static review</title>
+<link rel="stylesheet" href="theme.css">
+<main class="review">
+  <header><p class="eyebrow">DESIGN REVIEW / 01</p><h1>Notification preferences</h1>
+    <p>Compare the editable and saving states. These are static drafts, not working forms.</p></header>
+  <div class="variants">
+    <section class="variant">
+      <h2>Default</h2><p class="caption">Changes are ready to save.</p>
+      <article class="screen" id="SettingsDefault" data-screen="Settings" data-state="default" data-component="Panel">
+        <div class="heading"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5zM10 20h4"/></svg><h3>Stay in the loop</h3></div>
+        <p class="description" id="DefaultDescription" data-component="Text">Choose which updates reach your inbox. Essential security notices will always be delivered so you can keep your account protected, even when other notifications are turned off.</p>
+        <div class="field" id="DefaultEmail" data-component="Input"><label for="EmailDefault">Email address</label><input id="EmailDefault" type="email" value="alex@example.com" readonly></div>
+        <div class="actions"><p>Manage preferences anytime.</p><button id="DefaultSave" data-component="Button" type="button">Save changes</button></div>
+      </article>
+    </section>
+    <section class="variant">
+      <h2>Saving</h2><p class="caption">The action is temporarily unavailable while the update is saved.</p>
+      <article class="screen" id="SettingsSaving" data-screen="Settings" data-state="saving" data-component="Panel">
+        <div class="heading"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5zM10 20h4"/></svg><h3>Stay in the loop</h3></div>
+        <p class="description" id="SavingDescription" data-component="Text">Choose which updates reach your inbox. Essential security notices will always be delivered so you can keep your account protected, even when other notifications are turned off.</p>
+        <div class="field" id="SavingEmail" data-component="Input"><label for="EmailSaving">Email address</label><input id="EmailSaving" type="email" value="alex@example.com" readonly></div>
+        <div class="actions"><p>Manage preferences anytime.</p><button id="SavingSave" data-component="Button" type="button" disabled>Saving changes…</button></div>
+      </article>
+    </section>
+  </div>
+</main>
+</html>

@@ -8,6 +8,8 @@ svg-ui-bridge 是**設計階段**的 skill。它從不取代 superpowers 的任�
 
 ## superpowers
 
+下表描述的是 SVG 路線。走 HTML 路線（[HTML 設計路線](html-design.md)）時，在規格中連結 HTML 來源、審閱報告和核准的 PNG；實作時使用專案自己的截圖工具，不要求 SVG 元件清單，也不宣稱 `html_review.py` 提供像素比對 PASS。由 TSX 產生的設計，下文的「修改 SVG」指修改 TSX、主題或資料後重新建置（[元件化撰寫](component-authoring.md)）。兩條路線下，只要求設計時都以審閱過的草稿結束。
+
 superpowers 的 brainstorming 把每個需求分類為 **spike**、**bounded** 或 **architectural**，而 architectural 路徑之後唯一交接的 skill 是 writing-plans。所以 svg-ui-bridge 必須在 brainstorming 的設計步驟*之內*執行，不能排在它之後。
 
 | superpowers 階段 | svg-ui-bridge 增加的內容 |

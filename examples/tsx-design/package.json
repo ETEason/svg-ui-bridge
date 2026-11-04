@@ -1,0 +1,18 @@
+{
+  "name": "svg-ui-design-source",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsx build.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

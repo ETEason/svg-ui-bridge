@@ -7,3 +7,5 @@ skills/svg-ui-bridge/templates/_preview.html
 skills/svg-ui-bridge/templates/*.components.*
 tests/_out/
 dist/
+node_modules/
+examples/*.svg

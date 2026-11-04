@@ -57,7 +57,7 @@
 - 盡量用基本圖形（`rect`、`circle`、`line`、`text`）；`path` 只用於圖示或特殊形狀。
 - 不要匯出的大量路徑、不要把文字轉成外框、不要內嵌 base64 圖片。圖示要小（`<g data-component="Icon" id="Icon-Search">`），或引用素材（`<use href="icons.svg#search">`）。
 - 座標使用絕對值，盡量是整數（讓 diff 穩定）。
-- 檔案維持在約 60 KB 以下。再大就省不到 token 了。
+- 手寫的 SVG 盡量維持在約 60 KB 以下。重複內容請用[元件化撰寫](component-authoring.md)。產生的輸出可能更大：分開檢查來源的重複程度和幾何資料，不要把展開的輸出載入提示，接受的大小警告要記錄下來。
 
 ## 4. 遊戲與畫布 UI
 
@@ -80,5 +80,5 @@
 
 ## 6. Agent 讀什麼、人看什麼
 
-- 人審閱的是**渲染結果**，絕不是 XML。
+- 人審閱的是瀏覽器預覽或交付的靜態頁。Agent 分享前先檢查算出的 PNG（`svg_render.py`）。要比較的狀態要並排顯示，不能只靠狀態切換。
 - 實作元件的 agent **只讀該元件**：它在 `<name>.components.md` 的那一列，加上 `svg_render.py --component <Id>` 的輸出或 `<g>` 子樹。絕不要把整份 SVG 貼進每個 subagent 的提示，token 就是這樣省下來的。

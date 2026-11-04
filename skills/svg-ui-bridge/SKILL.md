@@ -1,15 +1,16 @@
 ---
 name: svg-ui-bridge
-description: Use for any change to what a user sees, such as screens, components, layout, styling or game HUDs, in any stack. Designs an SVG spec for approval first, then proves the build with a visual diff.
+description: Use for any change to what a user sees, such as screens, components, layout, styling or game HUDs, in any stack. Drafts it as SVG or HTML/CSS for approval first, then verifies the build.
 ---
 
 # svg-ui-bridge
 
-Version: 0.3.1
+Version: 0.4.0
 
-SVG is the shared language between the human's visual intent and the agent's code: the human
-judges a rendered picture, the agent reads named, layered, tokenised markup. Iterate on the
-picture, not on the code.
+A rendered draft is the shared language between the human's visual intent and the agent's code:
+the human judges a picture, the agent reads named, layered, tokenised markup. Iterate on the
+picture, not on the code. Structured SVG carries the full pipeline below; static HTML/CSS is a
+second route for flowing layouts, with its own checks and limits.
 
 `<skill>` below means the folder that contains this SKILL.md. Work it out from where this file was
 loaded, because it differs per install. Scripts live in `<skill>/scripts/` (Python 3 + Pillow, plus
@@ -24,7 +25,20 @@ one SVG renderer: resvg, rsvg-convert, Playwright with the system Chrome/Edge or
   `references/workflow-integration.md` (read it when superpowers or pstack skills are active).
   Both are optional: when they are absent, follow the steps below without mentioning them.
 
-## Step 0: find out where you are
+## Choose the format
+
+Follow the project's existing format and the user's constraints first. Otherwise:
+
+| content | format | follow |
+|---|---|---|
+| Forms, long text, content-driven sizing, responsive pages | HTML/CSS, with inline SVG for graphics | `references/html-design.md` instead of the SVG steps below |
+| Fixed-coordinate screens, diagrams, game HUDs, or when Quick Edit, the manifest and per-component visual diff are needed | Structured SVG | the steps below |
+
+HTML or SVG is the output format; how you write it is a separate choice. For repeated components
+or many variants, TSX components with a shared theme can generate either one at build time. Read
+`references/component-authoring.md` before adding a build step, and skip it for small drafts.
+
+## Step 0: find out where you are (SVG route)
 
 ```
 python <skill>/scripts/env_check.py
@@ -38,18 +52,23 @@ The last line is `MODE=local` or `MODE=sandbox`. Read `references/environments.m
 | Preview | `svg_preview.py design --serve`, tell the user the URL | Regenerate the static `_preview.html` after every SVG edit; publish it as an artifact or send the file |
 | Verify | Screenshot the app on the user's computer | Web: `screenshot_web.py` on a page started in the sandbox. Native or game: ask the user to upload a screenshot at the stated size |
 
-Two rules hold equally in both modes:
+These rules hold equally in both modes and both formats:
 
 - **Approval gate:** no product code until the user has seen the design and approved it.
-- **Evidence:** nothing is done until `visual_diff.py` has passed on a real screenshot. If no
-  screenshot can be had, say that the visual check is still open.
+- **Scope:** a design-only request ends with inspected drafts and the user's review. Go on to
+  decomposition, implementation and screenshot verification only when implementation is asked for.
+  An approval stays valid for the scope it was given.
+- **Implementation evidence:** an implementation is not visually verified until `visual_diff.py` has
+  passed on a real screenshot (HTML route: see `html-design.md`). If no screenshot can be had, say
+  that the visual check is still open. Never call a draft a verified implementation.
 
 ## The loop
 
 ### 1. Draft the SVG (design phase — no product code yet)
 
 - Read `references/svg-conventions.md` before writing the first SVG of a session.
-- Write `design/<screen>.svg` (or the folder the project CLAUDE.md names). If the project has
+- Write or generate `design/<screen>.svg` (or the folder the project CLAUDE.md names). If it is
+  generated from TSX, edit the source and rebuild; never patch the output. If the project has
   existing screens/tokens, reuse their tokens and copy the existing look; if the user gave a
   screenshot or sketch, trace its structure.
 - Every component is a `<g id="PascalCase" data-component="Kind">`; children flow per `data-layout`;
@@ -64,6 +83,10 @@ python <skill>/scripts/svg_preview.py design --no-open       # human: static pag
 python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to look at with Read
 ```
 
+- Rebuild generated SVG after every source edit, before these commands.
+- Show the states or options a decision depends on as separate SVGs at the same size, so the
+  preview shows them side by side. Keep captions outside the UI, and record which file, state and
+  size were approved. The state switcher is for inspection, not the only way to find alternatives.
 - Fix every ERROR; fix warnings unless there is a stated reason.
 - **The human reviews in the browser**, not the XML and not a PNG: `svg_preview.py --serve` opens
   a page at http://localhost:8765 that reloads by itself whenever an SVG in `design/` changes, with a
@@ -72,7 +95,8 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
   Without a long-running process: `svg_preview.py design` writes `design/_preview.html` and opens it.
 - **The agent checks its own drawing** by rendering a PNG and reading it (look for overlaps,
   clipped text, misalignment) before asking the user to look. `--all-states` renders each state.
-- Ask for feedback in visual terms. Apply it to the SVG → re-lint → (preview refreshes) → repeat.
+- Ask for feedback in visual terms. Apply it to the SVG or its source (then rebuild) → re-lint →
+  (preview refreshes) → repeat.
 - Tell the user they can click components in the preview, write a change in Quick Edit and copy it
   to you. The panel sits at the bottom of the window, so nothing in the design is compressed.
 - When a message contains `Snapshot JSON (svg_render.py --job)` and a `.svg#` reference: first run
@@ -82,7 +106,7 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
 - With `--serve`, the "送給 Agent" button writes to `design/_feedback.md`. During review, read new
   entries in that file before each reply. Mark handled entries `[done]`; do not delete them.
 - **Gate:** no product code until the user approves the design (this is the design approval in
-  superpowers terms).
+  superpowers terms). For a design-only request, the work ends here.
 
 ### 3. Decompose
 
@@ -127,15 +151,17 @@ gap: ask, then fix the SVG — the visual spec forces those decisions before cod
 
 ### 6. Later changes
 
-Visual change requests go to the SVG first (step 1 → 5 for the touched components). The SVG stays
-the source of truth; if code and SVG disagree, either fix the code or get the user to approve an
-SVG update — never let them drift silently.
+Visual change requests go to the design first (step 1 → 5 for the touched components). For
+generated SVG, edit the TSX, theme or data and rebuild every affected view. The approved SVG is the
+visual baseline; if code and SVG disagree, either fix the code or get the user to approve an SVG
+update — never let them drift silently.
 
 ## Red flags
 
 | thought | instead |
 |---|---|
-| "It's a small UI tweak, I'll just change the CSS" | Edit the component's `<g>`, render, get a nod. Two minutes. |
+| "It's a small UI tweak, I'll just change the CSS" | Edit the component's `<g>` (or its source, then rebuild), render, get a nod. |
+| "The user only wanted a design, but I'll start the app too" | Stop at the reviewed draft until implementation is asked for. |
 | "I'll describe the layout in words" | Draw it. Words are exactly what this skill replaces. |
 | "Paste the full SVG into each subagent" | Manifest row + isolated render only. |
 | "Looks right to me" | Run visual_diff; report the numbers. |

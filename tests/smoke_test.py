@@ -144,7 +144,9 @@ def main() -> int:
             "svg-ui-bridge/SKILL.md", "svg-ui-bridge/scripts/env_check.py",
             "svg-ui-bridge/references/environments.md",
             "svg-ui-bridge/templates/example-screen.svg"} <= set(names), str(names[:5]))
-        banned = [n for n in names if re.search(r"__pycache__|\.pyc$|\.png$|\.html$|\.components\.|"
+        check("zip includes HTML source", "svg-ui-bridge/templates/html-design/review.html" in names
+              and "svg-ui-bridge/templates/html-design/theme.css" in names)
+        banned = [n for n in names if n != "svg-ui-bridge/templates/html-design/review.html" and re.search(r"__pycache__|\.pyc$|\.png$|\.html$|\.components\.|"
                                                 r"/tests/|/docs/|\.claude-plugin", n)]
         check("zip excludes generated files", names and not banned, str(banned[:5]))
         check("zip is repeatable", zip_a.exists() and zip_b.exists()
