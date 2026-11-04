@@ -11,6 +11,11 @@ Works for web and non-web UIs (React, Rust egui/iced/Bevy, Qt, game HUDs) and sl
 [superpowers](https://github.com/obra/superpowers) (inside brainstorming's design step) and
 pstack (`create-verification-skill` provides the screenshots).
 
+![Workflow: choose the format, draft and self-check, your review, then build and verify, with the script behind each step](docs/images/diagram-flow.en.png)
+
+How each format is rendered: [diagram](docs/images/diagram-render.en.png).
+One Quick Edit round trip: [diagram](docs/images/diagram-quick-edit.en.png).
+
 ## Install
 
 **Claude Code plugin (recommended)** — one command in your shell:
@@ -148,6 +153,7 @@ The TSX example also needs Node.js and npm; nothing else does.
 | `examples/tsx-design/` | TSX components generating SVG; not part of the installed skill |
 | `scripts/lint_hook.py` | optional PostToolUse hook that lints SVGs the agent writes |
 | `tools/build_skill_zip.py` | validates `SKILL.md` and builds the upload zip |
+| `tools/draw_diagrams.py` | redraws the workflow diagrams in `docs/images/` (Chinese and English) |
 
 ## Security notes
 
