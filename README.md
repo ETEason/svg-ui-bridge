@@ -2,8 +2,8 @@
 
 [繁體中文](README.zh-TW.md)
 
-Design-first UI workflow for Claude Code. The agent drafts every screen as a structured SVG spec,
-or as static HTML/CSS for text-heavy responsive pages, and you review it in the browser. A
+Design-first UI workflow for Claude Code. The agent drafts every screen as static HTML/CSS (web UI)
+or a structured SVG spec (everything else), and you review it in the browser. A
 design-only request ends there. When you ask for implementation, the SVG is decomposed into a
 component manifest and the build is proven against the design with a per-component visual diff.
 
@@ -70,13 +70,11 @@ relative paths unless you pass `--absolute-paths`.
 
 ## Choose a format
 
-| design | format | what you get |
-|---|---|---|
-| Fixed-coordinate screens, diagrams, game HUDs | Structured SVG | live preview, Quick Edit, component manifest, per-component visual diff |
-| Forms, long text, responsive pages | Static HTML/CSS with inline SVG | one PNG per screen and state, component boxes, and checks for ids, resources and overflow via `html_review.py` |
-
-The HTML route has no Quick Edit, manifest or built-in pixel diff yet; implementation is compared
-with the project's own screenshot tooling. See [html-design.md](skills/svg-ui-bridge/references/html-design.md).
+One rule, unless the project already chose: **web UI is drafted in HTML/CSS, everything else in SVG**
+(native apps, games and HUDs, diagrams). Both get live preview, Quick Edit, a component manifest,
+token export and a per-component visual diff. HTML drafts reflow at the width you pick in the preview,
+so a responsive page is one file instead of one SVG per breakpoint.
+See [html-design.md](skills/svg-ui-bridge/references/html-design.md).
 
 For repeated components or many variants, write TSX components with a shared theme and generate the
 design at build time. [examples/tsx-design](examples/tsx-design) has a pinned, type-checked example;
@@ -145,7 +143,7 @@ The TSX example also needs Node.js and npm; nothing else does.
 | `scripts/tokens_export.py` | design tokens → CSS / TS / egui / Bevy / JSON |
 | `scripts/screenshot_web.py` | screenshots a URL or HTML file for `visual_diff.py` |
 | `scripts/visual_diff.py` | screenshot vs design: overall and per-component mismatch, diff image, exit code |
-| `scripts/html_review.py` | static HTML drafts: screen PNGs, component boxes, id, resource and overflow checks |
+| `scripts/html_review.py` | HTML drafts: screen PNGs, component manifests, id, resource and overflow checks; `--standalone` baseline |
 | `templates/html-design/` | offline HTML/CSS draft with two states |
 | `examples/tsx-design/` | TSX components generating SVG; not part of the installed skill |
 | `scripts/lint_hook.py` | optional PostToolUse hook that lints SVGs the agent writes |

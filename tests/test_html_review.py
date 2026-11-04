@@ -87,6 +87,59 @@ class HtmlReviewTest(unittest.TestCase):
         self.assertEqual(subprocess.run(base, capture_output=True).returncode, 1)
         self.assertEqual(subprocess.run(base + ['--size', '0x800'], capture_output=True).returncode, 2)
 
+    def script(self, name, *args):
+        return subprocess.run([sys.executable, str(SKILL / 'scripts' / name), *map(str, args)], capture_output=True,
+                              text=True, encoding='utf-8', errors='replace', cwd=self.work)
+
+    def test_standalone_manifest_and_visual_diff(self):
+        out = self.work / 'baseline'
+        report = review(self.html, out, 390, 844, standalone=True)
+        self.assertEqual(report['status'], 'PASS', report['errors'])
+        screen = report['screens'][0]
+        self.assertEqual(round(screen['size'][0]), 390, 'a standalone screen spans the viewport width')
+        manifest = json.loads((out / screen['manifest']).read_text(encoding='utf-8'))
+        self.assertEqual([c['id'] for c in manifest['components']],
+                         ['SettingsDefault', 'DefaultDescription', 'DefaultEmail', 'DefaultSave'])
+        self.assertEqual([c['depth'] for c in manifest['components']], [0, 1, 1, 1])
+        self.assertIn('color-primary', manifest['tokens'])
+
+        png = out / screen['screenshot']
+        same = self.work / 'same.png'
+        Image.open(png).save(same)
+        result = self.script('visual_diff.py', png, same, '--manifest', out / screen['manifest'])
+        self.assertEqual(result.returncode, 0, result.stdout)
+        broken = Image.open(png).convert('RGB')
+        x, y, w, h = next(c for c in manifest['components'] if c['id'] == 'DefaultSave')['bbox']
+        from PIL import ImageDraw
+        ImageDraw.Draw(broken).rectangle((x, y, x + w, y + h), fill=(255, 255, 255))
+        broken.save(self.work / 'broken.png')
+        result = self.script('visual_diff.py', png, self.work / 'broken.png', '--manifest', out / screen['manifest'])
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn('DefaultSave', result.stdout)
+
+    def test_render_job_matches_the_screen(self):
+        report = review(self.html, self.work / 'm', 390, 844, standalone=True)
+        screen = report['screens'][0]
+        button = next(c for c in screen['components'] if c['id'] == 'DefaultSave')
+        bbox = [round(v) for v in button['bbox']]
+        job = {'input': 'design/review.html', 'format': 'html', 'screen': screen['id'], 'state': 'default',
+               'view': {'zoom': 1, 'width': 390, 'visible': [0, 0, 390, round(screen['size'][1])]},
+               'selection': [{'ref': 'DefaultSave', 'kind': 'Button', 'path': 'SettingsDefault>DefaultSave', 'bbox': bbox}],
+               'outputs': [{'path': str(self.work / 'job.png'), 'scale': 1, 'highlight': True}]}
+        result = self.script('svg_render.py', '--job', json.dumps(job))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        with Image.open(self.work / 'job.png') as img:
+            self.assertEqual(img.size, (390, round(screen['size'][1])))
+            edge = img.convert('RGB').getpixel((bbox[0] + bbox[2] // 2, bbox[1]))
+        self.assertEqual(edge, (255, 0, 170), 'the selection is outlined')
+
+    def test_tokens_from_html_and_css(self):
+        for source in (self.html, self.source / 'theme.css'):
+            with self.subTest(source=source.name):
+                result = self.script('tokens_export.py', source, '--format', 'json')
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(json.loads(result.stdout)['color-primary'], '#17634f')
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

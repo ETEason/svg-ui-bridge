@@ -1,83 +1,100 @@
 # Static HTML/CSS design route
 
-Use for flowing text, forms and responsive layouts. This route replaces the SVG-specific loop;
-do not pass HTML into `svg_lint.py`, `svg_manifest.py`, `svg_preview.py` or `visual_diff.py`.
-It needs Python + Playwright and a supported Chromium browser for inspection, but no npm or server
-for authoring or opening the bundled draft. Reuse the project's design system before adding one.
+Use for web UI: anything that will ship as HTML/CSS, including forms, long text and responsive
+pages. It has the same loop as the SVG route (preview, Quick Edit, manifest, tokens, per-component
+visual diff) with HTML-specific commands. Reuse the project's design system before adding one.
+Inspection needs Python, Playwright and a Chromium-based browser; authoring needs no npm or server.
 
 ## Author and compare
 
-Copy `templates/html-design/` to a design folder, keeping `review.html` beside `theme.css`.
-Open the HTML directly in a browser (`file://`). In a sandbox deliver the folder/zip or an artifact
-with its CSS; sending only the HTML loses styling. The template deliberately uses no scripts,
-remote fonts, CDNs or libraries. Use local resources and shared CSS variables; Grid/Flex handle
-layout while inline SVG handles graphics. Repeated markup can use an existing template system
-when useful; JSX is optional, and generated HTML remains static. Do not edit generated output.
+Copy `templates/html-design/` to a design folder such as `design/html/`, keeping `review.html`
+beside `theme.css`. The draft opens directly in a browser (`file://`). Use no scripts, remote
+fonts, CDNs or libraries; scripts are stripped from previews and disabled during inspection. Use
+local resources and shared CSS variables; Grid/Flex handle layout and inline SVG handles graphics.
+Repeated markup can be generated from TSX (`component-authoring.md`); never edit generated output.
 
-Each independently captured UI has a unique PascalCase `id`, `data-screen` name and `data-state`.
-Screen roots cannot nest. Put `data-component="Kind"` and a unique PascalCase `id` on components;
-keep ids stable across revisions. Within one HTML document all ids must be unique, so use state
-prefixes for repeated instances. Hidden components are omitted from the geometry report.
+Each independently reviewed UI is a screen: an element with a unique PascalCase `id`, a
+`data-screen` name and a `data-state`. Screens cannot nest. Give components `data-component="Kind"`
+and a unique PascalCase `id`, and keep ids stable across revisions. All ids in one document must be
+unique, so prefix repeated instances with their state. Hidden components are left out of reports.
 
-Show decision-relevant states side by side, stacking them at narrow widths. Keep headings,
-rationale and captions outside `[data-screen]`; text inside a screen reads as actual UI copy.
-Do not implement navigation, events or network requests to demonstrate a state. Write real copy,
-including realistic long strings. Use consistent tokens and component classes across variants.
+Show the states a decision depends on as separate screens side by side, stacking them at narrow
+widths. Keep headings, rationale and captions outside `[data-screen]`; text inside a screen reads
+as real UI copy. Do not implement navigation, events or network requests to demonstrate a state.
+Write real copy, including realistic long strings.
+
+## Preview and Quick Edit
+
+```text
+python <skill>/scripts/svg_preview.py design/html --serve     # local: live page, tell the user the URL
+python <skill>/scripts/svg_preview.py design/html --no-open   # sandbox: static page to publish
+```
+
+The preview shows each screen in its own card, rendered from the draft's HTML and local CSS with
+scripts removed. The 寬度 select sets the viewport width (1280, 768, 390, or the card width), so
+media queries apply and text reflows. Selection, Alt-drag regions, the breadcrumb and the Quick Edit
+panel work as on the SVG route. A request references `file.html#Id?state=…&width=…`; region
+coordinates are CSS pixels relative to the screen. Handle it as SKILL.md describes: run
+`svg_render.py --job` first and read the PNG, which renders the same screen at the same width.
 
 ## Inspect before asking for review
-
-From the consuming project's root (replace `<skill>` with this skill's installed folder):
 
 ```text
 python <skill>/scripts/html_review.py design/html/review.html --size 1280x800 --out shots/html-desktop
 python <skill>/scripts/html_review.py design/html/review.html --size 390x844 --out shots/html-mobile
 ```
 
-Use a separate output folder for each viewport/revision. The tool opens a local file with page
-JavaScript disabled, blocks external requests, and checks screen/component identifiers, static
+Use a separate output folder for each viewport and revision. The tool opens the local file with
+page JavaScript disabled, blocks external requests, and checks screen and component ids, static
 content, failed resources and basic overflow. Exit codes: 0 = structural PASS, 1 = draft issues,
-2 = invalid input or capture failure. It is a local authoring helper, not an untrusted-file sandbox.
+2 = invalid input or capture failure. It is a local authoring helper, not a sandbox for untrusted
+files.
 
-On PASS it writes one PNG per screen and `report.json`. On FAIL it writes the report without new
-PNGs. Only use screenshots listed in the current successful report; old files may still exist.
-The report records browser viewport, actual screen size, and visible component boxes in CSS pixels
-relative to each screen's top-left, at DPR 1. PNG edges round fractional CSS coordinates to pixels.
-A comparison sheet's screen is narrower than its browser viewport. For a full app-viewport
-baseline, use a standalone screen with no review margins.
-Never compare a whole review page against a cropped product screenshot.
+On PASS it writes, per screen, a PNG and `<id>.components.json`, plus `report.json`. On FAIL it
+writes only the report. Use only files listed in the current successful report; older files may
+remain. Boxes are CSS pixels relative to each screen's top-left at DPR 1.
 
-Read all PNGs and fix clipped text, awkward wrapping, alignment and spacing before sharing.
-Overflow checks are heuristics: they also flag intentional scrolling, and cannot prove there are
-no overlaps or clipped text. Record any intentional exception and inspect it manually; do not
-call a failing report PASS. For scrollable UI, capture and label the relevant visible states.
-No automated accessibility or production visual-fidelity certification is provided by this check.
+Read every PNG and fix clipped text, awkward wrapping, alignment and spacing before sharing.
+Overflow checks are heuristics: they also flag intentional scrolling and cannot prove there are no
+overlaps or clipped text. Record intentional exceptions and inspect them by eye; never call a
+failing report PASS.
 
-## Review and handoff
+## Tokens
 
-Share the rendered review page and ask about appearance. Address feedback using `file.html#Id`,
-state and viewport; edit source/theme, rerun all affected captures and inspect the results. The SVG
-Quick Edit selection panel and snapshot-job syntax are not supported for HTML in this version.
+```text
+python <skill>/scripts/tokens_export.py design/html/review.html --format ts -o src/theme/tokens.ts
+```
 
-Record approved source revision, file, screen id/state, viewport, actual screen dimensions and PNG.
-Commit HTML/CSS and local assets (or source/build configuration when generated); keep captures in
-the project's evidence location. Design-only tasks finish here, without creating a product app.
+It reads the CSS variables from the draft's local stylesheets and `<style>` blocks; a `.css` file
+works as input too.
 
-If implementation is requested, hand off relevant component geometry and crops, shared CSS tokens,
-behaviour notes and approved screenshots. `report.json` is an HTML review report, not the SVG
-component-manifest schema or a build-order plan. It must not be fed into the SVG diff pipeline.
-Use the target project's browser screenshot comparison tooling at matching sizes, content and
-states. If unavailable, report manual comparison and the missing automated evidence explicitly;
-do not claim this route provides the SVG route's 2% / 10% automated acceptance checks.
+## Verify an implementation
 
-## Capabilities in this version
+Capture the approved baseline with each screen alone at the target viewport width, which is what an
+implementation screenshot shows:
 
-| Capability | SVG route | HTML route |
+```text
+python <skill>/scripts/html_review.py design/html/review.html --size 1280x800 --out shots/baseline-1280 --standalone
+```
+
+Screenshot the implementation at the same width and crop it to the screen (`screenshot_web.py`
+for web pages), then compare:
+
+```text
+python <skill>/scripts/visual_diff.py shots/baseline-1280/SettingsDefault.png shots/app-settings.png --manifest shots/baseline-1280/SettingsDefault.components.json
+```
+
+The same thresholds apply as on the SVG route: overall ≤ 2 % and no component over 10 %. Content,
+state and fonts must match the baseline; dynamic data in the implementation shows up as a mismatch.
+
+## What each route offers
+
+| | SVG route | HTML route |
 |---|---|---|
-| Static review and rendered screenshots | Existing preview/render | Local HTML and `html_review.py` |
-| Component identification | SVG groups and manifest | DOM ids and measured report |
-| Quick Edit and snapshot jobs | Supported | Not supported |
-| Token export | `tokens_export.py` | Maintain shared CSS variables directly |
-| Automated implementation pixel diff | `visual_diff.py` | Use project tooling; not built in |
-
-Optional workflow integrations must use this capability boundary as well: link HTML, reports and
-approved PNGs in a design spec; do not require an SVG manifest or SVG diff for an HTML draft.
+| Preview and Quick Edit | `svg_preview.py` | `svg_preview.py`, plus the 寬度 select |
+| Reproduce a Quick Edit view | `svg_render.py --job` | `svg_render.py --job` (`format: html`) |
+| Draft checks | `svg_lint.py` | `html_review.py` |
+| Component manifest | `svg_manifest.py` | `html_review.py` (`<id>.components.json`) |
+| Token export | `tokens_export.py` on the SVG | `tokens_export.py` on the HTML or CSS |
+| Per-component visual diff | `visual_diff.py design.svg …` | `visual_diff.py baseline.png …` with the manifest |
+| State layers in one file | `data-state` layers | one screen per state |

@@ -337,6 +337,94 @@ def test_paths(browser, work: Path) -> None:
     page.close()
 
 
+HTML_FILE = "design/html/review.html"
+INJECTED = ("<img id='Probe' src='missing.png' style='display:none' onerror='parent.__pwned=1'>"
+            "<script>parent.__pwned=2</script>")
+
+
+def html_refs(page) -> list[str]:
+    return [l for l in page.evaluate("buildPrompt()").splitlines() if "#" in l and not l.startswith("```")]
+
+
+def test_html(browser, work: Path) -> None:
+    template = ROOT / "skills" / "svg-ui-bridge" / "templates" / "html-design"
+    baseline = {}
+    for w in (1280, 390):  # html_review.py on the clean template, in its own process
+        out = work / f"base-{w}"
+        subprocess.run([sys.executable, str(SCRIPTS / "html_review.py"), str(template / "review.html"), "--size",
+                        f"{w}x800", "--out", str(out), "--standalone"], capture_output=True)
+        baseline[w] = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    html_dir = work / "design" / "html"
+    shutil.copytree(template, html_dir)
+    source = html_dir / "review.html"
+    source.write_text(source.read_text(encoding="utf-8").replace(
+        '<p class="description" id="DefaultDescription"', INJECTED + '<p class="description" id="DefaultDescription"'),
+        encoding="utf-8")
+    subprocess.run([sys.executable, str(SCRIPTS / "svg_preview.py"), "design/html", "--no-open"], cwd=work,
+                   capture_output=True, env={**os.environ, "SVG_UI_MODE": "local"})
+
+    page = browser.new_page(viewport={"width": 1600, "height": 900})
+    errors: list[str] = []
+    page.on("pageerror", lambda e: errors.append(str(e)))
+    page.goto((html_dir / "_preview.html").resolve().as_uri())
+    page.wait_for_function("roots.length === 2 && roots.every(r => r.doc && r.screen)")
+    check("html screens become cards", page.evaluate("roots.map(r => r.kind + ':' + r.id)") ==
+          ["html:SettingsDefault", "html:SettingsSaving"])
+    check("html: state select hidden, width select shown",
+          page.evaluate("[document.getElementById('state').parentElement.hidden, document.getElementById('width').parentElement.hidden]") == [True, False])
+    check("html scripts and handlers do not run", page.evaluate("window.__pwned") is None and
+          page.evaluate("roots[0].frame.contentWindow.__pwned") is None)
+
+    page.locator("#width").select_option("1280")
+    page.wait_for_function("roots[0].w === 1280")
+    select(page, "DefaultSave")
+    check("html chip and breadcrumb", "DefaultSave" in page.locator("#qeChips").inner_text() and
+          page.locator("#qeCrumbs").inner_text().replace("\n", "") == "SettingsDefault›DefaultSave",
+          page.locator("#qeCrumbs").inner_text())
+    check("html reference carries the width", html_refs(page) == [f"{HTML_FILE}#DefaultSave?width=1280"], html_refs(page))
+    job = snapshot(page.evaluate("buildPrompt()"))
+    check("html snapshot", job["format"] == "html" and job["screen"] == "SettingsDefault" and job["view"]["width"] == 1280, job)
+    want = next(c for c in baseline[1280]["screens"][0]["components"] if c["id"] == "DefaultSave")["bbox"]
+    got = job["selection"][0]["bbox"]
+    check("html bbox matches the standalone review", all(abs(a - b) <= 1 for a, b in zip(got, want)), (got, want))
+    wide = page.evaluate("roots[0].frame.offsetHeight")
+
+    page.locator("#width").select_option("390")
+    page.wait_for_function("roots[0].w === 390")
+    page.wait_for_timeout(100)
+    check("html reflows at 390", page.evaluate("roots[0].frame.offsetWidth") == 390 and page.evaluate("roots[0].frame.offsetHeight") > wide)
+    want = next(c for c in baseline[390]["screens"][0]["components"] if c["id"] == "DefaultSave")["bbox"]
+    got = snapshot(page.evaluate("buildPrompt()"))["selection"][0]["bbox"]
+    check("html bbox at 390 matches", all(abs(a - b) <= 1 for a, b in zip(got, want)), (got, want))
+
+    frame = page.frame_locator("iframe").first
+    frame.locator("#DefaultEmail").click(modifiers=["Shift"])
+    check("html multi-select is one line", html_refs(page) == [f"{HTML_FILE}#DefaultSave,DefaultEmail?width=390"], html_refs(page))
+    select(page, "SavingSave")
+    check("html state in reference", html_refs(page) == [f"{HTML_FILE}#SavingSave?state=saving&width=390"], html_refs(page))
+
+    page.evaluate("window.scrollTo(0, 0)")
+    f = page.locator("iframe").first.bounding_box()
+    # Playwright's own drag handling stalls on a pressed button over a sandboxed iframe, so send
+    # the same real mouse input through CDP instead.
+    cdp = page.context.new_cdp_session(page)
+
+    def mouse(kind, x, y, buttons=0):
+        cdp.send("Input.dispatchMouseEvent", {"type": kind, "x": x, "y": y, "button": "left",
+                                               "buttons": buttons, "clickCount": 1, "modifiers": 1})  # 1 = Alt
+
+    mouse("mouseMoved", f["x"] + 30, f["y"] + 20)
+    mouse("mousePressed", f["x"] + 30, f["y"] + 20, 1)
+    for i in range(1, 5):
+        mouse("mouseMoved", f["x"] + 30 + 50 * i, f["y"] + 20 + 10 * i, 1)
+    mouse("mouseReleased", f["x"] + 230, f["y"] + 60)
+    refs = html_refs(page)
+    check("html region reference", len(refs) == 1 and re.fullmatch(
+        rf"{HTML_FILE}#region\((\d+),(\d+),(\d+),(\d+)\)@SettingsDefault\?width=390", refs[0]), refs)
+    check("html preview has no script errors", not errors, errors)
+    page.close()
+
+
 def main() -> int:
     from playwright.sync_api import sync_playwright  # type: ignore
     with tempfile.TemporaryDirectory() as td:
@@ -374,6 +462,7 @@ def main() -> int:
                 test_denied(browser, url)
                 test_responsive(browser, url, port)
                 test_paths(browser, work)
+                test_html(browser, work)
                 browser.close()
         finally:
             server.terminate()

@@ -83,7 +83,9 @@ relative to the folder `svg_preview.py` ran in, or absolute with `--absolute-pat
 | `design/login.svg#SignInButton?state=hover` | not the default state; `?state=` goes last and applies to the whole line |
 | `design/login.svg#region(480,600,320,40)@LoginCard` | a region in SVG coordinates, rounded to integers, and the component it falls in. Each region has its own line |
 
-A selection across files gets one line per file. The `Snapshot JSON (svg_render.py --job)` block
+| `design/html/review.html#DefaultSave?width=1280` | an HTML draft: the component, with the preview width (and `state=` when not default); region coordinates are CSS px relative to the screen |
+
+A selection across files gets one line per file (for HTML, one line per screen). The `Snapshot JSON (svg_render.py --job)` block
 reproduces what the user saw: `view.visible` is `[x, y, w, h]` in SVG coordinates, and `selection`
 holds `ref`, `kind`, `path` and `bbox`. When files differ it is a list with one job per file.
 

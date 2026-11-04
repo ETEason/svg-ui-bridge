@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800"
+     data-screen="HtmlQuickEditDesktop" data-target="desktop-1280x800">
+  <style>
+    :root {
+      --color-page: #f3f4f7; --color-panel: #ffffff; --color-text: #1d2230; --color-muted: #6b7280;
+      --color-line: #e3e6ec; --color-select: #e0218a; --color-primary: #1d4ed8; --color-on-primary: #ffffff;
+      --color-chip: #eef0f5; --color-draft-bg: #f3f1ec; --color-draft-text: #202b32;
+      --color-draft-muted: #59676d; --color-draft-line: #d7dfdc; --color-draft-primary: #17634f;
+      --color-draft-disabled: #64716b; --radius-panel: 12px; --space-4: 16px;
+    }
+    text { font-family: system-ui, "Noto Sans TC", sans-serif; }
+    .mono { font-family: ui-monospace, monospace; }
+  </style>
+
+  <g id="Page" data-component="Screen" data-layout="col">
+    <rect x="0" y="0" width="1280" height="800" fill="var(--color-page)"/>
+
+    <g id="Header" data-component="Toolbar" data-layout="row center gap-12 pad-10-16"
+       data-note="adds a 寬度 select for HTML drafts: 原始 / 1280 / 768 / 390; screens reflow, nothing is scaled">
+      <rect x="0" y="0" width="1280" height="50" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="16" y="31" font-size="15" font-weight="700" fill="var(--color-text)">SVG Design Review</text>
+      <text x="170" y="31" font-size="13" fill="var(--color-muted)">狀態 default　縮放 1</text>
+      <rect x="318" y="12" width="104" height="28" rx="6" fill="var(--color-page)" stroke="var(--color-select)" stroke-width="2"/>
+      <text x="330" y="31" font-size="13" fill="var(--color-text)">寬度 1280 ▾</text>
+      <text x="440" y="31" font-size="13" fill="var(--color-muted)">切換背景　Quick Edit</text>
+    </g>
+
+    <g id="TreeAside" data-component="Panel" data-note="tree lists each HTML screen, then its data-component elements">
+      <rect x="16" y="66" width="260" height="300" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="28" y="96" font-size="13" fill="var(--color-muted)">元件（滑過可定位）</text>
+      <text x="34" y="122" font-size="12" font-weight="700" fill="var(--color-text)">review.html · SettingsDefault</text>
+      <text class="mono" x="46" y="146" font-size="12" fill="var(--color-text)">DefaultDescription</text>
+      <text class="mono" x="46" y="168" font-size="12" fill="var(--color-text)">DefaultEmail</text>
+      <rect x="28" y="178" width="236" height="20" rx="4" fill="var(--color-select)"/>
+      <text class="mono" x="46" y="192" font-size="12" fill="var(--color-on-primary)">DefaultSave</text>
+      <text x="34" y="222" font-size="12" font-weight="700" fill="var(--color-text)">review.html · SettingsSaving</text>
+      <text class="mono" x="46" y="246" font-size="12" fill="var(--color-text)">SavingDescription</text>
+    </g>
+
+    <g id="HtmlCard" data-component="Card" data-layout="col"
+       data-note="one card per [data-screen]; the screen is rendered from the draft's own HTML and local CSS, without its scripts">
+      <rect x="292" y="66" width="972" height="486" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="304" y="92" font-size="14" font-weight="600" fill="var(--color-text)">SettingsDefault</text>
+      <text x="420" y="92" font-size="12" fill="var(--color-muted)">review.html · default · 寬度 1280</text>
+
+      <g id="DraftScreen" data-component="Screen" data-layout="col pad-24 gap-16" data-note="the HTML draft itself">
+        <rect x="304" y="108" width="948" height="432" fill="var(--color-draft-bg)"/>
+        <rect x="328" y="128" width="900" height="392" rx="12" fill="var(--color-panel)" stroke="var(--color-draft-line)"/>
+        <circle cx="364" cy="170" r="10" fill="none" stroke="var(--color-draft-primary)" stroke-width="2"/>
+        <text x="386" y="178" font-size="22" font-weight="700" fill="var(--color-draft-text)">Stay in the loop</text>
+        <text x="352" y="222" font-size="15" fill="var(--color-draft-muted)">Choose which updates reach your inbox. Essential security notices will always be delivered so you can</text>
+        <text x="352" y="246" font-size="15" fill="var(--color-draft-muted)">keep your account protected, even when other notifications are turned off.</text>
+        <text x="352" y="292" font-size="14" font-weight="600" fill="var(--color-draft-text)">Email address</text>
+        <rect x="352" y="304" width="852" height="46" rx="6" fill="var(--color-panel)" stroke="var(--color-draft-line)"/>
+        <text x="366" y="333" font-size="15" fill="var(--color-draft-text)">alex@example.com</text>
+        <text x="352" y="406" font-size="13" fill="var(--color-draft-muted)">Manage preferences anytime.</text>
+        <g id="SelectedElement" data-component="Overlay" data-note="solid outline drawn over the selected DOM element; hover stays dashed">
+          <rect x="1064" y="380" width="140" height="46" rx="6" fill="var(--color-draft-primary)"/>
+          <text x="1134" y="408" font-size="15" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Save changes</text>
+          <rect x="1061" y="377" width="146" height="52" fill="none" stroke="var(--color-select)" stroke-width="2"/>
+          <rect x="1049" y="367" width="22" height="18" rx="4" fill="var(--color-select)"/>
+          <text x="1060" y="380" font-size="11" font-weight="700" text-anchor="middle" fill="var(--color-on-primary)">1</text>
+        </g>
+      </g>
+    </g>
+
+    <g id="BottomPanel" data-component="Panel" data-layout="col gap-8 pad-14"
+       data-note="same Quick Edit panel as the SVG route; references read review.html#DefaultSave with ?state and ?width">
+      <rect x="16" y="568" width="1248" height="216" rx="12" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <rect x="620" y="576" width="40" height="4" rx="2" fill="var(--color-line)"/>
+      <text x="30" y="602" font-size="14" font-weight="700" fill="var(--color-text)">Quick Edit</text>
+      <text x="1244" y="603" font-size="18" text-anchor="middle" fill="var(--color-muted)">×</text>
+      <rect x="30" y="618" width="108" height="28" rx="14" fill="var(--color-chip)"/>
+      <text class="mono" x="42" y="636" font-size="12" fill="var(--color-text)">DefaultSave</text>
+      <text x="126" y="637" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+      <text class="mono" x="30" y="672" font-size="12" fill="var(--color-primary)">SettingsDefault › </text>
+      <text class="mono" x="150" y="672" font-size="12" font-weight="700" fill="var(--color-text)">DefaultSave</text>
+      <rect x="420" y="618" width="830" height="100" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="432" y="640" font-size="13" fill="var(--color-muted)">描述你想怎麼改</text>
+      <rect x="1040" y="730" width="92" height="42" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="1086" y="756" font-size="13" text-anchor="middle" fill="var(--color-text)">加入清單</text>
+      <rect x="1140" y="730" width="110" height="42" rx="8" fill="var(--color-primary)"/>
+      <text x="1195" y="756" font-size="13" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Copy Prompt</text>
+    </g>
+  </g>
+</svg>
