@@ -27,7 +27,8 @@ browser can open here, so a live server shows nobody anything.
 4. After every SVG edit, regenerate the page and update the same artifact, or send the file again,
    so the user never reviews a stale design.
 
-`--serve` in sandbox mode prints a notice, writes the same static page and exits.
+`--serve` in sandbox mode prints a notice, writes the same static page and exits. HTML drafts in the
+folder are included with their local CSS inlined, so the static page still needs no other files.
 
 Quick Edit works inside an artifact as well. If the iframe blocks the clipboard, the panel shows the
 full text for the user to copy by hand. Artifact comments stay available. The "送給 Agent" button

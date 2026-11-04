@@ -23,7 +23,7 @@
 3. 能用 artifact 時就發佈成 artifact，否則傳送檔案。
 4. 每次編輯 SVG 後都重新產生頁面，並更新同一個 artifact 或重新傳送，避免使用者審閱到舊設計。
 
-sandbox 模式下的 `--serve` 會印出提醒，寫出同一份靜態頁後結束。
+sandbox 模式下的 `--serve` 會印出提醒，寫出同一份靜態頁後結束。資料夾裡的 HTML 設計稿會連同本機 CSS 一起內嵌，所以靜態頁仍不需要其他檔案。
 
 artifact 內也能用 Quick Edit。iframe 擋住剪貼簿時，面板會顯示全文讓使用者手動複製。artifact 的留言功能仍可用。「送給 Agent」需要 `--serve`，靜態頁不會顯示這個按鈕。
 

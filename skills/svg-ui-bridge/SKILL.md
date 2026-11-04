@@ -5,12 +5,11 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.4.0
+Version: 0.5.0
 
 A rendered draft is the shared language between the human's visual intent and the agent's code:
 the human judges a picture, the agent reads named, layered, tokenised markup. Iterate on the
-picture, not on the code. Structured SVG carries the full pipeline below; static HTML/CSS is a
-second route for flowing layouts, with its own checks and limits.
+picture, not on the code. Drafts are structured SVG or static HTML/CSS; both get the same loop.
 
 `<skill>` below means the folder that contains this SKILL.md. Work it out from where this file was
 loaded, because it differs per install. Scripts live in `<skill>/scripts/` (Python 3 + Pillow, plus
@@ -27,18 +26,16 @@ one SVG renderer: resvg, rsvg-convert, Playwright with the system Chrome/Edge or
 
 ## Choose the format
 
-Follow the project's existing format and the user's constraints first. Otherwise:
+Use the format the project or the user already chose. Otherwise one rule decides:
 
-| content | format | follow |
-|---|---|---|
-| Forms, long text, content-driven sizing, responsive pages | HTML/CSS, with inline SVG for graphics | `references/html-design.md` instead of the SVG steps below |
-| Fixed-coordinate screens, diagrams, game HUDs, or when Quick Edit, the manifest and per-component visual diff are needed | Structured SVG | the steps below |
+- **Web UI** (it will ship as HTML/CSS): an HTML/CSS draft. Follow `references/html-design.md`
+  for its commands; the loop and rules below are the same.
+- **Anything else** (native apps, games and HUDs, diagrams, fixed-coordinate graphics): SVG, as below.
 
-HTML or SVG is the output format; how you write it is a separate choice. For repeated components
-or many variants, TSX components with a shared theme can generate either one at build time. Read
-`references/component-authoring.md` before adding a build step, and skip it for small drafts.
+When many components repeat, they can be generated from TSX with a shared theme; see
+`references/component-authoring.md`. Small drafts are written by hand.
 
-## Step 0: find out where you are (SVG route)
+## Step 0: find out where you are
 
 ```
 python <skill>/scripts/env_check.py
@@ -59,8 +56,8 @@ These rules hold equally in both modes and both formats:
   decomposition, implementation and screenshot verification only when implementation is asked for.
   An approval stays valid for the scope it was given.
 - **Implementation evidence:** an implementation is not visually verified until `visual_diff.py` has
-  passed on a real screenshot (HTML route: see `html-design.md`). If no screenshot can be had, say
-  that the visual check is still open. Never call a draft a verified implementation.
+  passed on a real screenshot (for HTML against the `html_review.py --standalone` baseline). If no
+  screenshot can be had, say that the visual check is still open. Never call a draft verified.
 
 ## The loop
 

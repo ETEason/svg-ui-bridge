@@ -2,9 +2,8 @@
 
 ## Visual design (svg-ui-bridge)
 
-- Design format: <SVG | HTML/CSS>. For HTML, follow `references/html-design.md` instead of the SVG-only
-  commands below, run `html_review.py` at each target size, and name the screenshot comparison tool
-  used for implementation (or record that automated pixel verification is unavailable).
+- Design format: <HTML/CSS for web UI | SVG>. For HTML, follow `references/html-design.md`: drafts in
+  `design/html/`, `html_review.py --standalone` at each target size for the baseline and manifests.
 - Authoring: <hand-written | TSX in `design/system/`>; build: <none | `npm run typecheck && npm run build` in `design/system`>.
   For generated designs, edit the source and rebuild before preview or verification, including Quick Edit changes.
 - Review the states and options a decision depends on side by side; record the approved file, state and size.

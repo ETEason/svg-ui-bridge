@@ -9,6 +9,7 @@ Examples
   python svg_render.py design/settings.svg --all-states          # one PNG per data-state value
   python svg_render.py --job '{"input":"design/settings.svg", ...}'   # Quick Edit Snapshot JSON
   python svg_render.py --job snapshot.json
+A job with "format": "html" renders one [data-screen] of an HTML draft at view.width.
 """
 from __future__ import annotations
 
@@ -20,6 +21,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _htmldraft import css_text, is_html, render_screen  # noqa: E402
 from _svgcommon import canvas_size, isolate, load_svg, local, render_svg_bytes, show_state  # noqa: E402
 import xml.etree.ElementTree as ET  # noqa: E402
 
@@ -27,8 +29,7 @@ HIGHLIGHTS = ((255, 0, 170), (0, 230, 118))  # magenta, or green when the design
 DASH = 10
 
 
-def highlight_colour(root: ET.Element) -> tuple[int, int, int]:
-    css = "".join((s.text or "") for s in root.iter() if local(s.tag) == "style")
+def highlight_colour(css: str) -> tuple[int, int, int]:
     m = re.search(r"--color-primary\s*:\s*#([0-9a-fA-F]{6})", css)
     if not m:
         return HIGHLIGHTS[0]
@@ -75,19 +76,31 @@ def find_input(name: str, job_file: Path | None) -> Path:
 def run_job(job: dict, job_file: Path | None) -> None:
     from PIL import Image
     src = find_input(job["input"], job_file)
-    tree = load_svg(src)
-    state = job.get("state")
-    data = show_state(tree, None if state in (None, "default") else state)
-    size = canvas_size(tree.getroot())
-    visible = (job.get("view") or {}).get("visible") or [0, 0, size[0], size[1]]
-    colour = highlight_colour(tree.getroot())
+    view = job.get("view") or {}
+    if job.get("format") == "html" or is_html(src):
+        # one [data-screen] alone at the width the user had chosen; coordinates are CSS px
+        size, colour = None, highlight_colour(css_text(src))
+
+        def render(out: Path, scale: float) -> None:
+            nonlocal size
+            size = render_screen(src, job["screen"], int(view.get("width") or 1280), out, scale)
+    else:
+        tree = load_svg(src)
+        state = job.get("state")
+        data = show_state(tree, None if state in (None, "default") else state)
+        size = canvas_size(tree.getroot())
+        colour = highlight_colour("".join((s.text or "") for s in tree.getroot().iter() if local(s.tag) == "style"))
+
+        def render(out: Path, scale: float) -> None:
+            render_svg_bytes(data, out, scale=scale, size=size)
     for output in job.get("outputs", []):
         scale = float(output.get("scale", 1))
         out = Path(output["path"].replace("<tmp>", tempfile.gettempdir()))
         out.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory() as td:
             full = Path(td) / "full.png"
-            render_svg_bytes(data, full, scale=scale, size=size)
+            render(full, scale)
+            visible = view.get("visible") or [0, 0, round(size[0]), round(size[1])]
             with Image.open(full) as im:
                 x, y, w, h = visible
                 crop = im.convert("RGBA").crop((round(x * scale), round(y * scale),

@@ -76,7 +76,9 @@
 | `design/login.svg#SignInButton?state=hover` | 不是預設狀態；`?state=` 放最後，套用到整行 |
 | `design/login.svg#region(480,600,320,40)@LoginCard` | 區域的 SVG 座標（四捨五入成整數）與所在元件。每個區域獨立一行 |
 
-跨檔案選取時，每個檔案一行。`Snapshot JSON (svg_render.py --job)` 區塊可重現使用者看到的畫面：`view.visible` 是 SVG 座標的 `[x, y, w, h]`，`selection` 含 `ref`、`kind`、`path`、`bbox`。跨檔案時它是清單，每個檔案一個 job。
+| `design/html/review.html#DefaultSave?width=1280` | HTML 設計稿：元件加上預覽寬度（非預設狀態時加 `state=`）；區域座標是相對於畫面的 CSS 像素 |
+
+跨檔案選取時，每個檔案一行（HTML 則是每個畫面一行）。`Snapshot JSON (svg_render.py --job)` 區塊可重現使用者看到的畫面：`view.visible` 是 SVG 座標的 `[x, y, w, h]`，`selection` 含 `ref`、`kind`、`path`、`bbox`。跨檔案時它是清單，每個檔案一個 job。
 
 ## 6. Agent 讀什麼、人看什麼
 

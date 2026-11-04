@@ -1,6 +1,6 @@
 <h1 align="center">svg-ui-bridge</h1>
 
-<p align="center">讓 Claude Code 先畫出 SVG 或 HTML 設計稿、經你核准再寫程式，最後用比對證明成品符合設計。</p>
+<p align="center">讓 Claude Code 先畫出 HTML 或 SVG 設計稿、經你核准再寫程式，最後用像素比對證明成品符合設計。</p>
 
 <p align="center">
   <a href="README.md">English</a> ·
@@ -121,12 +121,7 @@ npx skills add ETEason/svg-ui-bridge
 
 ## 🧭 選擇設計格式
 
-| 設計內容 | 格式 | 提供的功能 |
-|---|---|---|
-| 固定座標的畫面、圖表、遊戲 HUD | 結構化 SVG | 即時預覽、Quick Edit、元件清單、逐元件視覺比對 |
-| 表單、長文字、響應式頁面 | 靜態 HTML/CSS，圖形用內嵌 SVG | `html_review.py` 輸出每個畫面與狀態的 PNG、元件位置，並檢查 id、資源與溢出 |
-
-HTML 路線目前沒有 Quick Edit、元件清單或內建的像素比對，實作時改用專案自己的截圖比對工具。詳見 [HTML 設計路線](docs/zh-TW/html-design.md)。
+專案沒有指定時只看一條規則：**網頁 UI 用 HTML/CSS，其他都用 SVG**（原生 app、遊戲與 HUD、圖表）。兩者都有即時預覽、Quick Edit、元件清單、token 匯出和逐元件視覺比對。HTML 設計稿會依預覽頁選的寬度重新排版，所以響應式頁面只要一個檔案，不必每個斷點各畫一份 SVG。詳見 [HTML 設計路線](docs/zh-TW/html-design.md)。
 
 元件重複或變體很多時，可用 TSX 元件搭配共用主題，在建置時產生設計稿。[examples/tsx-design](examples/tsx-design) 是鎖定版本、有型別檢查的範例；詳見[元件化撰寫](docs/zh-TW/component-authoring.md)。
 
@@ -182,7 +177,7 @@ python tests/smoke_test.py
 | `scripts/tokens_export.py` | 匯出 token 為 CSS、TS、egui、Bevy 或 JSON |
 | `scripts/screenshot_web.py` | 截取網址或 HTML 檔，供 `visual_diff.py` 比對 |
 | `scripts/visual_diff.py` | 比對截圖與設計稿，輸出差異圖與結束碼 |
-| `scripts/html_review.py` | 檢查靜態 HTML 草稿：輸出畫面 PNG、元件位置，並檢查 id、資源與溢出 |
+| `scripts/html_review.py` | 檢查 HTML 設計稿：輸出畫面 PNG 與元件清單，檢查 id、資源與溢出；`--standalone` 產生比對基準 |
 | `templates/html-design/` | 可離線開啟、含兩種狀態的 HTML/CSS 草稿範本 |
 | `examples/tsx-design/` | 用 TSX 元件產生 SVG 的範例；不屬於安裝後的 skill |
 | `scripts/lint_hook.py` | 選用的 PostToolUse hook，自動檢查 Claude 寫出的 SVG |
