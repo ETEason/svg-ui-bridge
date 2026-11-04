@@ -37,6 +37,12 @@
 
 只要求設計時，到你核准設計稿就結束；要求實作時才進行階段 3 到 5。適用網頁，也適用 Rust egui/iced/Bevy、Qt、遊戲 HUD 等非網頁介面。可以放進 [superpowers](https://github.com/obra/superpowers) 的 brainstorming 設計步驟裡使用。
 
+<p align="center">
+  <img alt="工作流程圖：選擇格式、草稿與自我檢查、你審閱、實作與驗證四個階段，標出每一步執行的程式" src="docs/images/diagram-flow.zh-TW.png" width="720">
+</p>
+
+各階段的細節，以及兩種格式的渲染方式與 Quick Edit 的來回，見[工作流程](docs/zh-TW/workflow.md)。
+
 ## 🚀 快速開始
 
 安裝 plugin：
@@ -182,6 +188,7 @@ python tests/smoke_test.py
 | `examples/tsx-design/` | 用 TSX 元件產生 SVG 的範例；不屬於安裝後的 skill |
 | `scripts/lint_hook.py` | 選用的 PostToolUse hook，自動檢查 Claude 寫出的 SVG |
 | `tools/build_skill_zip.py` | 驗證 `SKILL.md` 並產生上傳用的 zip |
+| `tools/draw_diagrams.py` | 重新產生 `docs/images/` 的流程圖（中英文） |
 | `tests/smoke_test.py` | 端對端冒煙測試 |
 
 `scripts/` 都在 `skills/svg-ui-bridge/` 底下。

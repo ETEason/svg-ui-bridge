@@ -4,6 +4,8 @@
 
 版本：0.5.0
 
+![工作流程圖：四個階段與每一步執行的程式](../images/diagram-flow.zh-TW.png)
+
 算圖後的設計稿是人的視覺意圖和 agent 程式碼之間的共同語言：人判斷渲染出來的畫面，agent 讀有命名、有分層、用 token 表示的標記。要反覆修改的是畫面，不是程式碼。設計稿可以是結構化 SVG 或靜態 HTML/CSS，兩者走同一套流程。
 
 下文的 `<skill>` 指包含 SKILL.md 的資料夾。請從這個檔案的載入位置推得，因為每種安裝方式都不同。腳本放在 `<skill>/scripts/`（需要 Python 3 與 Pillow，再加一種 SVG 算圖器：resvg、rsvg-convert、搭配系統 Chrome/Edge 的 Playwright，或 cairosvg）。
@@ -22,6 +24,10 @@
 - **其他**（原生 app、遊戲與 HUD、圖表、固定座標的圖形）：用 SVG，照下方步驟。
 
 元件大量重複時，可用 TSX 搭配共用主題產生設計稿，見[元件化撰寫](component-authoring.md)。小型草稿直接手寫。
+
+兩種格式在預覽頁與 Agent 端的渲染方式：
+
+![渲染路徑圖：SVG 與 HTML 給你看的預覽頁與給 Agent 看的 PNG](../images/diagram-render.zh-TW.png)
 
 ## Step 0：判斷環境
 
@@ -66,9 +72,10 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent：用 Read 
   不想讓程序長時間執行時：`svg_preview.py design` 會寫出 `design/_preview.html` 並開啟。
 - **Agent 先檢查自己的畫稿**：請使用者看之前，先算出 PNG 並讀取（檢查重疊、文字被裁切、對不齊）。`--all-states` 會算出每種狀態。
 - 用視覺語言徵求回饋。把回饋改進 SVG 或其來源（再重新建置）→ 重新檢查 →（預覽自動更新）→ 重複。
-- 告訴使用者可以在預覽頁點選元件，用 Quick Edit 寫修改建議並複製給你。面板在視窗底部，不會壓縮設計稿。
+- 告訴使用者可以在預覽頁點選元件，用 Quick Edit 寫修改建議並複製給你（一次來回的流程見下圖）。面板在視窗底部，不會壓縮設計稿。
 - 收到含 `Snapshot JSON (svg_render.py --job)` 與 `.svg#` reference 的文字時：先執行 `python <skill>/scripts/svg_render.py --job '<json>'` 並看圖，確認和使用者看到的一致，再依 reference 找到元件或區域，照本流程修改。語法見 [SVG 規範](svg-conventions.md)。
 - `--serve` 模式下，「送給 Agent」會寫到 `design/_feedback.md`。審稿期間每次回應前先讀新內容；處理完的項目標記 `[done]`，不要刪掉。
+  ![Quick Edit 來回圖：你選取並複製，Agent 重現畫面、修改並更新預覽](../images/diagram-quick-edit.zh-TW.png)
 - **關卡：** 使用者核准設計前，不寫產品程式（這就是 superpowers 所說的設計核准）。只要求設計時，到此結束。
 
 ### 3. 拆解
