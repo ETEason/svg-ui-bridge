@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <img alt="瀏覽器預覽頁：左側元件樹選中 SearchButton，右側設計稿標出對應位置" src="docs/images/preview-page.png" width="800">
+  <img alt="瀏覽器預覽頁：左邊是設計稿並標出選取的 ResultCard，右側欄上方是元件列、下方是 Quick Edit" src="docs/images/preview-page.png" width="800">
 </p>
 
 只用文字描述畫面時，人和 AI 很容易各想各的，等程式寫完才發現不對。這個 skill 把 SVG 當成共同語言：你看渲染出來的畫面，Claude 讀有命名、有分層的標記，所以修改發生在設計稿上，而不是反覆重寫程式。
@@ -111,7 +111,7 @@ npx skills add ETEason/svg-ui-bridge
 
 ## ✏️ 用 Quick Edit 指出要改的地方
 
-在預覽頁直接指給 Claude 看，不用文字描述位置。面板在視窗底部，頁面會預留同樣的高度，所以設計稿大小不變，也能捲到面板上方。
+在預覽頁直接指給 Claude 看，不用文字描述位置。Quick Edit 開在側欄、元件列的下方，和設計稿並排而不會蓋住它。用頂部的「元件列」選單把側欄放在右側（預設）或左側，或隱藏元件列；拖曳分隔線可調整大小。這些選擇會記在瀏覽器裡。
 
 | 動作 | 操作 |
 |---|---|
@@ -121,7 +121,7 @@ npx skills add ETEason/svg-ui-bridge
 | 標出空白區域 | 按住 Alt 拖曳 |
 | 累積多筆修改 | 寫好一筆後按「加入清單」，再選下一處 |
 | 複製給 Claude | Copy Prompt，或 Ctrl/Cmd＋Enter |
-| 收合面板 | 點面板上方的把手；Esc 關閉 |
+| 調整側欄 | 「元件列」選右側、左側或不顯示；拖曳分隔線調整大小；Esc 關閉 Quick Edit |
 
 把複製的文字貼給 Claude，它會先用 `svg_render.py --job` 重現你看到的畫面確認位置，再改 SVG。剪貼簿被擋時，面板會顯示全文讓你手動複製。`--serve` 模式下可按「送給 Agent」，內容會寫到 `design/_feedback.md`。prompt 預設用相對路徑，加 `--absolute-paths` 才是絕對路徑。
 
