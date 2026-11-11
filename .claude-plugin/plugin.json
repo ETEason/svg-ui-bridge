@@ -1,7 +1,7 @@
 {
   "name": "svg-ui-bridge",
   "displayName": "SVG UI Bridge",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Design UI as a structured SVG or static HTML/CSS draft first, review it in the browser, then decompose it into components and prove the implementation with a per-component visual diff. Fits inside superpowers brainstorming and pstack verification.",
   "author": { "name": "ETEason" },
   "homepage": "https://github.com/ETEason/svg-ui-bridge",

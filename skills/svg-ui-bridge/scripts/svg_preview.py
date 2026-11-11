@@ -49,24 +49,31 @@ PAGE = r"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SVG Design Review</title>
 <style>
-:root{--bg:#f3f4f7;--panel:#fff;--text:#1d2230;--muted:#6b7280;--line:#e3e6ec;--hi:#e5484d;--sel:#e0218a;--primary:#1d4ed8;--chip:#eef0f5;--grip:#b6bdcc;--hdr:52px;--side-w:356px;--tree-h:300px;--qe-h:340px}
-:root[data-theme=dark]{--bg:#0b0d11;--panel:#151821;--text:#e8eaf0;--muted:#8b93a7;--line:#262b36;--primary:#4f7dff;--chip:#262b36;--grip:#4a5164}
+/* colour tokens of the review page itself; design/preview-palette.svg lists them */
+:root{--bg:#f3f4f7;--panel:#fff;--text:#1d2230;--muted:#6b7280;--line:#e3e6ec;--hi:#d6177f;--sel:#d6177f;--primary:#1d4ed8;--on-primary:#fff;--chip:#eef0f5;--grip:#7f879a;--ok:#15803d;--tip:#111;--tip-id:#ff9ccf;--gut:6px;--hdr:52px;--side-w:362px;--tree-h:300px;--qe-h:340px;--link:#1d4ed8;--sel-tint:#fbe3f0;--halo:#fff}
+:root[data-theme=dark]{--bg:#0b0d11;--panel:#151821;--text:#e8eaf0;--muted:#8b93a7;--line:#262b36;--primary:#3563e9;--chip:#262b36;--grip:#5d6578;--link:#6b8cff;--sel-tint:#3a1630;--ok:#22c55e}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,"Noto Sans TC",sans-serif}
 header{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
 header b{font-size:15px}select,button{font:inherit;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer}
-.live{font-size:12px;color:#16a34a}
+.live{font-size:12px;color:var(--ok)}
 /* desktop: design on one side, a column with the tree above Quick Edit on the other; nothing floats */
-.wrap{display:flex;padding:16px;height:calc(100vh - var(--hdr));min-height:0}.wrap.side-left{flex-direction:row-reverse}
-main{flex:1;min-width:0;overflow:auto;display:flex;flex-direction:column;gap:20px}
-.split-v{flex:none;width:24px;cursor:col-resize;display:grid;place-items:center;touch-action:none}.split-v::before{content:"";width:3px;height:40px;border-radius:2px;background:var(--grip)}
-.split-h{flex:none;height:16px;cursor:row-resize;display:grid;place-items:center;touch-action:none}.split-h::before{content:"";width:40px;height:3px;border-radius:2px;background:var(--grip)}
+.wrap{display:flex;padding:var(--gut);height:calc(100vh - var(--hdr));min-height:0}.wrap.side-left{flex-direction:row-reverse}
+main{flex:1;min-width:0;overflow:auto;display:flex;flex-direction:column;gap:var(--gut)}
+/* dividers are one gutter wide with a 2px grip; the grab area reaches 4px further into the side column
+   (never over the design pane's scrollbar) */
+.split-v,.split-h{flex:none;position:relative;display:grid;place-items:center;touch-action:none}
+.split-v{width:var(--gut);cursor:col-resize}.split-v::before{content:"";width:2px;height:40px;border-radius:1px;background:var(--grip)}
+.split-h{height:var(--gut);cursor:row-resize}.split-h::before{content:"";width:40px;height:2px;border-radius:1px;background:var(--grip)}
+.split-v::after,.split-h::after{content:"";position:absolute;z-index:1;inset:0}.split-v::after{right:-4px}.wrap.side-left .split-v::after{right:0;left:-4px}.split-h::after{bottom:-4px}
+.split-v:hover::before,.split-h:hover::before,.split-v.drag::before,.split-h.drag::before{background:var(--primary)}
 .split-v:focus-visible,.split-h:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:4px}
 #side{flex:none;width:var(--side-w);min-width:0;display:flex;flex-direction:column;min-height:0}
 aside{flex:0 0 var(--tree-h);min-height:80px;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
 #side.no-qe aside{flex:1 1 auto}#side.no-qe .split-h,#side.no-tree aside,#side.no-tree .split-h{display:none}
 .wrap.side-hidden #side,.wrap.side-hidden .split-v{display:none}
-aside h3{margin:4px 0 8px;font-size:13px;color:var(--muted)}aside li{list-style:none;padding:2px 6px;border-radius:4px;cursor:default;font-family:ui-monospace,monospace;font-size:12px}
-aside li:hover,aside li.on{background:var(--hi);color:#fff}aside li.sel{background:var(--sel);color:#fff}aside ul{margin:0;padding:0}
+aside h3{margin:4px 0 8px;font-size:13px;color:var(--muted)}aside li{list-style:none;user-select:none;-webkit-user-select:none;padding:2px 6px;border-radius:4px;cursor:default;font-family:ui-monospace,monospace;font-size:12px}
+/* tree: hover is a neutral tint; selected rows get the selection tint and a bar, text keeps its contrast */
+aside li:hover,aside li.on{background:var(--chip)}aside li.sel{background:var(--sel-tint);box-shadow:inset 3px 0 var(--sel);font-weight:700}aside ul{margin:0;padding:0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;flex:none}
 .card h2{margin:0 0 8px;font-size:14px}.card .meta{color:var(--muted);font-size:12px;font-weight:400}
 .stage{transform-origin:0 0;width:max-content;user-select:none;-webkit-user-select:none}
@@ -78,13 +85,13 @@ body.dragging{user-select:none;-webkit-user-select:none}body.dragging iframe{poi
 #qeChips{display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;min-height:40px;max-height:66px;overflow-y:auto;padding:4px;border:1px dashed var(--line);border-radius:6px;margin-bottom:10px;flex:none}
 .qe-chip{display:inline-flex;flex:none;align-items:center;gap:4px;height:26px;padding:0 4px 0 10px;border-radius:13px;background:var(--chip);font-size:12px;white-space:nowrap}.qe-chip.c{font-family:ui-monospace,monospace}
 .qe-chip button{width:22px;height:22px;padding:0;border:0;border-radius:11px;background:none;color:var(--muted)}
-#qeCrumbs{display:flex;flex-wrap:wrap;align-items:center;font:12px ui-monospace,monospace;color:var(--muted);margin-bottom:2px;flex:none}#qeCrumbs button{padding:2px 1px;border:0;background:none;color:var(--primary);font:inherit}#qeCrumbs button[aria-current]{color:var(--text);font-weight:700}#qeCrumbs i{font-style:normal;padding:0 4px}
+#qeCrumbs{display:flex;flex-wrap:wrap;align-items:center;font:12px ui-monospace,monospace;color:var(--muted);margin-bottom:2px;flex:none}#qeCrumbs button{padding:2px 1px;border:0;background:none;color:var(--link);font:inherit}#qeCrumbs button[aria-current]{color:var(--text);font-weight:700}#qeCrumbs i{font-style:normal;padding:0 4px}
 #qeText,#qeManual{display:block;width:100%;min-height:100px;padding:10px 12px;resize:none;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font:13px/1.45 system-ui,"Noto Sans TC",sans-serif}#qeText{flex:1}
 #qeManual{display:none;flex:none;margin-top:8px;resize:vertical;font-family:ui-monospace,monospace;font-size:12px}#qeManual.on{display:block}
-.qe-actions{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}#qeCount{margin-right:auto;font-size:12px;color:var(--muted)}#qeStatus{font-size:12px;font-weight:600;color:#16a34a}
-.qe-actions button{min-height:40px;padding:0 10px;border-radius:8px;background:var(--panel)}#qeQueue{min-width:100px}#qeCopy{min-width:114px}.qe-actions button.primary{border-color:var(--primary);background:var(--primary);color:#fff;font-weight:600}
-#tip{position:fixed;pointer-events:none;z-index:9;background:#111;color:#fff;font-size:12px;padding:6px 8px;border-radius:6px;max-width:320px;display:none}
-#tip code{color:#ffb4b4}
+.qe-actions{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}#qeCount{margin-right:auto;font-size:12px;color:var(--muted)}#qeStatus{font-size:12px;font-weight:600;color:var(--ok)}
+.qe-actions button{min-height:40px;padding:0 10px;border-radius:8px;background:var(--panel)}#qeQueue{min-width:100px}#qeCopy{min-width:114px}.qe-actions button.primary{border-color:var(--primary);background:var(--primary);color:var(--on-primary);font-weight:600}
+#tip{position:fixed;pointer-events:none;z-index:9;background:var(--tip);color:var(--on-primary);font-size:12px;padding:6px 8px;border-radius:6px;max-width:320px;display:none}
+#tip code{color:var(--tip-id)}
 /* narrow: no tree; the design pane on top and Quick Edit below share the window height */
 @media (max-width:800px){.wrap,.wrap.side-left{flex-direction:column}.split-v,#side aside,#sidePosLabel{display:none!important}
   #side{width:auto;flex:0 0 var(--qe-h)}#qe{min-height:0}#qeText{min-height:60px}
@@ -112,7 +119,8 @@ body.dragging{user-select:none;-webkit-user-select:none}body.dragging iframe{poi
 const DATA = __DATA__;
 const LIVE = __LIVE__;
 const $=id=>document.getElementById(id),main=$('main'),tree=$('tree'),tip=$('tip'),qe=$('qe'),qeText=$('qeText'),qeManual=$('qeManual'),rootEl=document.documentElement;
-const MARK='#e0218a',HOVER='#e5484d',MIN_DRAG=4,EDGE=2,WIDTHS=['','1280','768','390'],picked=[];
+/* marks are drawn inside the drafts, where the page's CSS variables do not reach, so read the tokens once */
+const tok=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim(),MARK=tok('--sel'),HOVER=tok('--hi'),ON=tok('--on-primary'),HALO=tok('--halo'),MIN_DRAG=4,EDGE=2,WIDTHS=['','1280','768','390'],picked=[];
 const states=new Set(['default']),roots=[];let queue=[],dragging=null,skipClick=false,statusTimer=0,cur=null,curBox=null;
 /* a root is one reviewable canvas: an SVG in a shadow root, or one HTML [data-screen] in a script-free iframe */
 function card(title){const c=document.createElement('section');c.className='card';c.innerHTML='<h2></h2><div class="stage"></div>';
@@ -182,21 +190,23 @@ function toLocal(r,cx,cy){if(r.kind==='svg'){const b=r.svg.getBoundingClientRect
 function fromFrame(r,e){const f=r.frame.getBoundingClientRect(),k=frameScale(r);return [f.left+e.clientX*k,f.top+e.clientY*k];}
 /* overlays: SVG rects, or absolutely placed boxes inside the iframe */
 function svgEl(tag,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;}
-function htmlMark(r,box,color,dashed,label){const s=r.screen.getBoundingClientRect(),w=r.doc.defaultView,d=r.doc.createElement('div');
-  d.style.cssText=`position:absolute;left:${s.left+w.scrollX+box[0]-3}px;top:${s.top+w.scrollY+box[1]-3}px;width:${box[2]+6}px;height:${box[3]+6}px;box-sizing:border-box;border:2px ${dashed?'dashed':'solid'} ${color};pointer-events:none;z-index:2147483647`;
-  if(label){const t=r.doc.createElement('span');t.textContent=label;t.style.cssText=`position:absolute;left:-12px;top:-12px;min-width:22px;height:18px;border-radius:4px;background:${MARK};color:#fff;font:700 11px/18px system-ui,sans-serif;text-align:center`;d.appendChild(t);}return d;}
+function htmlMark(r,box,color,dashed,label,thin){const s=r.screen.getBoundingClientRect(),w=r.doc.defaultView,d=r.doc.createElement('div');
+  d.style.cssText=`position:absolute;left:${s.left+w.scrollX+box[0]-3}px;top:${s.top+w.scrollY+box[1]-3}px;width:${box[2]+6}px;height:${box[3]+6}px;box-sizing:border-box;border:${thin?1.5:2}px ${dashed?'dashed':'solid'} ${color};box-shadow:0 0 0 1px ${HALO},inset 0 0 0 1px ${HALO};pointer-events:none;z-index:2147483647`;
+  if(label){const t=r.doc.createElement('span');t.textContent=label;t.style.cssText=`position:absolute;left:-12px;top:-12px;min-width:22px;height:18px;border-radius:4px;background:${MARK};color:${ON};box-shadow:0 0 0 1px ${HALO};font:700 11px/18px system-ui,sans-serif;text-align:center`;d.appendChild(t);}return d;}
 function layer(r){if(r.kind==='svg'){let o=r.svg.querySelector(':scope>.qe-marks');if(!o){o=svgEl('g',{class:'qe-marks','pointer-events':'none'});r.svg.appendChild(o);}return o;}
   let o=r.doc.getElementById('__qe_marks');if(!o){o=r.doc.createElement('div');o.id='__qe_marks';r.doc.body.appendChild(o);}return o;}
 function outline(r,box,dashed,label){if(r.kind==='html')return [htmlMark(r,box,MARK,dashed,label)];
-  const out=[svgEl('rect',Object.assign({x:box[0]-3,y:box[1]-3,width:box[2]+6,height:box[3]+6,fill:'none',stroke:MARK,'stroke-width':2},dashed?{'stroke-dasharray':'7 4'}:{}))];
-  if(label){const t=svgEl('text',{x:box[0]+8,y:box[1]+1,'font-size':11,'font-weight':700,'text-anchor':'middle',fill:'#fff'});t.textContent=label;out.push(svgEl('rect',{x:box[0]-3,y:box[1]-12,width:22,height:18,rx:4,fill:MARK}),t);}return out;}
+  const r0={x:box[0]-3,y:box[1]-3,width:box[2]+6,height:box[3]+6,fill:'none'};
+  const out=[svgEl('rect',Object.assign({},r0,{stroke:HALO,'stroke-width':4})),svgEl('rect',Object.assign({},r0,{stroke:MARK,'stroke-width':2},dashed?{'stroke-dasharray':'7 4'}:{}))];
+  if(label){const t=svgEl('text',{x:box[0]+8,y:box[1]+1,'font-size':11,'font-weight':700,'text-anchor':'middle',fill:ON});t.textContent=label;
+    out.push(svgEl('rect',{x:box[0]-4,y:box[1]-13,width:24,height:20,rx:5,fill:HALO}),svgEl('rect',{x:box[0]-3,y:box[1]-12,width:22,height:18,rx:4,fill:MARK}),t);}return out;}
 function draw(){roots.forEach(r=>{if(r.kind==='svg'?!r.svg:!r.screen)return;const o=layer(r);o.replaceChildren();
     picked.forEach((i,n)=>{if(i.root===r)o.append(...outline(r,itemBox(i),!i.g,String(n+1)));});});
   document.querySelectorAll('#tree li[data-id]').forEach(li=>li.classList.toggle('sel',picked.some(i=>i.id===li.dataset.id&&roots.indexOf(i.root)===+li.dataset.root)));}
 function info(g){return `<code>#${g.id}</code> ${g.dataset.component||''}${g.dataset.layout?'<br>layout: '+g.dataset.layout:''}${g.dataset.note?'<br>note: '+g.dataset.note:''}${g.dataset.bind?'<br>bind: '+g.dataset.bind:''}`}
 function mark(r,g){if(g===cur)return;cur=g;if(curBox){curBox.remove();curBox=null;}
-  if(g&&r){const b=localBox(r,g);if(r.kind==='svg'){curBox=svgEl('rect',{x:b[0]-2,y:b[1]-2,width:b[2]+4,height:b[3]+4,fill:'none',stroke:HOVER,'stroke-width':2,'stroke-dasharray':'6 3','pointer-events':'none'});r.svg.appendChild(curBox);}
-    else{curBox=htmlMark(r,b,HOVER,true);r.doc.body.appendChild(curBox);}}
+  if(g&&r){const b=localBox(r,g);if(r.kind==='svg'){const h={x:b[0]-2,y:b[1]-2,width:b[2]+4,height:b[3]+4,fill:'none'};curBox=svgEl('g',{'pointer-events':'none'});curBox.append(svgEl('rect',Object.assign({},h,{stroke:HALO,'stroke-width':3.5})),svgEl('rect',Object.assign({},h,{stroke:HOVER,'stroke-width':1.5,'stroke-dasharray':'5 3'})));r.svg.appendChild(curBox);}
+    else{curBox=htmlMark(r,b,HOVER,true,null,true);r.doc.body.appendChild(curBox);}}
   document.querySelectorAll('#tree li').forEach(li=>li.classList.toggle('on',!!g&&li.dataset.id===g.id&&roots[+li.dataset.root]===r));}
 function showTip(g,cx,cy){tip.innerHTML=info(g);tip.style.display='block';const tw=tip.offsetWidth,th=tip.offsetHeight;tip.style.left=Math.min(cx+14,innerWidth-tw-8)+'px';tip.style.top=(cy+14+th>innerHeight?cy-th-10:cy+14)+'px';}
 function hideHover(){mark(null,null);tip.style.display='none';}
@@ -272,7 +282,7 @@ async function copyAll(){const text=buildPrompt();if(!text)return;if(await write
 async function sendAll(){const text=buildPrompt();if(!text)return;try{const r=await fetch('/__feedback',{method:'POST',body:text});if(r.ok){finished('已送出');return;}setStatus('送出失敗：'+r.status);}catch(e){setStatus('送出失敗');}}
 function save(){try{sessionStorage.setItem('qe',JSON.stringify({text:qeText.value,queue}));}catch(e){}}
 const multi=e=>e.shiftKey||e.ctrlKey||e.metaKey;
-function startDrag(r,cx,cy,add){const start=toLocal(r,cx,cy),box=r.kind==='svg'?svgEl('rect',{fill:'none',stroke:MARK,'stroke-width':2,'stroke-dasharray':'7 4','pointer-events':'none'}):htmlMark(r,[0,0,0,0],MARK,true);
+function startDrag(r,cx,cy,add){const start=toLocal(r,cx,cy),box=r.kind==='svg'?svgEl('rect',{fill:'none',stroke:MARK,'stroke-width':2,'stroke-dasharray':'7 4','pointer-events':'none',style:`filter:drop-shadow(0 0 1px ${HALO})`}):htmlMark(r,[0,0,0,0],MARK,true);
   (r.kind==='svg'?r.svg:r.doc.body).appendChild(box);dragging={r,start,box,add,b:null};}
 function moveDrag(cx,cy){if(!dragging)return;const{r,start,box}=dragging,p=toLocal(r,cx,cy),v=canvas(r);
   const x=Math.max(v[0],Math.min(start[0],p[0])),y=Math.max(v[1],Math.min(start[1],p[1])),w=Math.min(v[0]+v[2],Math.max(start[0],p[0]))-x,h=Math.min(v[1]+v[3],Math.max(start[1],p[1]))-y;
@@ -297,13 +307,13 @@ function onKey(e){if(!qe.classList.contains('open'))return;if(e.key==='Escape')c
 addEventListener('keydown',onKey);
 /* side column: position, width, tree height and the narrow Quick Edit height are remembered in this browser */
 const wrap=$('wrap'),side=$('side'),sidePos=$('sidePos'),PREFS='svgui.layout';
-let prefs={pos:'right',w:356,treeH:300,qeH:340};
+let prefs={pos:'right',w:362,treeH:300,qeH:340};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem(PREFS)||'{}'));}catch(e){}
 if(!['right','left','none'].includes(prefs.pos))prefs.pos='right';
 function storePrefs(){try{localStorage.setItem(PREFS,JSON.stringify(prefs));}catch(e){}}
 function clampW(w){return Math.round(Math.max(240,Math.min(w,wrap.clientWidth*0.6)));}
 function clampH(h){return Math.round(Math.max(80,Math.min(h,side.clientHeight-(qe.classList.contains('open')?252:0))));}
-function clampQ(h){return Math.round(Math.max(200,Math.min(h,wrap.clientHeight-32-16-120)));}
+function clampQ(h){return Math.round(Math.max(200,Math.min(h,wrap.clientHeight-18-120)));}
 function layout(){const open=qe.classList.contains('open');rootEl.style.setProperty('--hdr',document.querySelector('header').offsetHeight+'px');
   wrap.classList.toggle('side-left',prefs.pos==='left');wrap.classList.toggle('side-hidden',(prefs.pos==='none'||narrow())&&!open);
   side.classList.toggle('no-tree',prefs.pos==='none');side.classList.toggle('no-qe',!open);sidePos.value=prefs.pos;
@@ -311,9 +321,9 @@ function layout(){const open=qe.classList.contains('open');rootEl.style.setPrope
   applyZoom();draw();}
 sidePos.onchange=()=>{prefs.pos=sidePos.value;storePrefs();layout();};
 /* sizes follow the pointer's movement since it went down, so grabbing the splitter anywhere never jumps */
-function dragSplit(el,onMove){el.addEventListener('pointerdown',e=>{if(e.button)return;e.preventDefault();el.setPointerCapture(e.pointerId);document.body.classList.add('dragging');
+function dragSplit(el,onMove){el.addEventListener('pointerdown',e=>{if(e.button)return;e.preventDefault();el.setPointerCapture(e.pointerId);document.body.classList.add('dragging');el.classList.add('drag');
     const start={x:e.clientX,y:e.clientY,w:side.getBoundingClientRect().width,h:$('side').querySelector('aside').getBoundingClientRect().height,q:side.getBoundingClientRect().height};
-    const move=ev=>{onMove(ev,start);layout();},up=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);document.body.classList.remove('dragging');storePrefs();};
+    const move=ev=>{onMove(ev,start);layout();},up=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);document.body.classList.remove('dragging');el.classList.remove('drag');storePrefs();};
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);});}
 dragSplit($('splitV'),(e,s)=>{prefs.w=clampW(s.w+(prefs.pos==='left'?e.clientX-s.x:s.x-e.clientX));});
 /* wide: the splitter sets the tree height; narrow: it sits above Quick Edit and sets its height */

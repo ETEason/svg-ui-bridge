@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1300" width="1280" height="1300"
+     data-screen="PreviewPalette" data-target="desktop-1280x1300">
+  <style>
+    :root { --color-page: #f3f4f7; --color-panel: #ffffff; --color-text: #1d2230; --color-muted: #6b7280;
+      --color-line: #e3e6ec; --color-changed: #fff7e0; }
+    text { font-family: system-ui, "Noto Sans TC", sans-serif; }
+    .mono { font-family: ui-monospace, monospace; }
+  </style>
+  <g id="Page" data-component="Screen" data-layout="col pad-24"
+     data-note="colour tokens of the review page itself (not of any draft); each swatch pair is light | dark">
+    <rect x="0" y="0" width="1280" height="1300" fill="var(--color-page)"/>
+    <g id="Title" data-component="Header">
+      <text x="24" y="44" font-size="20" font-weight="700" fill="var(--color-text)">預覽頁色卡</text>
+      <text x="24" y="70" font-size="13" fill="var(--color-muted)">每格左方塊是淺色模式、右方塊是深色模式。黃底列是 0.7.2 改過的顏色。</text>
+    </g>
+    <g id="Principles" data-component="List" data-layout="col gap-4">
+      <text x="24" y="104" font-size="13" fill="var(--color-text)">1. 介面退後、設計稿優先：操作介面只用低彩度冷灰，強調色只留兩個。</text>
+      <text x="24" y="128" font-size="13" fill="var(--color-text)">2. 一個顏色一種意思：藍色＝可以按的動作；洋紅＝你指到的元件；紅色留給設計稿自己（錯誤、電源鍵）。</text>
+      <text x="24" y="152" font-size="13" fill="var(--color-text)">3. 不只靠顏色區分：滑過＝細虛線、選取＝實線＋編號，色盲也分得出來。</text>
+      <text x="24" y="176" font-size="13" fill="var(--color-text)">4. 對比度：文字至少 4.5:1，線條與圖示至少 3:1（WCAG 無障礙標準）。</text>
+      <text x="24" y="200" font-size="13" fill="var(--color-text)">5. 白色外圈：標記外加 1px 白邊，畫在紅色按鈕或深色畫面上都看得見。</text>
+    </g>
+    <g id="Table" data-component="Table" data-layout="col">
+      <rect x="16" y="244" width="1248" height="724" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="32" y="268" font-size="12" font-weight="600" fill="var(--color-muted)">token</text>
+      <text x="170" y="268" font-size="12" font-weight="600" fill="var(--color-muted)">用在哪裡</text>
+      <text x="400" y="268" font-size="12" font-weight="600" fill="var(--color-muted)">舊（0.7.1）</text>
+      <text x="590" y="268" font-size="12" font-weight="600" fill="var(--color-muted)">新</text>
+      <text x="780" y="268" font-size="12" font-weight="600" fill="var(--color-muted)">理由</text>
+      <g id="Swatch-Bg" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="280" x2="1256" y2="280" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="305" font-size="13" fill="var(--color-text)">--bg</text>
+        <text x="170" y="305" font-size="12" fill="var(--color-text)">頁面背景、間距</text>
+        <rect x="400" y="288" width="24" height="24" rx="5" fill="#f3f4f7" stroke="var(--color-line)"/><rect x="428" y="288" width="24" height="24" rx="5" fill="#0b0d11" stroke="#262b36"/><text class="mono" x="460" y="299" font-size="11" fill="var(--color-text)">#f3f4f7</text><text class="mono" x="460" y="313" font-size="11" fill="var(--color-muted)">#0b0d11</text>
+        <text x="590" y="305" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="305" font-size="12" fill="var(--color-text)">冷灰中性色，讓位給設計稿</text>
+      </g>
+      <g id="Swatch-Panel" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="320" x2="1256" y2="320" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="345" font-size="13" fill="var(--color-text)">--panel</text>
+        <text x="170" y="345" font-size="12" fill="var(--color-text)">頂部列、卡片、側欄</text>
+        <rect x="400" y="328" width="24" height="24" rx="5" fill="#ffffff" stroke="var(--color-line)"/><rect x="428" y="328" width="24" height="24" rx="5" fill="#151821" stroke="#262b36"/><text class="mono" x="460" y="339" font-size="11" fill="var(--color-text)">#ffffff</text><text class="mono" x="460" y="353" font-size="11" fill="var(--color-muted)">#151821</text>
+        <text x="590" y="345" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="345" font-size="12" fill="var(--color-text)">同上</text>
+      </g>
+      <g id="Swatch-Text" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="360" x2="1256" y2="360" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="385" font-size="13" fill="var(--color-text)">--text</text>
+        <text x="170" y="385" font-size="12" fill="var(--color-text)">主要文字</text>
+        <rect x="400" y="368" width="24" height="24" rx="5" fill="#1d2230" stroke="var(--color-line)"/><rect x="428" y="368" width="24" height="24" rx="5" fill="#e8eaf0" stroke="#262b36"/><text class="mono" x="460" y="379" font-size="11" fill="var(--color-text)">#1d2230</text><text class="mono" x="460" y="393" font-size="11" fill="var(--color-muted)">#e8eaf0</text>
+        <text x="590" y="385" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="385" font-size="12" fill="var(--color-text)">對比 15:1</text>
+      </g>
+      <g id="Swatch-Muted" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="400" x2="1256" y2="400" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="425" font-size="13" fill="var(--color-text)">--muted</text>
+        <text x="170" y="425" font-size="12" fill="var(--color-text)">次要文字、說明</text>
+        <rect x="400" y="408" width="24" height="24" rx="5" fill="#6b7280" stroke="var(--color-line)"/><rect x="428" y="408" width="24" height="24" rx="5" fill="#8b93a7" stroke="#262b36"/><text class="mono" x="460" y="419" font-size="11" fill="var(--color-text)">#6b7280</text><text class="mono" x="460" y="433" font-size="11" fill="var(--color-muted)">#8b93a7</text>
+        <text x="590" y="425" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="425" font-size="12" fill="var(--color-text)">4.8:1／5.8:1，達文字標準</text>
+      </g>
+      <g id="Swatch-Line" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="440" x2="1256" y2="440" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="465" font-size="13" fill="var(--color-text)">--line</text>
+        <text x="170" y="465" font-size="12" fill="var(--color-text)">邊框、虛線框</text>
+        <rect x="400" y="448" width="24" height="24" rx="5" fill="#e3e6ec" stroke="var(--color-line)"/><rect x="428" y="448" width="24" height="24" rx="5" fill="#262b36" stroke="#262b36"/><text class="mono" x="460" y="459" font-size="11" fill="var(--color-text)">#e3e6ec</text><text class="mono" x="460" y="473" font-size="11" fill="var(--color-muted)">#262b36</text>
+        <text x="590" y="465" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="465" font-size="12" fill="var(--color-text)">裝飾性邊框，淡即可</text>
+      </g>
+      <g id="Swatch-Grip" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="480" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="480" x2="1256" y2="480" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="505" font-size="13" fill="var(--color-text)">--grip</text>
+        <text x="170" y="505" font-size="12" fill="var(--color-text)">分隔線把手</text>
+        <rect x="400" y="488" width="24" height="24" rx="5" fill="#b6bdcc" stroke="var(--color-line)"/><rect x="428" y="488" width="24" height="24" rx="5" fill="#4a5164" stroke="#262b36"/><text class="mono" x="460" y="499" font-size="11" fill="var(--color-text)">#b6bdcc</text><text class="mono" x="460" y="513" font-size="11" fill="var(--color-muted)">#4a5164</text>
+        <rect x="590" y="488" width="24" height="24" rx="5" fill="#7f879a" stroke="var(--color-line)"/><rect x="618" y="488" width="24" height="24" rx="5" fill="#5d6578" stroke="#262b36"/><text class="mono" x="650" y="499" font-size="11" fill="var(--color-text)">#7f879a</text><text class="mono" x="650" y="513" font-size="11" fill="var(--color-muted)">#5d6578</text>
+        <text x="780" y="505" font-size="12" fill="var(--color-text)">原本 1.7:1 幾乎看不到；細線需 3:1 以上</text>
+      </g>
+      <g id="Swatch-Chip" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="520" x2="1256" y2="520" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="545" font-size="13" fill="var(--color-text)">--chip</text>
+        <text x="170" y="545" font-size="12" fill="var(--color-text)">已選元件標籤、元件列滑過</text>
+        <rect x="400" y="528" width="24" height="24" rx="5" fill="#eef0f5" stroke="var(--color-line)"/><rect x="428" y="528" width="24" height="24" rx="5" fill="#262b36" stroke="#262b36"/><text class="mono" x="460" y="539" font-size="11" fill="var(--color-text)">#eef0f5</text><text class="mono" x="460" y="553" font-size="11" fill="var(--color-muted)">#262b36</text>
+        <text x="590" y="545" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="545" font-size="12" fill="var(--color-text)">滑過改用中性灰，不搶選取色</text>
+      </g>
+      <g id="Swatch-Primary" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="560" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="560" x2="1256" y2="560" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="585" font-size="13" fill="var(--color-text)">--primary</text>
+        <text x="170" y="585" font-size="12" fill="var(--color-text)">Copy Prompt 按鈕、焦點框</text>
+        <rect x="400" y="568" width="24" height="24" rx="5" fill="#1d4ed8" stroke="var(--color-line)"/><rect x="428" y="568" width="24" height="24" rx="5" fill="#4f7dff" stroke="#262b36"/><text class="mono" x="460" y="579" font-size="11" fill="var(--color-text)">#1d4ed8</text><text class="mono" x="460" y="593" font-size="11" fill="var(--color-muted)">#4f7dff</text>
+        <rect x="590" y="568" width="24" height="24" rx="5" fill="#1d4ed8" stroke="var(--color-line)"/><rect x="618" y="568" width="24" height="24" rx="5" fill="#3563e9" stroke="#262b36"/><text class="mono" x="650" y="579" font-size="11" fill="var(--color-text)">#1d4ed8</text><text class="mono" x="650" y="593" font-size="11" fill="var(--color-muted)">#3563e9</text>
+        <text x="780" y="585" font-size="12" fill="var(--color-text)">深色模式白字只有 3.7:1，改後 5.1:1</text>
+      </g>
+      <g id="Swatch-Link" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="600" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="600" x2="1256" y2="600" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="625" font-size="13" fill="var(--color-text)">--link</text>
+        <text x="170" y="625" font-size="12" fill="var(--color-text)">breadcrumb 連結（新增）</text>
+        <text x="400" y="625" font-size="12" fill="var(--color-muted)">—</text>
+        <rect x="590" y="608" width="24" height="24" rx="5" fill="#1d4ed8" stroke="var(--color-line)"/><rect x="618" y="608" width="24" height="24" rx="5" fill="#6b8cff" stroke="#262b36"/><text class="mono" x="650" y="619" font-size="11" fill="var(--color-text)">#1d4ed8</text><text class="mono" x="650" y="633" font-size="11" fill="var(--color-muted)">#6b8cff</text>
+        <text x="780" y="625" font-size="12" fill="var(--color-text)">深色背景上的連結字要更亮：5.8:1</text>
+      </g>
+      <g id="Swatch-OnPrimary" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="640" x2="1256" y2="640" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="665" font-size="13" fill="var(--color-text)">--on-primary</text>
+        <text x="170" y="665" font-size="12" fill="var(--color-text)">主要按鈕、標籤上的文字</text>
+        <rect x="400" y="648" width="24" height="24" rx="5" fill="#ffffff" stroke="var(--color-line)"/><rect x="428" y="648" width="24" height="24" rx="5" fill="#ffffff" stroke="#262b36"/><text class="mono" x="460" y="659" font-size="11" fill="var(--color-text)">#ffffff</text><text class="mono" x="460" y="673" font-size="11" fill="var(--color-muted)">#ffffff</text>
+        <text x="590" y="665" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="665" font-size="12" fill="var(--color-text)"></text>
+      </g>
+      <g id="Swatch-Select" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="680" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="680" x2="1256" y2="680" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="705" font-size="13" fill="var(--color-text)">--sel</text>
+        <text x="170" y="705" font-size="12" fill="var(--color-text)">已選元件：外框、編號</text>
+        <rect x="400" y="688" width="24" height="24" rx="5" fill="#e0218a" stroke="var(--color-line)"/><rect x="428" y="688" width="24" height="24" rx="5" fill="#e0218a" stroke="#262b36"/><text class="mono" x="460" y="699" font-size="11" fill="var(--color-text)">#e0218a</text><text class="mono" x="460" y="713" font-size="11" fill="var(--color-muted)">#e0218a</text>
+        <rect x="590" y="688" width="24" height="24" rx="5" fill="#d6177f" stroke="var(--color-line)"/><rect x="618" y="688" width="24" height="24" rx="5" fill="#d6177f" stroke="#262b36"/><text class="mono" x="650" y="699" font-size="11" fill="var(--color-text)">#d6177f</text><text class="mono" x="650" y="713" font-size="11" fill="var(--color-muted)">#d6177f</text>
+        <text x="780" y="705" font-size="12" fill="var(--color-text)">洋紅在設計稿裡很少出現，冷色介面中最醒目；略加深讓白字 4.9:1</text>
+      </g>
+      <g id="Swatch-Hover" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="720" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="720" x2="1256" y2="720" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="745" font-size="13" fill="var(--color-text)">--hi</text>
+        <text x="170" y="745" font-size="12" fill="var(--color-text)">滑過的元件：虛線外框</text>
+        <rect x="400" y="728" width="24" height="24" rx="5" fill="#e5484d" stroke="var(--color-line)"/><rect x="428" y="728" width="24" height="24" rx="5" fill="#e5484d" stroke="#262b36"/><text class="mono" x="460" y="739" font-size="11" fill="var(--color-text)">#e5484d</text><text class="mono" x="460" y="753" font-size="11" fill="var(--color-muted)">#e5484d</text>
+        <rect x="590" y="728" width="24" height="24" rx="5" fill="#d6177f" stroke="var(--color-line)"/><rect x="618" y="728" width="24" height="24" rx="5" fill="#d6177f" stroke="#262b36"/><text class="mono" x="650" y="739" font-size="11" fill="var(--color-text)">#d6177f</text><text class="mono" x="650" y="753" font-size="11" fill="var(--color-muted)">#d6177f</text>
+        <text x="780" y="745" font-size="12" fill="var(--color-text)">紅色代表錯誤，又和選取色太像；改同色，以細虛線區分</text>
+      </g>
+      <g id="Swatch-SelTint" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="760" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="760" x2="1256" y2="760" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="785" font-size="13" fill="var(--color-text)">--sel-tint</text>
+        <text x="170" y="785" font-size="12" fill="var(--color-text)">元件列已選列底色（新增）</text>
+        <text x="400" y="785" font-size="12" fill="var(--color-muted)">—</text>
+        <rect x="590" y="768" width="24" height="24" rx="5" fill="#fbe3f0" stroke="var(--color-line)"/><rect x="618" y="768" width="24" height="24" rx="5" fill="#3a1630" stroke="#262b36"/><text class="mono" x="650" y="779" font-size="11" fill="var(--color-text)">#fbe3f0</text><text class="mono" x="650" y="793" font-size="11" fill="var(--color-muted)">#3a1630</text>
+        <text x="780" y="785" font-size="12" fill="var(--color-text)">淡洋紅底＋左側色條，取代整條飽和色塊</text>
+      </g>
+      <g id="Swatch-Halo" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="800" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="800" x2="1256" y2="800" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="825" font-size="13" fill="var(--color-text)">--halo</text>
+        <text x="170" y="825" font-size="12" fill="var(--color-text)">標記外圈白邊（新增）</text>
+        <text x="400" y="825" font-size="12" fill="var(--color-muted)">—</text>
+        <rect x="590" y="808" width="24" height="24" rx="5" fill="#ffffff" stroke="var(--color-line)"/><rect x="618" y="808" width="24" height="24" rx="5" fill="#ffffff" stroke="#262b36"/><text class="mono" x="650" y="819" font-size="11" fill="var(--color-text)">#ffffff</text><text class="mono" x="650" y="833" font-size="11" fill="var(--color-muted)">#ffffff</text>
+        <text x="780" y="825" font-size="12" fill="var(--color-text)">標記在任何底色上都看得到</text>
+      </g>
+      <g id="Swatch-Ok" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="840" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="840" x2="1256" y2="840" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="865" font-size="13" fill="var(--color-text)">--ok</text>
+        <text x="170" y="865" font-size="12" fill="var(--color-text)">「已複製」、「即時預覽中」</text>
+        <rect x="400" y="848" width="24" height="24" rx="5" fill="#16a34a" stroke="var(--color-line)"/><rect x="428" y="848" width="24" height="24" rx="5" fill="#16a34a" stroke="#262b36"/><text class="mono" x="460" y="859" font-size="11" fill="var(--color-text)">#16a34a</text><text class="mono" x="460" y="873" font-size="11" fill="var(--color-muted)">#16a34a</text>
+        <rect x="590" y="848" width="24" height="24" rx="5" fill="#15803d" stroke="var(--color-line)"/><rect x="618" y="848" width="24" height="24" rx="5" fill="#22c55e" stroke="#262b36"/><text class="mono" x="650" y="859" font-size="11" fill="var(--color-text)">#15803d</text><text class="mono" x="650" y="873" font-size="11" fill="var(--color-muted)">#22c55e</text>
+        <text x="780" y="865" font-size="12" fill="var(--color-text)">淺色下只有 3.3:1，改後 5.0:1</text>
+      </g>
+      <g id="Swatch-Tip" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="880" x2="1256" y2="880" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="905" font-size="13" fill="var(--color-text)">--tip</text>
+        <text x="170" y="905" font-size="12" fill="var(--color-text)">滑過提示框背景</text>
+        <rect x="400" y="888" width="24" height="24" rx="5" fill="#111111" stroke="var(--color-line)"/><rect x="428" y="888" width="24" height="24" rx="5" fill="#111111" stroke="#262b36"/><text class="mono" x="460" y="899" font-size="11" fill="var(--color-text)">#111111</text><text class="mono" x="460" y="913" font-size="11" fill="var(--color-muted)">#111111</text>
+        <text x="590" y="905" font-size="12" fill="var(--color-muted)">不變</text>
+        <text x="780" y="905" font-size="12" fill="var(--color-text)"></text>
+      </g>
+      <g id="Swatch-TipId" data-component="Row" data-layout="row center gap-12">
+        <rect x="17" y="920" width="1246" height="40" fill="var(--color-changed)"/><line x1="24" y1="920" x2="1256" y2="920" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="945" font-size="13" fill="var(--color-text)">--tip-id</text>
+        <text x="170" y="945" font-size="12" fill="var(--color-text)">提示框裡的元件 id</text>
+        <rect x="400" y="928" width="24" height="24" rx="5" fill="#ffb4b4" stroke="var(--color-line)"/><rect x="428" y="928" width="24" height="24" rx="5" fill="#ffb4b4" stroke="#262b36"/><text class="mono" x="460" y="939" font-size="11" fill="var(--color-text)">#ffb4b4</text><text class="mono" x="460" y="953" font-size="11" fill="var(--color-muted)">#ffb4b4</text>
+        <rect x="590" y="928" width="24" height="24" rx="5" fill="#ff9ccf" stroke="var(--color-line)"/><rect x="618" y="928" width="24" height="24" rx="5" fill="#ff9ccf" stroke="#262b36"/><text class="mono" x="650" y="939" font-size="11" fill="var(--color-text)">#ff9ccf</text><text class="mono" x="650" y="953" font-size="11" fill="var(--color-muted)">#ff9ccf</text>
+        <text x="780" y="945" font-size="12" fill="var(--color-text)">改成洋紅同色系，和選取色呼應</text>
+      </g>
+    </g>
+    <g id="MarkDemo" data-component="Panel" data-layout="col gap-12"
+       data-note="the same component marked on a light draft, a dark draft and a red button">
+      <rect x="16" y="1000" width="1248" height="284" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="32" y="1028" font-size="14" font-weight="700" fill="var(--color-text)">標記在不同底色上的樣子</text>
+      <text x="32" y="1048" font-size="12" fill="var(--color-muted)">每格左邊是「滑過」、右邊是「已選」。</text>
+      <text x="32" y="1118" font-size="13" font-weight="600" fill="var(--color-text)">舊</text>
+      <g id="Demo-Now-1" data-component="Tile">
+        <rect x="100" y="1066" width="370" height="92" rx="8" fill="#ffffff" stroke="var(--color-line)"/>
+        <text x="110" y="1082" font-size="11" fill="#6b7280">淺色畫面</text>
+        <rect x="130" y="1100" width="130" height="40" rx="8" fill="#e5e7eb"/><text x="195.0" y="1125" font-size="13" text-anchor="middle" fill="#1d2230">按鈕</text>
+        <rect x="127" y="1097" width="136" height="46" fill="none" stroke="#e5484d" stroke-width="2" stroke-dasharray="6 3"/>
+        <rect x="310" y="1100" width="130" height="40" rx="8" fill="#e5e7eb"/><text x="375.0" y="1125" font-size="13" text-anchor="middle" fill="#1d2230">按鈕</text>
+        <rect x="307" y="1097" width="136" height="46" fill="none" stroke="#e0218a" stroke-width="2"/>
+        <rect x="307" y="1088" width="22" height="18" rx="4" fill="#e0218a"/><text x="318" y="1101" font-size="11" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+      </g>
+      <g id="Demo-Now-2" data-component="Tile">
+        <rect x="490" y="1066" width="370" height="92" rx="8" fill="#0f1115" stroke="var(--color-line)"/>
+        <text x="500" y="1082" font-size="11" fill="#8b93a7">深色畫面</text>
+        <rect x="520" y="1100" width="130" height="40" rx="8" fill="#2a2f3a"/><text x="585.0" y="1125" font-size="13" text-anchor="middle" fill="#e8eaf0">按鈕</text>
+        <rect x="517" y="1097" width="136" height="46" fill="none" stroke="#e5484d" stroke-width="2" stroke-dasharray="6 3"/>
+        <rect x="700" y="1100" width="130" height="40" rx="8" fill="#2a2f3a"/><text x="765.0" y="1125" font-size="13" text-anchor="middle" fill="#e8eaf0">按鈕</text>
+        <rect x="697" y="1097" width="136" height="46" fill="none" stroke="#e0218a" stroke-width="2"/>
+        <rect x="697" y="1088" width="22" height="18" rx="4" fill="#e0218a"/><text x="708" y="1101" font-size="11" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+      </g>
+      <g id="Demo-Now-3" data-component="Tile">
+        <rect x="880" y="1066" width="370" height="92" rx="8" fill="#ef4444" stroke="var(--color-line)"/>
+        <text x="890" y="1082" font-size="11" fill="#ffe4e4">紅色區塊（例如警示列、電源鍵）</text>
+        <rect x="910" y="1100" width="130" height="40" rx="8" fill="#dc2626"/><text x="975.0" y="1125" font-size="13" text-anchor="middle" fill="#ffffff">按鈕</text>
+        <rect x="907" y="1097" width="136" height="46" fill="none" stroke="#e5484d" stroke-width="2" stroke-dasharray="6 3"/>
+        <rect x="1090" y="1100" width="130" height="40" rx="8" fill="#dc2626"/><text x="1155.0" y="1125" font-size="13" text-anchor="middle" fill="#ffffff">按鈕</text>
+        <rect x="1087" y="1097" width="136" height="46" fill="none" stroke="#e0218a" stroke-width="2"/>
+        <rect x="1087" y="1088" width="22" height="18" rx="4" fill="#e0218a"/><text x="1098" y="1101" font-size="11" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+      </g>
+      <text x="32" y="1226" font-size="13" font-weight="600" fill="var(--color-text)">新</text>
+      <g id="Demo-New-1" data-component="Tile">
+        <rect x="100" y="1174" width="370" height="92" rx="8" fill="#ffffff" stroke="var(--color-line)"/>
+        <text x="110" y="1190" font-size="11" fill="#6b7280">淺色畫面</text>
+        <rect x="130" y="1208" width="130" height="40" rx="8" fill="#e5e7eb"/><text x="195.0" y="1233" font-size="13" text-anchor="middle" fill="#1d2230">按鈕</text>
+        <rect x="127" y="1205" width="136" height="46" fill="none" stroke="#ffffff" stroke-width="3.5"/><rect x="127" y="1205" width="136" height="46" fill="none" stroke="#d6177f" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <rect x="310" y="1208" width="130" height="40" rx="8" fill="#e5e7eb"/><text x="375.0" y="1233" font-size="13" text-anchor="middle" fill="#1d2230">按鈕</text>
+        <rect x="307" y="1205" width="136" height="46" fill="none" stroke="#ffffff" stroke-width="4"/><rect x="307" y="1205" width="136" height="46" fill="none" stroke="#d6177f" stroke-width="2"/><rect x="306" y="1195" width="24" height="20" rx="5" fill="#ffffff"/><rect x="307" y="1196" width="22" height="18" rx="4" fill="#d6177f"/><text x="318" y="1209" font-size="11" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+      </g>
+      <g id="Demo-New-2" data-component="Tile">
+        <rect x="490" y="1174" width="370" height="92" rx="8" fill="#0f1115" stroke="var(--color-line)"/>
+        <text x="500" y="1190" font-size="11" fill="#8b93a7">深色畫面</text>
+        <rect x="520" y="1208" width="130" height="40" rx="8" fill="#2a2f3a"/><text x="585.0" y="1233" font-size="13" text-anchor="middle" fill="#e8eaf0">按鈕</text>
+        <rect x="517" y="1205" width="136" height="46" fill="none" stroke="#ffffff" stroke-width="3.5"/><rect x="517" y="1205" width="136" height="46" fill="none" stroke="#d6177f" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <rect x="700" y="1208" width="130" height="40" rx="8" fill="#2a2f3a"/><text x="765.0" y="1233" font-size="13" text-anchor="middle" fill="#e8eaf0">按鈕</text>
+        <rect x="697" y="1205" width="136" height="46" fill="none" stroke="#ffffff" stroke-width="4"/><rect x="697" y="1205" width="136" height="46" fill="none" stroke="#d6177f" stroke-width="2"/><rect x="696" y="1195" width="24" height="20" rx="5" fill="#ffffff"/><rect x="697" y="1196" width="22" height="18" rx="4" fill="#d6177f"/><text x="708" y="1209" font-size="11" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+      </g>
+      <g id="Demo-New-3" data-component="Tile">
+        <rect x="880" y="1174" width="370" height="92" rx="8" fill="#ef4444" stroke="var(--color-line)"/>
+        <text x="890" y="1190" font-size="11" fill="#ffe4e4">紅色區塊（例如警示列、電源鍵）</text>
+        <rect x="910" y="1208" width="130" height="40" rx="8" fill="#dc2626"/><text x="975.0" y="1233" font-size="13" text-anchor="middle" fill="#ffffff">按鈕</text>
+        <rect x="907" y="1205" width="136" height="46" fill="none" stroke="#ffffff" stroke-width="3.5"/><rect x="907" y="1205" width="136" height="46" fill="none" stroke="#d6177f" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <rect x="1090" y="1208" width="130" height="40" rx="8" fill="#dc2626"/><text x="1155.0" y="1233" font-size="13" text-anchor="middle" fill="#ffffff">按鈕</text>
+        <rect x="1087" y="1205" width="136" height="46" fill="none" stroke="#ffffff" stroke-width="4"/><rect x="1087" y="1205" width="136" height="46" fill="none" stroke="#d6177f" stroke-width="2"/><rect x="1086" y="1195" width="24" height="20" rx="5" fill="#ffffff"/><rect x="1087" y="1196" width="22" height="18" rx="4" fill="#d6177f"/><text x="1098" y="1209" font-size="11" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+      </g>
+    </g>
+  </g>
+</svg>

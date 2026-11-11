@@ -25,7 +25,7 @@
 
     <g id="DraftPane" data-component="Card" data-layout="col scroll"
        data-note="the draft keeps its design size and layout; 符合寬度 scales it down uniformly, so nothing moves relative to anything else">
-      <rect x="16" y="62" width="358" height="420" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <rect x="6" y="56" width="378" height="448" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
       <text x="28" y="84" font-size="13" font-weight="600" fill="var(--color-text)">DocsSearch</text>
       <text x="108" y="84" font-size="11" fill="var(--color-muted)">desktop-1280x800 · 符合寬度 26%</text>
       <rect x="28" y="96" width="334" height="209" fill="var(--color-stage)"/>
@@ -43,14 +43,14 @@
       <text x="28" y="330" font-size="12" fill="var(--color-muted)">第二個畫面（mobile-390x844）在下方，捲動可見</text>
     </g>
 
-    <g id="PortraitSplitter" data-component="Splitter" data-note="drag to share the height between draft and Quick Edit; remembered">
-      <rect x="16" y="486" width="358" height="16" rx="4" fill="var(--color-page)"/>
-      <rect x="175" y="492.5" width="40" height="3" rx="1.5" fill="var(--color-grip)"/>
+    <g id="PortraitSplitter" data-component="Splitter" data-note="6px gutter, 2px grip; drag to share the height between draft and Quick Edit; remembered">
+      <rect x="6" y="504" width="378" height="6" fill="var(--color-page)"/>
+      <rect x="175" y="506" width="40" height="2" rx="1" fill="var(--color-grip)"/>
     </g>
 
     <g id="QuickEditPanel" data-component="Panel" data-layout="col gap-8 pad-12"
        data-note="part of the layout, never over the draft; × closes it and the draft takes the full height">
-      <rect x="16" y="506" width="358" height="322" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <rect x="6" y="510" width="378" height="328" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
       <text x="30" y="530" font-size="14" font-weight="700" fill="var(--color-text)">Quick Edit</text>
       <text x="356" y="531" font-size="18" text-anchor="middle" fill="var(--color-muted)">×</text>
       <rect x="30" y="542" width="330" height="36" rx="6" fill="var(--color-panel)" stroke="var(--color-line)" stroke-dasharray="3 3"/>

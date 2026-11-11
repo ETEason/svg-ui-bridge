@@ -2,7 +2,7 @@
 
 [English](../../skills/svg-ui-bridge/SKILL.md)
 
-版本：0.7.1
+版本：0.7.2
 
 ![工作流程圖：四個階段與每一步執行的程式](../images/diagram-flow.zh-TW.png)
 
