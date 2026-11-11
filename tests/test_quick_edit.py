@@ -456,11 +456,20 @@ def test_html(browser, work: Path) -> None:
       .map(t => { const e = document.createElement('div'); e.dataset.target = t; return designW(e); })""") == [390, 768, 1440, 1280])
     geo = """roots.map(r => [...r.screen.querySelectorAll('[data-component][id]')]
       .map(n => { const b = n.getBoundingClientRect(); return [b.x, b.y, b.width, b.height].map(Math.round); }))"""
-    before, k0 = page.evaluate(geo), page.evaluate("scale")
+    before, k0 = page.evaluate(geo), page.evaluate("roots[0].scale")
     page.set_viewport_size({"width": 900, "height": 900})
     page.wait_for_timeout(150)
     check("a squeezed pane scales the html draft down but moves nothing inside it",
-          page.evaluate(geo) == before and page.evaluate("scale") < k0, (k0, page.evaluate("scale")))
+          page.evaluate(geo) == before and page.evaluate("roots[0].scale") < k0, (k0, page.evaluate("roots[0].scale")))
+    page.evaluate("""() => {
+      roots[1].frame.style.width = '390px'; roots[1].dw = 390; roots[1].w = 390; applyZoom(); }""")
+    check("fit to width scales each card on its own", page.evaluate("roots[1].scale") == 1 and page.evaluate("roots[0].scale") < 1,
+          page.evaluate("roots.map(r => r.scale)"))
+    page.locator("#zoom").select_option("same")
+    check("same scale gives every card the scale of the widest draft",
+          page.evaluate("roots[0].scale === roots[1].scale && roots[1].scale < 1"), page.evaluate("roots.map(r => r.scale)"))
+    page.locator("#zoom").select_option("fit")
+    page.evaluate("roots[1].dw = 1280; sizeFrame(roots[1])")
     page.set_viewport_size({"width": 1600, "height": 900})
     page.wait_for_timeout(150)
 
