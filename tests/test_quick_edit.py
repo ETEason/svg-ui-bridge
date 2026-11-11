@@ -58,6 +58,8 @@ def select(page, cid: str, shift: bool = False) -> None:
 
 
 def click_comp(page, cid: str, shift: bool = False) -> None:
+    page.evaluate("id => document.querySelector('.stage').shadowRoot.getElementById(id)"
+                  ".scrollIntoView({block: 'center', inline: 'center'})", cid)
     b = box_of(page, cid)
     page.mouse.move((b["left"] + b["right"]) / 2, (b["top"] + b["bottom"]) / 2)
     if shift:
@@ -68,8 +70,14 @@ def click_comp(page, cid: str, shift: bool = False) -> None:
         page.keyboard.up("Shift")
 
 
+def to_origin(page) -> None:
+    """Scroll the design pane and its cards back to the top-left corner."""
+    page.evaluate("document.getElementById('main').scrollTo(0, 0); document.querySelectorAll('.card').forEach(c => c.scrollLeft = 0)")
+
+
 def alt_drag(page, svg_box: list[int]) -> None:
     """Alt+drag over an SVG-coordinate box, whatever the zoom."""
+    to_origin(page)
     r = page.evaluate("""() => { const s = document.querySelector('.stage').shadowRoot.querySelector('svg');
       const b = s.getBoundingClientRect(); return {left: b.left, top: b.top, k: b.width / s.viewBox.baseVal.width}; }""")
     x, y, w, h = svg_box
@@ -112,7 +120,9 @@ def test_prompt(page) -> str:
     check("snapshot keeps locating fields only", set(job["selection"][0]) == {"ref", "kind", "path", "bbox"})
     check("snapshot is one line", "\n" not in re.search(r"```json\n(.*)\n```", text).group(1))
     visible = job["view"]["visible"]
-    check("visible range covers the full width at 1600px", visible[0] == 0 and visible[2] == 1280, visible)
+    pane = page.evaluate("document.querySelector('.card').clientWidth")
+    check("visible range is what the design pane shows", visible[0] + visible[2] == 1280 and pane - 30 <= visible[2] <= pane + 2,
+          (visible, pane))
     check("input and text cleared after copy", page.locator("#qeText").input_value() == "")
 
     page.locator("#state").select_option("hover")
@@ -219,34 +229,92 @@ def test_denied(browser, url: str) -> None:
     ctx.close()
 
 
+def rect(page, selector: str) -> dict:
+    return page.evaluate(f"""() => {{ const e = document.querySelector({selector!r}), b = e.getBoundingClientRect();
+      return {{x: b.x, y: b.y, w: b.width, h: b.height, right: b.right, bottom: b.bottom,
+               shown: getComputedStyle(e).display !== 'none', position: getComputedStyle(e).position}}; }}""")
+
+
+def drag(page, selector: str, dx: float, dy: float) -> None:
+    b = page.locator(selector).bounding_box()
+    x, y = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
+    page.mouse.move(x, y)
+    page.mouse.down()
+    page.mouse.move(x + dx, y + dy, steps=6)
+    page.mouse.up()
+
+
 def test_responsive(browser, url: str, port: int) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    for w, h in ((1280, 800), (600, 800), (390, 844), (1024, 500)):
+    ctx = browser.new_context(viewport={"width": 1280, "height": 800})
+    page = ctx.new_page()
+    page.goto(url)
+    check("side column on the right by default", rect(page, "#side")["x"] > rect(page, "main")["right"] and
+          page.locator("#sidePos").input_value() == "right")
+    select(page, "SearchButton")
+    m, s, a, q = rect(page, "main"), rect(page, "#side"), rect(page, "aside"), rect(page, "#qe")
+    check("Quick Edit sits below the tree in the column", q["shown"] and a["bottom"] <= q["y"] and abs(q["x"] - s["x"]) < 1, (a, q))
+    check("nothing floats over the design", q["position"] == "static" and s["x"] >= m["right"], (q, m, s))
+    check("Copy Prompt is 40px tall and inside the window", page.locator("#qeCopy").bounding_box()["height"] >= 40 and
+          rect(page, "#qeCopy")["bottom"] <= 800)
+
+    select(page, "ArticlePreview")
+    b, m = box_of(page, "ArticlePreview"), rect(page, "main")
+    check("selecting scrolls the design pane to the component", b["top"] >= m["y"] - 1 and b["top"] < m["bottom"], (b, m))
+    page.locator('#tree li[data-id="NavBar-Title"]').hover()
+    page.wait_for_timeout(100)
+    b = box_of(page, "NavBar-Title")
+    check("hovering the tree still scrolls to the component", b["top"] >= m["y"] - 1 and b["bottom"] <= m["bottom"] + 1, b)
+
+    for cid in ("SearchInput", "NavBar", "NavBar-Title", "NavBar-Status", "ResultList", "ResultCard", "DetailPanel"):
+        select(page, cid, shift=True)
+    chips = page.locator("#qeChips")
+    grows = page.evaluate("(() => { const c = document.getElementById('qeChips'); return c.scrollHeight > c.clientHeight; })()")
+    chips.hover()
+    page.mouse.wheel(0, 200)
+    page.wait_for_timeout(150)
+    check("selected items scroll with the mouse wheel", grows and page.evaluate("document.getElementById('qeChips').scrollTop") > 0)
+
+    w0, h0 = rect(page, "#side")["w"], rect(page, "aside")["h"]
+    drag(page, "#splitV", -120, 0)
+    drag(page, "#splitH", 0, 60)
+    w1, h1 = rect(page, "#side")["w"], rect(page, "aside")["h"]
+    check("dragging the vertical splitter widens the column", abs((w1 - w0) - 120) <= 3, (w0, w1))
+    check("dragging the horizontal splitter grows the tree", abs((h1 - h0) - 60) <= 3, (h0, h1))
+    page.screenshot(path=str(OUT / "layout-1280x800-right.png"))
+
+    page.locator("#sidePos").select_option("left")
+    page.reload()
+    check("position, width and tree height survive a reload", page.locator("#sidePos").input_value() == "left" and
+          rect(page, "#side")["right"] <= rect(page, "main")["x"] + 1 and abs(rect(page, "#side")["w"] - w1) <= 1,
+          (rect(page, "#side"), w1))
+    select(page, "SearchButton")
+    check("tree height survives a reload", abs(rect(page, "aside")["h"] - h1) <= 1, (rect(page, "aside")["h"], h1))
+    page.screenshot(path=str(OUT / "layout-1280x800-left.png"))
+
+    page.locator("#sidePos").select_option("none")
+    check("hidden tree leaves only Quick Edit in the column", not rect(page, "aside")["shown"] and rect(page, "#qe")["shown"])
+    page.locator("#qeText").fill("還沒送出的文字")
+    page.keyboard.press("Escape")
+    check("Esc closes Quick Edit", not rect(page, "#qe")["shown"])
+    check("with no tree and no Quick Edit the design takes the full width",
+          not rect(page, "#side")["shown"] and rect(page, "main")["w"] > 1200, rect(page, "main"))
+    page.reload()
+    check("hidden choice survives a reload", page.locator("#sidePos").input_value() == "none")
+    page.locator("#sidePos").select_option("right")
+    ctx.close()
+
+    for w, h in ((600, 800), (390, 844)):
         ctx = browser.new_context(viewport={"width": w, "height": h})
         page = ctx.new_page()
         page.goto(url)
         select(page, "NavBar-Title")
-        shown = page.evaluate("visible(roots[0])")
-        check(f"{w}x{h} visible range stays partial when clipped", shown[2] < 1280 and shown[3] < 800, shown)
-        p = page.evaluate("() => { const b = document.getElementById('qe').getBoundingClientRect(); return {l: b.left, r: innerWidth - b.right, t: b.top, b: innerHeight - b.bottom, h: b.height}; }")
-        check(f"{w}x{h} bottom panel with 16px sides", abs(p["l"] - 16) < 1 and abs(p["r"] - 16) < 1 and abs(p["b"] - 16) < 1, p)
-        check(f"{w}x{h} panel at most 45vh", p["h"] <= h * 0.45 + 1, p)
-
-        copy = page.locator("#qeCopy").bounding_box()
-        check(f"{w}x{h} Copy Prompt reachable and 40px tall", copy["height"] >= 40 and copy["y"] + copy["height"] <= h, copy)
-        select(page, "ArticlePreview")
-        b, top = box_of(page, "ArticlePreview"), page.evaluate("document.getElementById('qe').getBoundingClientRect().top")
-        ok = b["bottom"] <= top or b["top"] <= page.evaluate("document.querySelector('header').getBoundingClientRect().bottom") + 9
-        check(f"{w}x{h} selected component clear of panel", ok, (b, top))
-        select(page, "NavBar-Status")
-        b = box_of(page, "NavBar-Status")
-        check(f"{w}x{h} small component above panel", b["bottom"] <= page.evaluate("document.getElementById('qe').getBoundingClientRect().top") + 1, b)
-
-        tree_box = page.evaluate("document.querySelector('aside').getBoundingClientRect().toJSON()")
-        if w > 800:
-            check(f"{w}x{h} tree stays clear of panel", tree_box["bottom"] <= page.evaluate("document.getElementById('qe').getBoundingClientRect().top") + 1, tree_box)
-        page.locator("#qeText").fill("示範文字")
-        page.screenshot(path=str(OUT / f"quick-edit-{w}x{h}.png"))
+        m, a, q = rect(page, "main"), rect(page, "aside"), rect(page, "#qe")
+        check(f"{w}x{h} stacks design, tree, Quick Edit", m["bottom"] <= a["y"] and a["bottom"] <= q["y"] and q["position"] == "static",
+              (m, a, q))
+        check(f"{w}x{h} hides the splitters", not rect(page, "#splitV")["shown"] and not rect(page, "#splitH")["shown"])
+        check(f"{w}x{h} buttons are 40px tall", page.locator("#qeCopy").bounding_box()["height"] >= 40)
+        page.screenshot(path=str(OUT / f"layout-{w}x{h}.png"), full_page=True)
         ctx.close()
 
     ctx = browser.new_context(viewport={"width": 1280, "height": 800})
@@ -262,18 +330,6 @@ def test_responsive(browser, url: str, port: int) -> None:
     check("resize keeps selection", "SearchInput" in page.locator("#qeChips").inner_text())
     check("resize keeps text", page.locator("#qeText").input_value() == "還沒送出的文字")
     check("resize keeps queue", "清單 1 筆" in page.locator("#qeCount").inner_text())
-    full = page.locator("#qe").bounding_box()["height"]
-    page.locator("#qeHandle").click()
-    small = page.locator("#qe").bounding_box()["height"]
-    check("handle collapses to one line", small < 90 and "已選 1 項" in page.locator("#qeCount").inner_text(), small)
-    check("collapsed Copy Prompt still there", page.locator("#qeCopy").is_visible())
-    page.screenshot(path=str(OUT / "quick-edit-collapsed.png"))
-    page.locator("#qeHandle").click()
-    check("handle expands again", abs(page.locator("#qe").bounding_box()["height"] - full) < 2)
-
-    page.keyboard.press("Escape")
-    check("Esc closes the panel", not page.locator("#qe").is_visible())
-    check("closing releases the reserved space", page.evaluate("getComputedStyle(document.body).paddingBottom") == "0px")
     ctx.close()
 
 
@@ -403,7 +459,7 @@ def test_html(browser, work: Path) -> None:
     select(page, "SavingSave")
     check("html state in reference", html_refs(page) == [f"{HTML_FILE}#SavingSave?state=saving&width=390"], html_refs(page))
 
-    page.evaluate("window.scrollTo(0, 0)")
+    to_origin(page)
     f = page.locator("iframe").first.bounding_box()
     # Playwright's own drag handling stalls on a pressed button over a sandboxed iframe, so send
     # the same real mouse input through CDP instead.

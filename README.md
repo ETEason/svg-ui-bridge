@@ -55,8 +55,10 @@ for UI work.
 
 ## Quick Edit in the preview page
 
-Point at the design instead of describing it. A panel opens at the bottom of the window, and the
-page reserves its height so the design keeps its size and can scroll clear of the panel.
+Point at the design instead of describing it. Quick Edit opens in the side column below the
+component tree, beside the design rather than over it. The 元件列 select in the header puts the
+column on the right (default) or left, or hides the tree; drag the dividers to resize. Your choices
+are remembered in this browser.
 
 | action | how |
 |---|---|
@@ -66,7 +68,7 @@ page reserves its height so the design keeps its size and can scroll clear of th
 | Mark an empty area | hold Alt and drag |
 | Queue several requests | write one, press 加入清單, select the next |
 | Copy for the agent | Copy Prompt, or Ctrl/Cmd + Enter |
-| Collapse the panel | click its top handle; Esc closes it |
+| Arrange the column | 元件列: right, left or hidden; drag the dividers to resize; Esc closes Quick Edit |
 
 Paste the copied text to the agent. It renders what you saw with `svg_render.py --job`, confirms the
 position, then edits the SVG. If the clipboard is blocked, the panel shows the text for you to copy

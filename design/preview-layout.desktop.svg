@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800"
+     data-screen="PreviewLayoutDesktop" data-target="desktop-1280x800">
+  <style>
+    :root {
+      --color-page: #f3f4f7; --color-panel: #ffffff; --color-text: #1d2230; --color-muted: #6b7280;
+      --color-line: #e3e6ec; --color-select: #e0218a; --color-primary: #1d4ed8; --color-on-primary: #ffffff;
+      --color-chip: #eef0f5; --color-grip: #b6bdcc; --color-stage: #0f1115; --color-stage-2: #20242d;
+      --color-stage-3: #4f8cff; --radius-panel: 10px; --space-4: 16px;
+    }
+    text { font-family: system-ui, "Noto Sans TC", sans-serif; }
+    .mono { font-family: ui-monospace, monospace; }
+  </style>
+
+  <g id="Page" data-component="Screen" data-layout="col">
+    <rect x="0" y="0" width="1280" height="800" fill="var(--color-page)"/>
+
+    <g id="Header" data-component="Toolbar" data-layout="row center gap-12 pad-10-16"
+       data-note="元件列 select: 右側 (default) / 左側 / 不顯示; remembered in localStorage">
+      <rect x="0" y="0" width="1280" height="50" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="16" y="31" font-size="15" font-weight="700" fill="var(--color-text)">SVG Design Review</text>
+      <text x="170" y="31" font-size="13" fill="var(--color-muted)">狀態 default　縮放 1</text>
+      <rect x="318" y="12" width="122" height="28" rx="6" fill="var(--color-page)" stroke="var(--color-select)" stroke-width="2"/>
+      <text x="330" y="31" font-size="13" fill="var(--color-text)">元件列 右側 ▾</text>
+      <text x="456" y="31" font-size="13" fill="var(--color-muted)">切換背景　Quick Edit</text>
+    </g>
+
+    <g id="DesignPane" data-component="Card" data-layout="col scroll"
+       data-note="takes the remaining width; scrolls on its own, so the side column never covers it">
+      <rect x="16" y="66" width="868" height="718" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <text x="28" y="92" font-size="14" font-weight="600" fill="var(--color-text)">DocsSearch</text>
+      <text x="118" y="92" font-size="12" fill="var(--color-muted)">example-screen.svg · desktop-1280x800</text>
+      <rect x="28" y="108" width="844" height="664" fill="var(--color-stage)"/>
+      <rect x="48" y="128" width="660" height="40" rx="8" fill="var(--color-stage-2)"/>
+      <g id="SelectedOutline" data-component="Overlay">
+        <rect x="720" y="128" width="132" height="40" rx="8" fill="var(--color-stage-3)"/>
+        <text x="786" y="153" font-size="14" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Search</text>
+        <rect x="717" y="125" width="138" height="46" fill="none" stroke="var(--color-select)" stroke-width="2"/>
+        <rect x="705" y="115" width="22" height="18" rx="4" fill="var(--color-select)"/>
+        <text x="716" y="128" font-size="11" font-weight="700" text-anchor="middle" fill="var(--color-on-primary)">1</text>
+      </g>
+    </g>
+
+    <g id="WidthSplitter" data-component="Splitter" data-note="drag to change the column width; remembered">
+      <rect x="892" y="66" width="8" height="718" rx="4" fill="var(--color-page)"/>
+      <rect x="894.5" y="405" width="3" height="40" rx="1.5" fill="var(--color-grip)"/>
+    </g>
+
+    <g id="SideColumn" data-component="Panel" data-layout="col fixed-364x718"
+       data-note="right by default, left when chosen; holds the tree above Quick Edit">
+      <g id="TreePanel" data-component="Panel" data-layout="col scroll-y">
+        <rect x="908" y="66" width="356" height="300" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+        <text x="920" y="92" font-size="13" fill="var(--color-muted)">元件（滑過可定位）</text>
+        <text class="mono" x="926" y="118" font-size="12" fill="var(--color-text)">App</text>
+        <text class="mono" x="938" y="140" font-size="12" fill="var(--color-text)">NavBar</text>
+        <text class="mono" x="938" y="162" font-size="12" fill="var(--color-text)">SearchBar</text>
+        <text class="mono" x="950" y="184" font-size="12" fill="var(--color-text)">SearchInput</text>
+        <rect x="920" y="194" width="332" height="20" rx="4" fill="var(--color-select)"/>
+        <text class="mono" x="950" y="208" font-size="12" fill="var(--color-on-primary)">SearchButton</text>
+        <text class="mono" x="938" y="232" font-size="12" fill="var(--color-text)">Body</text>
+        <text class="mono" x="950" y="254" font-size="12" fill="var(--color-text)">ResultList</text>
+      </g>
+      <g id="HeightSplitter" data-component="Splitter" data-note="drag to share the height between tree and Quick Edit; remembered">
+        <rect x="908" y="370" width="356" height="8" rx="4" fill="var(--color-page)"/>
+        <rect x="1066" y="372.5" width="40" height="3" rx="1.5" fill="var(--color-grip)"/>
+      </g>
+      <g id="QuickEditPanel" data-component="Panel" data-layout="col gap-8 pad-12"
+         data-note="part of the layout, not floating; × closes it and the tree takes the full height">
+        <rect x="908" y="382" width="356" height="402" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+        <text x="922" y="408" font-size="14" font-weight="700" fill="var(--color-text)">Quick Edit</text>
+        <text x="1248" y="409" font-size="18" text-anchor="middle" fill="var(--color-muted)">×</text>
+        <g id="QuickEdit-Chips" data-component="List" data-layout="wrap gap-6 scroll-y fixed-332x64"
+           data-note="fixed height; the mouse wheel scrolls through the selected items">
+          <rect x="922" y="422" width="328" height="66" rx="6" fill="var(--color-panel)" stroke="var(--color-line)" stroke-dasharray="3 3"/>
+          <rect x="927" y="427" width="112" height="26" rx="13" fill="var(--color-chip)"/>
+          <text class="mono" x="937" y="444" font-size="12" fill="var(--color-text)">SearchButton</text>
+          <text x="1024" y="445" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+          <rect x="1045" y="427" width="106" height="26" rx="13" fill="var(--color-chip)"/>
+          <text class="mono" x="1055" y="444" font-size="12" fill="var(--color-text)">SearchInput</text>
+          <text x="1136" y="445" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+          <rect x="1157" y="427" width="76" height="26" rx="13" fill="var(--color-chip)"/>
+          <text class="mono" x="1167" y="444" font-size="12" fill="var(--color-text)">NavBar</text>
+          <text x="1218" y="445" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+          <rect x="927" y="459" width="144" height="26" rx="13" fill="var(--color-chip)"/>
+          <text x="937" y="476" font-size="12" fill="var(--color-text)">區域 20,80,340×90</text>
+          <text x="1056" y="477" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+          <rect x="1077" y="459" width="100" height="26" rx="13" fill="var(--color-chip)"/>
+          <text class="mono" x="1087" y="476" font-size="12" fill="var(--color-text)">ResultCard</text>
+          <text x="1162" y="477" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+        </g>
+        <text class="mono" x="922" y="506" font-size="12" fill="var(--color-primary)">App › SearchBar › </text>
+        <text class="mono" x="1040" y="506" font-size="12" font-weight="700" fill="var(--color-text)">SearchButton</text>
+        <g id="QuickEdit-Input" data-component="Input">
+          <rect x="922" y="518" width="328" height="190" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
+          <text x="934" y="540" font-size="13" fill="var(--color-muted)">描述你想怎麼改</text>
+        </g>
+        <text x="922" y="732" font-size="12" fill="var(--color-muted)">清單 2 筆</text>
+        <g id="QuickEdit-Actions" data-component="Toolbar" data-layout="row gap-8">
+          <rect x="1028" y="716" width="100" height="40" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
+          <text x="1078" y="741" font-size="13" text-anchor="middle" fill="var(--color-text)">加入清單</text>
+          <rect x="1136" y="716" width="114" height="40" rx="8" fill="var(--color-primary)"/>
+          <text x="1193" y="741" font-size="13" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Copy Prompt</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -5,7 +5,7 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.5.0
+Version: 0.6.0
 
 A rendered draft is the shared language between the human's visual intent and the agent's code:
 the human judges a picture, the agent reads named, layered, tokenised markup. Iterate on the
@@ -95,7 +95,8 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
 - Ask for feedback in visual terms. Apply it to the SVG or its source (then rebuild) → re-lint →
   (preview refreshes) → repeat.
 - Tell the user they can click components in the preview, write a change in Quick Edit and copy it
-  to you. The panel sits at the bottom of the window, so nothing in the design is compressed.
+  to you. It opens in the side column below the component tree, beside the design rather than over
+  it; the 元件列 select puts that column right (default) or left, or hides the tree.
 - When a message contains `Snapshot JSON (svg_render.py --job)` and a `.svg#` reference: first run
   `python <skill>/scripts/svg_render.py --job '<json>'` and read the PNG to confirm you see what the
   user saw, then find each component or region from its reference and follow this loop. The syntax
