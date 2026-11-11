@@ -93,7 +93,7 @@ body.dragging{user-select:none;-webkit-user-select:none}body.dragging iframe{poi
 <header><b>SVG Design Review</b>
 <label>狀態 <select id="state"></select></label>
 <label hidden>寬度 <select id="width"><option value="">設計尺寸</option><option>1280</option><option>768</option><option>390</option></select></label>
-<label>縮放 <select id="zoom"><option value="fit" selected>符合寬度</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></label>
+<label>縮放 <select id="zoom"><option value="fit" selected>符合寬度</option><option value="same">同比例</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></label>
 <label id="sidePosLabel">元件列 <select id="sidePos"><option value="right">右側</option><option value="left">左側</option><option value="none">不顯示</option></select></label>
 <button id="theme">切換背景</button><button id="qeOpen">Quick Edit</button><span id="live" class="live"></span></header>
 <div class="wrap" id="wrap"><main id="main"></main>
@@ -152,13 +152,14 @@ function applyState(){const s=sel.value;roots.forEach(r=>{if(r.kind!=='svg')retu
   e.style.display=show?'inline':'none';});});
   /* components without the chosen state keep showing their default layer */}
 sel.onchange=()=>{applyState();draw();try{sessionStorage.setItem('st',sel.value)}catch(e){}};
-/* one scale for every card, so a phone and a laptop draft keep their true size relative to each other;
-   符合寬度 picks the largest scale (at most 1) at which the widest draft fits its card */
-let scale=1;
-function applyZoom(){const z=$('zoom').value,st=roots.map(r=>r.host),nat=st.map(s=>[s.offsetWidth,s.offsetHeight]);
-  scale=z==='fit'?Math.min(1,...st.map((s,i)=>nat[i][0]?Math.floor((s.parentElement.clientWidth-24)/nat[i][0]*1000)/1000:1)):+z;
-  st.forEach((s,i)=>{s.style.transform=`scale(${scale})`;s.style.marginRight=nat[i][0]*(scale-1)+'px';s.style.marginBottom=nat[i][1]*(scale-1)+'px';});
-  document.querySelectorAll('.zm').forEach(m=>m.textContent=`· ${z==='fit'?'符合寬度 ':''}${Math.round(scale*100)}%`);}
+/* a draft is always scaled as a whole, so nothing inside it moves. 符合寬度: each card gets the largest
+   scale (at most 1) at which its draft fits, so a phone draft is not shrunk because a laptop draft is
+   wide. 同比例: one such scale for every card, so drafts keep their true size relative to each other */
+function applyZoom(){const z=$('zoom').value,nat=roots.map(r=>[r.host.offsetWidth,r.host.offsetHeight]),
+    fit=roots.map((r,i)=>nat[i][0]?Math.min(1,Math.floor((r.card.clientWidth-24)/nat[i][0]*1000)/1000):1),all=Math.min(1,...fit);
+  roots.forEach((r,i)=>{const k=z==='fit'?fit[i]:z==='same'?all:+z,s=r.host;r.scale=k;
+    s.style.transform=`scale(${k})`;s.style.marginRight=nat[i][0]*(k-1)+'px';s.style.marginBottom=nat[i][1]*(k-1)+'px';
+    r.card.querySelector('.zm').textContent=`· ${{fit:'符合寬度 ',same:'同比例 '}[z]||''}${Math.round(k*100)}%`;});}
 $('zoom').onchange=()=>{applyZoom();draw();try{sessionStorage.setItem('zm',$('zoom').value)}catch(_){}};
 $('theme').onclick=()=>{rootEl.dataset.theme=rootEl.dataset.theme==='dark'?'light':'dark';};
 /* geometry: local = SVG units or screen-relative CSS px; client = coordinates in this page */
@@ -254,8 +255,8 @@ function rootForKey(k){return roots.find(r=>keyOf(r)===k);}
 function snapshot(entries,keys){const all=entries.flatMap(e=>e.items),state=entries[entries.length-1].state;
   const jobs=keys.map((k,n)=>{const r=rootForKey(k),selection=all.filter(i=>i.key===k).map(({ref,kind,path,bbox})=>({ref,kind,path,bbox})),
       outputs=[{path:`<tmp>/svgui-quickedit-current-view${n?'-'+(n+1):''}.png`,label:'current view',scale:1,highlight:true}];
-    return r.kind==='html'?{input:r.file,format:'html',screen:r.id,state:r.state,view:{zoom:scale,width:r.w,visible:visible(r)},selection,outputs}
-      :{input:r.file,screen:r.d.screen,target:r.d.target,state,view:{zoom:scale,visible:visible(r)},selection,outputs};});
+    return r.kind==='html'?{input:r.file,format:'html',screen:r.id,state:r.state,view:{zoom:r.scale,width:r.w,visible:visible(r)},selection,outputs}
+      :{input:r.file,screen:r.d.screen,target:r.d.target,state,view:{zoom:r.scale,visible:visible(r)},selection,outputs};});
   return JSON.stringify(jobs.length===1?jobs[0]:jobs);}
 function buildPrompt(){const entries=queue.concat(current()||[]);if(!entries.length)return '';
   let keys=[...new Set(entries.flatMap(e=>e.items.map(i=>i.key)))];if(!keys.length)keys=[keyOf(roots[0])];

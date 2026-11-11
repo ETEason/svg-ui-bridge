@@ -62,8 +62,10 @@ portrait window the tree is hidden and Quick Edit docks below the design, so you
 Your choices are remembered in this browser.
 
 Drafts keep their design size. When the preview pane gets squeezed, by a chat panel or a sidebar,
-the zoom scales every draft by the same amount (fit to width by default) instead of moving anything
-inside it. Responsive behaviour belongs to the built product, not the draft.
+the zoom scales each draft as a whole instead of moving anything inside it. By default every card
+fits its own width (at most 100%), so a phone draft stays full size next to a wide laptop draft; the
+same-scale option shrinks all drafts equally to compare their true sizes. Responsive behaviour
+belongs to the built product, not the draft.
 
 | action | how |
 |---|---|
@@ -74,7 +76,7 @@ inside it. Responsive behaviour belongs to the built product, not the draft.
 | Queue several requests | write one, press the add-to-list button next to Copy Prompt, select the next |
 | Copy for the agent | Copy Prompt, or Ctrl/Cmd + Enter |
 | Arrange the column | tree position menu: right, left or hidden; drag the dividers to resize; Esc closes Quick Edit |
-| Zoom | fit to width (default) or a fixed scale; the layout inside a draft never changes |
+| Zoom | fit each card (default), same scale for all cards, or a fixed scale; the layout inside a draft never changes |
 
 Paste the copied text to the agent. It renders what you saw with `svg_render.py --job`, confirms the
 position, then edits the SVG. If the clipboard is blocked, the panel shows the text for you to copy

@@ -5,7 +5,7 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.7.0
+Version: 0.7.1
 
 A rendered draft is the shared language between the human's visual intent and the agent's code:
 the human judges a picture, the agent reads named, layered, tokenised markup. Iterate on the
@@ -88,7 +88,8 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
 - **The human reviews in the browser**, not the XML and not a PNG: `svg_preview.py --serve` opens
   a page at http://localhost:8765 that reloads by itself whenever an SVG in `design/` changes, with a
   state switcher (default/hover/disabled…), hover-to-identify components (id, layout, note) and zoom.
-  Drafts keep their design size; a squeezed pane scales them (fit to width by default), never reflows them.
+  Drafts keep their design size; a squeezed pane scales each one as a whole (by default every card fits
+  its own width), never reflows them.
   Start it once in the background at the beginning of design work and tell the user the URL.
   Without a long-running process: `svg_preview.py design` writes `design/_preview.html` and opens it.
 - **The agent checks its own drawing** by rendering a PNG and reading it (look for overlaps,
