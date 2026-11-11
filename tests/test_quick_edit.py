@@ -98,6 +98,13 @@ def test_selection(page) -> None:
     click_comp(page, "SearchButton")
     check("chip for clicked component", page.locator("#qeChips .qe-chip").count() == 1
           and "SearchButton" in page.locator("#qeChips").inner_text())
+    strokes = page.evaluate("""[...document.querySelector('.stage').shadowRoot.querySelectorAll('.qe-marks rect')]
+      .slice(0, 2).map(r => r.getAttribute('stroke'))""")
+    check("selection outline has a halo under it", strokes == [page.evaluate("HALO"), page.evaluate("MARK")], strokes)
+    li = page.evaluate("""(() => { const s = getComputedStyle(document.querySelector('#tree li.sel')), r = getComputedStyle(document.documentElement);
+      return [s.backgroundColor, s.color, s.userSelect, r.getPropertyValue('--sel-tint').trim()]; })()""")
+    check("selected tree row uses the tint, keeps the text colour and is not text-selectable",
+          li[0] == "rgb(251, 227, 240)" and li[1] == "rgb(29, 34, 48)" and li[2] == "none", li)
     check("breadcrumb path", page.locator("#qeCrumbs").inner_text().replace("\n", "") == "App›SearchBar›SearchButton",
           page.locator("#qeCrumbs").inner_text())
     page.locator("#qeCrumbs button", has_text="SearchBar").click()
