@@ -308,13 +308,33 @@ def test_responsive(browser, url: str, port: int) -> None:
         ctx = browser.new_context(viewport={"width": w, "height": h})
         page = ctx.new_page()
         page.goto(url)
-        select(page, "NavBar-Title")
-        m, a, q = rect(page, "main"), rect(page, "aside"), rect(page, "#qe")
-        check(f"{w}x{h} stacks design, tree, Quick Edit", m["bottom"] <= a["y"] and a["bottom"] <= q["y"] and q["position"] == "static",
-              (m, a, q))
-        check(f"{w}x{h} hides the splitters", not rect(page, "#splitV")["shown"] and not rect(page, "#splitH")["shown"])
+        check(f"{w}x{h} hides the tree and its position menu",
+              not rect(page, "aside")["shown"] and not rect(page, "#sidePosLabel")["shown"])
+        check(f"{w}x{h} design pane fills the window while Quick Edit is closed",
+              not rect(page, "#side")["shown"] and abs(rect(page, "main")["bottom"] - (h - 16)) <= 2, rect(page, "main"))
+        stage, card = rect(page, ".stage"), rect(page, ".card")
+        check(f"{w}x{h} fit scales the design down to the card instead of reflowing it",
+              stage["right"] <= card["right"] and page.evaluate("getComputedStyle(document.querySelector('.stage')).transform") != "none",
+              (stage, card))
+        click_comp(page, "NavBar-Title")
+        m, sp, q = rect(page, "main"), rect(page, "#splitH"), rect(page, "#qe")
+        check(f"{w}x{h} design on top and Quick Edit below, both on screen",
+              m["bottom"] <= sp["y"] and sp["bottom"] <= q["y"] and q["bottom"] <= h and m["h"] >= 200 and q["position"] == "static",
+              (m, sp, q))
+        b = box_of(page, "NavBar-Title")
+        check(f"{w}x{h} selection stays visible in the design pane", b["top"] >= m["y"] and b["bottom"] <= m["bottom"], (b, m))
         check(f"{w}x{h} buttons are 40px tall", page.locator("#qeCopy").bounding_box()["height"] >= 40)
-        page.screenshot(path=str(OUT / f"layout-{w}x{h}.png"), full_page=True)
+        page.screenshot(path=str(OUT / f"layout-{w}x{h}.png"))
+        q0 = rect(page, "#side")["h"]
+        drag(page, "#splitH", 0, -60)
+        check(f"{w}x{h} dragging the splitter up grows Quick Edit by the same amount",
+              abs(rect(page, "#side")["h"] - (q0 + 60)) <= 1, (q0, rect(page, "#side")))
+        page.reload()
+        page.locator("#qeOpen").click()
+        check(f"{w}x{h} Quick Edit height survives a reload", abs(rect(page, "#side")["h"] - (q0 + 60)) <= 1, rect(page, "#side"))
+        page.keyboard.press("Escape")
+        check(f"{w}x{h} Esc gives the design the full height back",
+              not rect(page, "#side")["shown"] and abs(rect(page, "main")["bottom"] - (h - 16)) <= 2)
         ctx.close()
 
     ctx = browser.new_context(viewport={"width": 1280, "height": 800})
@@ -430,6 +450,19 @@ def test_html(browser, work: Path) -> None:
           page.evaluate("[document.getElementById('state').parentElement.hidden, document.getElementById('width').parentElement.hidden]") == [True, False])
     check("html scripts and handlers do not run", page.evaluate("window.__pwned") is None and
           page.evaluate("roots[0].frame.contentWindow.__pwned") is None)
+    check("html renders at the design width, not the card width", page.evaluate("roots.map(r => r.w)") == [1280, 1280],
+          page.evaluate("roots.map(r => r.w)"))
+    check("design width comes from data-target", page.evaluate("""['mobile-390x844', 'tablet-768', 'desktop-1440x900', '']
+      .map(t => { const e = document.createElement('div'); e.dataset.target = t; return designW(e); })""") == [390, 768, 1440, 1280])
+    geo = """roots.map(r => [...r.screen.querySelectorAll('[data-component][id]')]
+      .map(n => { const b = n.getBoundingClientRect(); return [b.x, b.y, b.width, b.height].map(Math.round); }))"""
+    before, k0 = page.evaluate(geo), page.evaluate("scale")
+    page.set_viewport_size({"width": 900, "height": 900})
+    page.wait_for_timeout(150)
+    check("a squeezed pane scales the html draft down but moves nothing inside it",
+          page.evaluate(geo) == before and page.evaluate("scale") < k0, (k0, page.evaluate("scale")))
+    page.set_viewport_size({"width": 1600, "height": 900})
+    page.wait_for_timeout(150)
 
     page.locator("#width").select_option("1280")
     page.wait_for_function("roots[0].w === 1280")

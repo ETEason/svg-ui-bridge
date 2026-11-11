@@ -56,9 +56,14 @@ for UI work.
 ## Quick Edit in the preview page
 
 Point at the design instead of describing it. Quick Edit opens in the side column below the
-component tree, beside the design rather than over it. The 元件列 select in the header puts the
-column on the right (default) or left, or hides the tree; drag the dividers to resize. Your choices
-are remembered in this browser.
+component tree, beside the design rather than over it. The tree position menu in the header puts the
+column on the right (default) or left, or hides the tree; drag the dividers to resize. In a narrow or
+portrait window the tree is hidden and Quick Edit docks below the design, so you see both at once.
+Your choices are remembered in this browser.
+
+Drafts keep their design size. When the preview pane gets squeezed, by a chat panel or a sidebar,
+the zoom scales every draft by the same amount (fit to width by default) instead of moving anything
+inside it. Responsive behaviour belongs to the built product, not the draft.
 
 | action | how |
 |---|---|
@@ -66,21 +71,23 @@ are remembered in this browser.
 | Select several | Shift or Ctrl + click |
 | Widen the selection | click a level in the breadcrumb, such as `App › SearchBar › SearchButton` |
 | Mark an empty area | hold Alt and drag |
-| Queue several requests | write one, press 加入清單, select the next |
+| Queue several requests | write one, press the add-to-list button next to Copy Prompt, select the next |
 | Copy for the agent | Copy Prompt, or Ctrl/Cmd + Enter |
-| Arrange the column | 元件列: right, left or hidden; drag the dividers to resize; Esc closes Quick Edit |
+| Arrange the column | tree position menu: right, left or hidden; drag the dividers to resize; Esc closes Quick Edit |
+| Zoom | fit to width (default) or a fixed scale; the layout inside a draft never changes |
 
 Paste the copied text to the agent. It renders what you saw with `svg_render.py --job`, confirms the
 position, then edits the SVG. If the clipboard is blocked, the panel shows the text for you to copy
-by hand. With `--serve`, 送給 Agent writes the request to `design/_feedback.md` instead. Prompts use
+by hand. With `--serve`, the send-to-agent button writes the request to `design/_feedback.md` instead. Prompts use
 relative paths unless you pass `--absolute-paths`.
 
 ## Choose a format
 
 One rule, unless the project already chose: **web UI is drafted in HTML/CSS, everything else in SVG**
 (native apps, games and HUDs, diagrams). Both get live preview, Quick Edit, a component manifest,
-token export and a per-component visual diff. HTML drafts reflow at the width you pick in the preview,
-so a responsive page is one file instead of one SVG per breakpoint.
+token export and a per-component visual diff. An HTML draft renders at its design width and can be
+switched to 1280, 768 or 390 in the preview, so a responsive page is one file instead of one SVG per
+breakpoint.
 See [html-design.md](skills/svg-ui-bridge/references/html-design.md).
 
 For repeated components or many variants, write TSX components with a shared theme and generate the
