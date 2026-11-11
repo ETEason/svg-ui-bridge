@@ -5,7 +5,7 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.7.1
+Version: 0.7.2
 
 A rendered draft is the shared language between the human's visual intent and the agent's code:
 the human judges a picture, the agent reads named, layered, tokenised markup. Iterate on the

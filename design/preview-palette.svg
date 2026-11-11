@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 768" width="960" height="768"
+     data-screen="PreviewPalette" data-target="desktop-960x768">
+  <style>
+    :root { --color-page: #f3f4f7; --color-panel: #ffffff; --color-text: #1d2230; --color-muted: #6b7280;
+      --color-line: #e3e6ec; --color-dark: #0b0d11; }
+    text { font-family: system-ui, "Noto Sans TC", sans-serif; }
+    .mono { font-family: ui-monospace, monospace; }
+  </style>
+  <g id="Page" data-component="Screen" data-layout="col pad-24"
+     data-note="colour tokens of the review page itself (not of any draft); 切換背景 switches light/dark">
+    <rect x="0" y="0" width="960" height="768" fill="var(--color-page)"/>
+    <g id="Title" data-component="Header">
+      <text x="24" y="44" font-size="20" font-weight="700" fill="var(--color-text)">預覽頁色卡</text>
+      <text x="24" y="70" font-size="13" fill="var(--color-muted)">操作介面本身的顏色。改哪一格，告訴我 token 和新色碼即可。</text>
+    </g>
+    <g id="Table" data-component="Table" data-layout="col">
+      <rect x="16" y="88" width="928" height="664" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+      <rect x="724" y="88" width="220" height="664" rx="10" fill="var(--color-dark)"/>
+      <text x="32" y="114" font-size="12" font-weight="600" fill="var(--color-muted)">token</text>
+      <text x="170" y="114" font-size="12" font-weight="600" fill="var(--color-muted)">用在哪裡</text>
+      <text x="520" y="114" font-size="12" font-weight="600" fill="var(--color-muted)">淺色</text>
+      <text x="740" y="114" font-size="12" font-weight="600" fill="#8b93a7">深色</text>
+      <g id="Swatch-Bg" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="128" x2="716" y2="128" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="155" font-size="13" fill="var(--color-text)">--bg</text>
+        <text x="170" y="155" font-size="13" fill="var(--color-text)">頁面背景、分隔區</text>
+        <rect x="520" y="136" width="28" height="28" rx="6" fill="#f3f4f7" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="155" font-size="13" fill="var(--color-text)">#f3f4f7</text>
+        <rect x="740" y="136" width="28" height="28" rx="6" fill="#0b0d11" stroke="#262b36"/>
+        <text class="mono" x="778" y="155" font-size="13" fill="#e8eaf0">#0b0d11</text>
+      </g>
+      <g id="Swatch-Panel" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="172" x2="716" y2="172" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="199" font-size="13" fill="var(--color-text)">--panel</text>
+        <text x="170" y="199" font-size="13" fill="var(--color-text)">頂部列、卡片、側欄、Quick Edit</text>
+        <rect x="520" y="180" width="28" height="28" rx="6" fill="#ffffff" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="199" font-size="13" fill="var(--color-text)">#ffffff</text>
+        <rect x="740" y="180" width="28" height="28" rx="6" fill="#151821" stroke="#262b36"/>
+        <text class="mono" x="778" y="199" font-size="13" fill="#e8eaf0">#151821</text>
+      </g>
+      <g id="Swatch-Text" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="216" x2="716" y2="216" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="243" font-size="13" fill="var(--color-text)">--text</text>
+        <text x="170" y="243" font-size="13" fill="var(--color-text)">主要文字</text>
+        <rect x="520" y="224" width="28" height="28" rx="6" fill="#1d2230" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="243" font-size="13" fill="var(--color-text)">#1d2230</text>
+        <rect x="740" y="224" width="28" height="28" rx="6" fill="#e8eaf0" stroke="#262b36"/>
+        <text class="mono" x="778" y="243" font-size="13" fill="#e8eaf0">#e8eaf0</text>
+      </g>
+      <g id="Swatch-Muted" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="260" x2="716" y2="260" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="287" font-size="13" fill="var(--color-text)">--muted</text>
+        <text x="170" y="287" font-size="13" fill="var(--color-text)">次要文字、說明、×</text>
+        <rect x="520" y="268" width="28" height="28" rx="6" fill="#6b7280" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="287" font-size="13" fill="var(--color-text)">#6b7280</text>
+        <rect x="740" y="268" width="28" height="28" rx="6" fill="#8b93a7" stroke="#262b36"/>
+        <text class="mono" x="778" y="287" font-size="13" fill="#e8eaf0">#8b93a7</text>
+      </g>
+      <g id="Swatch-Line" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="304" x2="716" y2="304" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="331" font-size="13" fill="var(--color-text)">--line</text>
+        <text x="170" y="331" font-size="13" fill="var(--color-text)">邊框、虛線框</text>
+        <rect x="520" y="312" width="28" height="28" rx="6" fill="#e3e6ec" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="331" font-size="13" fill="var(--color-text)">#e3e6ec</text>
+        <rect x="740" y="312" width="28" height="28" rx="6" fill="#262b36" stroke="#262b36"/>
+        <text class="mono" x="778" y="331" font-size="13" fill="#e8eaf0">#262b36</text>
+      </g>
+      <g id="Swatch-Grip" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="348" x2="716" y2="348" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="375" font-size="13" fill="var(--color-text)">--grip</text>
+        <text x="170" y="375" font-size="13" fill="var(--color-text)">分隔線把手</text>
+        <rect x="520" y="356" width="28" height="28" rx="6" fill="#b6bdcc" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="375" font-size="13" fill="var(--color-text)">#b6bdcc</text>
+        <rect x="740" y="356" width="28" height="28" rx="6" fill="#4a5164" stroke="#262b36"/>
+        <text class="mono" x="778" y="375" font-size="13" fill="#e8eaf0">#4a5164</text>
+      </g>
+      <g id="Swatch-Chip" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="392" x2="716" y2="392" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="419" font-size="13" fill="var(--color-text)">--chip</text>
+        <text x="170" y="419" font-size="13" fill="var(--color-text)">已選元件標籤底色</text>
+        <rect x="520" y="400" width="28" height="28" rx="6" fill="#eef0f5" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="419" font-size="13" fill="var(--color-text)">#eef0f5</text>
+        <rect x="740" y="400" width="28" height="28" rx="6" fill="#262b36" stroke="#262b36"/>
+        <text class="mono" x="778" y="419" font-size="13" fill="#e8eaf0">#262b36</text>
+      </g>
+      <g id="Swatch-Primary" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="436" x2="716" y2="436" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="463" font-size="13" fill="var(--color-text)">--primary</text>
+        <text x="170" y="463" font-size="13" fill="var(--color-text)">Copy Prompt 按鈕、breadcrumb 連結、焦點框</text>
+        <rect x="520" y="444" width="28" height="28" rx="6" fill="#1d4ed8" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="463" font-size="13" fill="var(--color-text)">#1d4ed8</text>
+        <rect x="740" y="444" width="28" height="28" rx="6" fill="#4f7dff" stroke="#262b36"/>
+        <text class="mono" x="778" y="463" font-size="13" fill="#e8eaf0">#4f7dff</text>
+      </g>
+      <g id="Swatch-OnPrimary" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="480" x2="716" y2="480" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="507" font-size="13" fill="var(--color-text)">--on-primary</text>
+        <text x="170" y="507" font-size="13" fill="var(--color-text)">主要按鈕、選取標籤上的文字</text>
+        <rect x="520" y="488" width="28" height="28" rx="6" fill="#ffffff" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="507" font-size="13" fill="var(--color-text)">#ffffff</text>
+        <rect x="740" y="488" width="28" height="28" rx="6" fill="#ffffff" stroke="#262b36"/>
+        <text class="mono" x="778" y="507" font-size="13" fill="#e8eaf0">#ffffff</text>
+      </g>
+      <g id="Swatch-Select" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="524" x2="716" y2="524" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="551" font-size="13" fill="var(--color-text)">--sel</text>
+        <text x="170" y="551" font-size="13" fill="var(--color-text)">已選元件：外框、編號、元件列反白</text>
+        <rect x="520" y="532" width="28" height="28" rx="6" fill="#e0218a" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="551" font-size="13" fill="var(--color-text)">#e0218a</text>
+        <rect x="740" y="532" width="28" height="28" rx="6" fill="#e0218a" stroke="#262b36"/>
+        <text class="mono" x="778" y="551" font-size="13" fill="#e8eaf0">#e0218a</text>
+      </g>
+      <g id="Swatch-Hover" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="568" x2="716" y2="568" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="595" font-size="13" fill="var(--color-text)">--hi</text>
+        <text x="170" y="595" font-size="13" fill="var(--color-text)">滑過的元件：虛線外框、元件列反白</text>
+        <rect x="520" y="576" width="28" height="28" rx="6" fill="#e5484d" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="595" font-size="13" fill="var(--color-text)">#e5484d</text>
+        <rect x="740" y="576" width="28" height="28" rx="6" fill="#e5484d" stroke="#262b36"/>
+        <text class="mono" x="778" y="595" font-size="13" fill="#e8eaf0">#e5484d</text>
+      </g>
+      <g id="Swatch-Ok" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="612" x2="716" y2="612" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="639" font-size="13" fill="var(--color-text)">--ok</text>
+        <text x="170" y="639" font-size="13" fill="var(--color-text)">「已複製」、「● 即時預覽中」</text>
+        <rect x="520" y="620" width="28" height="28" rx="6" fill="#16a34a" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="639" font-size="13" fill="var(--color-text)">#16a34a</text>
+        <rect x="740" y="620" width="28" height="28" rx="6" fill="#16a34a" stroke="#262b36"/>
+        <text class="mono" x="778" y="639" font-size="13" fill="#e8eaf0">#16a34a</text>
+      </g>
+      <g id="Swatch-Tip" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="656" x2="716" y2="656" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="683" font-size="13" fill="var(--color-text)">--tip</text>
+        <text x="170" y="683" font-size="13" fill="var(--color-text)">滑過提示框背景</text>
+        <rect x="520" y="664" width="28" height="28" rx="6" fill="#111111" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="683" font-size="13" fill="var(--color-text)">#111111</text>
+        <rect x="740" y="664" width="28" height="28" rx="6" fill="#111111" stroke="#262b36"/>
+        <text class="mono" x="778" y="683" font-size="13" fill="#e8eaf0">#111111</text>
+      </g>
+      <g id="Swatch-TipId" data-component="Row" data-layout="row center gap-12">
+        <line x1="24" y1="700" x2="716" y2="700" stroke="var(--color-line)"/>
+        <text class="mono" x="32" y="727" font-size="13" fill="var(--color-text)">--tip-id</text>
+        <text x="170" y="727" font-size="13" fill="var(--color-text)">提示框裡的元件 id</text>
+        <rect x="520" y="708" width="28" height="28" rx="6" fill="#ffb4b4" stroke="var(--color-line)"/>
+        <text class="mono" x="558" y="727" font-size="13" fill="var(--color-text)">#ffb4b4</text>
+        <rect x="740" y="708" width="28" height="28" rx="6" fill="#ffb4b4" stroke="#262b36"/>
+        <text class="mono" x="778" y="727" font-size="13" fill="#e8eaf0">#ffb4b4</text>
+      </g>
+    </g>
+  </g>
+</svg>

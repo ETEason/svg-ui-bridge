@@ -5,100 +5,97 @@
       --color-page: #f3f4f7; --color-panel: #ffffff; --color-text: #1d2230; --color-muted: #6b7280;
       --color-line: #e3e6ec; --color-select: #e0218a; --color-primary: #1d4ed8; --color-on-primary: #ffffff;
       --color-chip: #eef0f5; --color-grip: #b6bdcc; --color-stage: #0f1115; --color-stage-2: #20242d;
-      --color-stage-3: #4f8cff; --radius-panel: 10px; --space-4: 16px;
+      --color-stage-3: #4f8cff; --radius-panel: 10px; --gutter: 6px;
     }
     text { font-family: system-ui, "Noto Sans TC", sans-serif; }
     .mono { font-family: ui-monospace, monospace; }
   </style>
 
-  <g id="Page" data-component="Screen" data-layout="col">
+  <g id="Page" data-component="Screen" data-layout="col"
+     data-note="one gutter width everywhere: 6px page margin, 6px between cards, 6px dividers">
     <rect x="0" y="0" width="1280" height="800" fill="var(--color-page)"/>
 
     <g id="Header" data-component="Toolbar" data-layout="row center gap-12 pad-10-16"
        data-note="元件列 select: 右側 (default) / 左側 / 不顯示; remembered in localStorage">
       <rect x="0" y="0" width="1280" height="50" fill="var(--color-panel)" stroke="var(--color-line)"/>
       <text x="16" y="31" font-size="15" font-weight="700" fill="var(--color-text)">SVG Design Review</text>
-      <text x="170" y="31" font-size="13" fill="var(--color-muted)">狀態 default　縮放 1</text>
-      <rect x="318" y="12" width="122" height="28" rx="6" fill="var(--color-page)" stroke="var(--color-select)" stroke-width="2"/>
-      <text x="330" y="31" font-size="13" fill="var(--color-text)">元件列 右側 ▾</text>
-      <text x="456" y="31" font-size="13" fill="var(--color-muted)">切換背景　Quick Edit</text>
+      <text x="170" y="31" font-size="13" fill="var(--color-muted)">狀態 default　縮放 符合寬度　元件列 右側　切換背景　Quick Edit</text>
     </g>
 
-    <g id="DesignPane" data-component="Card" data-layout="col scroll"
-       data-note="takes the remaining width; scrolls on its own, so the side column never covers it">
-      <rect x="16" y="66" width="868" height="718" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
-      <text x="28" y="92" font-size="14" font-weight="600" fill="var(--color-text)">DocsSearch</text>
-      <text x="118" y="92" font-size="12" fill="var(--color-muted)">example-screen.svg · desktop-1280x800</text>
-      <rect x="28" y="108" width="844" height="664" fill="var(--color-stage)"/>
-      <rect x="48" y="128" width="660" height="40" rx="8" fill="var(--color-stage-2)"/>
-      <g id="SelectedOutline" data-component="Overlay">
-        <rect x="720" y="128" width="132" height="40" rx="8" fill="var(--color-stage-3)"/>
-        <text x="786" y="153" font-size="14" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Search</text>
-        <rect x="717" y="125" width="138" height="46" fill="none" stroke="var(--color-select)" stroke-width="2"/>
-        <rect x="705" y="115" width="22" height="18" rx="4" fill="var(--color-select)"/>
-        <text x="716" y="128" font-size="11" font-weight="700" text-anchor="middle" fill="var(--color-on-primary)">1</text>
+    <g id="DesignPane" data-component="Panel" data-layout="col gap-6 scroll"
+       data-note="takes the remaining width; scrolls on its own; cards 6px apart">
+      <g id="DesignCard" data-component="Card">
+        <rect x="6" y="56" width="900" height="610" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+        <text x="18" y="82" font-size="14" font-weight="600" fill="var(--color-text)">DocsSearch</text>
+        <text x="108" y="82" font-size="12" fill="var(--color-muted)">example-screen.svg · desktop-1280x800 · 符合寬度 68%</text>
+        <rect x="18" y="98" width="876" height="556" fill="var(--color-stage)"/>
+        <rect x="38" y="118" width="690" height="40" rx="8" fill="var(--color-stage-2)"/>
+        <g id="SelectedOutline" data-component="Overlay">
+          <rect x="740" y="118" width="134" height="40" rx="8" fill="var(--color-stage-3)"/>
+          <text x="807" y="143" font-size="14" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Search</text>
+          <rect x="737" y="115" width="140" height="46" fill="none" stroke="var(--color-select)" stroke-width="2"/>
+          <rect x="725" y="105" width="22" height="18" rx="4" fill="var(--color-select)"/>
+          <text x="736" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="var(--color-on-primary)">1</text>
+        </g>
+      </g>
+      <g id="NextCard" data-component="Card" data-note="the next draft, 6px below">
+        <rect x="6" y="672" width="900" height="122" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+        <text x="18" y="698" font-size="14" font-weight="600" fill="var(--color-text)">DocsSearch (empty)</text>
+        <rect x="18" y="714" width="876" height="80" fill="var(--color-stage)"/>
       </g>
     </g>
 
-    <g id="WidthSplitter" data-component="Splitter" data-note="drag to change the column width; remembered">
-      <rect x="892" y="66" width="8" height="718" rx="4" fill="var(--color-page)"/>
-      <rect x="894.5" y="405" width="3" height="40" rx="1.5" fill="var(--color-grip)"/>
+    <g id="WidthSplitter" data-component="Splitter"
+       data-note="6px gutter with a short 2px grip; the grab area reaches 4px into the side column, never over the design pane's scrollbar; the grip turns primary on hover and while dragging">
+      <rect x="906" y="56" width="6" height="738" fill="var(--color-page)"/>
+      <rect x="908" y="405" width="2" height="40" rx="1" fill="var(--color-grip)"/>
     </g>
 
-    <g id="SideColumn" data-component="Panel" data-layout="col fixed-364x718"
+    <g id="SideColumn" data-component="Panel" data-layout="col fixed-362x738"
        data-note="right by default, left when chosen; holds the tree above Quick Edit">
       <g id="TreePanel" data-component="Panel" data-layout="col scroll-y">
-        <rect x="908" y="66" width="356" height="300" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
-        <text x="920" y="92" font-size="13" fill="var(--color-muted)">元件（滑過可定位）</text>
-        <text class="mono" x="926" y="118" font-size="12" fill="var(--color-text)">App</text>
-        <text class="mono" x="938" y="140" font-size="12" fill="var(--color-text)">NavBar</text>
-        <text class="mono" x="938" y="162" font-size="12" fill="var(--color-text)">SearchBar</text>
-        <text class="mono" x="950" y="184" font-size="12" fill="var(--color-text)">SearchInput</text>
-        <rect x="920" y="194" width="332" height="20" rx="4" fill="var(--color-select)"/>
-        <text class="mono" x="950" y="208" font-size="12" fill="var(--color-on-primary)">SearchButton</text>
-        <text class="mono" x="938" y="232" font-size="12" fill="var(--color-text)">Body</text>
-        <text class="mono" x="950" y="254" font-size="12" fill="var(--color-text)">ResultList</text>
+        <rect x="912" y="56" width="362" height="300" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+        <text x="924" y="82" font-size="13" fill="var(--color-muted)">元件（滑過可定位）</text>
+        <text class="mono" x="930" y="108" font-size="12" fill="var(--color-text)">App</text>
+        <text class="mono" x="942" y="130" font-size="12" fill="var(--color-text)">NavBar</text>
+        <text class="mono" x="942" y="152" font-size="12" fill="var(--color-text)">SearchBar</text>
+        <text class="mono" x="954" y="174" font-size="12" fill="var(--color-text)">SearchInput</text>
+        <rect x="924" y="184" width="338" height="20" rx="4" fill="var(--color-select)"/>
+        <text class="mono" x="954" y="198" font-size="12" fill="var(--color-on-primary)">SearchButton</text>
+        <text class="mono" x="942" y="222" font-size="12" fill="var(--color-text)">Body</text>
+        <text class="mono" x="954" y="244" font-size="12" fill="var(--color-text)">ResultList</text>
       </g>
-      <g id="HeightSplitter" data-component="Splitter" data-note="drag to share the height between tree and Quick Edit; remembered">
-        <rect x="908" y="370" width="356" height="8" rx="4" fill="var(--color-page)"/>
-        <rect x="1066" y="372.5" width="40" height="3" rx="1.5" fill="var(--color-grip)"/>
+      <g id="HeightSplitter" data-component="Splitter"
+         data-note="6px gutter, 2px grip; the grab area reaches 4px into Quick Edit's top padding">
+        <rect x="912" y="356" width="362" height="6" fill="var(--color-page)"/>
+        <rect x="1073" y="358" width="40" height="2" rx="1" fill="var(--color-grip)"/>
       </g>
       <g id="QuickEditPanel" data-component="Panel" data-layout="col gap-8 pad-12"
          data-note="part of the layout, not floating; × closes it and the tree takes the full height">
-        <rect x="908" y="382" width="356" height="402" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
-        <text x="922" y="408" font-size="14" font-weight="700" fill="var(--color-text)">Quick Edit</text>
-        <text x="1248" y="409" font-size="18" text-anchor="middle" fill="var(--color-muted)">×</text>
-        <g id="QuickEdit-Chips" data-component="List" data-layout="wrap gap-6 scroll-y fixed-332x64"
-           data-note="fixed height; the mouse wheel scrolls through the selected items">
-          <rect x="922" y="422" width="328" height="66" rx="6" fill="var(--color-panel)" stroke="var(--color-line)" stroke-dasharray="3 3"/>
-          <rect x="927" y="427" width="112" height="26" rx="13" fill="var(--color-chip)"/>
-          <text class="mono" x="937" y="444" font-size="12" fill="var(--color-text)">SearchButton</text>
-          <text x="1024" y="445" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
-          <rect x="1045" y="427" width="106" height="26" rx="13" fill="var(--color-chip)"/>
-          <text class="mono" x="1055" y="444" font-size="12" fill="var(--color-text)">SearchInput</text>
-          <text x="1136" y="445" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
-          <rect x="1157" y="427" width="76" height="26" rx="13" fill="var(--color-chip)"/>
-          <text class="mono" x="1167" y="444" font-size="12" fill="var(--color-text)">NavBar</text>
-          <text x="1218" y="445" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
-          <rect x="927" y="459" width="144" height="26" rx="13" fill="var(--color-chip)"/>
-          <text x="937" y="476" font-size="12" fill="var(--color-text)">區域 20,80,340×90</text>
-          <text x="1056" y="477" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
-          <rect x="1077" y="459" width="100" height="26" rx="13" fill="var(--color-chip)"/>
-          <text class="mono" x="1087" y="476" font-size="12" fill="var(--color-text)">ResultCard</text>
-          <text x="1162" y="477" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+        <rect x="912" y="362" width="362" height="432" rx="10" fill="var(--color-panel)" stroke="var(--color-line)"/>
+        <text x="926" y="388" font-size="14" font-weight="700" fill="var(--color-text)">Quick Edit</text>
+        <text x="1258" y="389" font-size="18" text-anchor="middle" fill="var(--color-muted)">×</text>
+        <g id="QuickEdit-Chips" data-component="List" data-layout="wrap gap-6 scroll-y fixed-334x66">
+          <rect x="926" y="402" width="334" height="66" rx="6" fill="var(--color-panel)" stroke="var(--color-line)" stroke-dasharray="3 3"/>
+          <rect x="931" y="407" width="112" height="26" rx="13" fill="var(--color-chip)"/>
+          <text class="mono" x="941" y="424" font-size="12" fill="var(--color-text)">SearchButton</text>
+          <text x="1028" y="425" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
+          <rect x="1049" y="407" width="106" height="26" rx="13" fill="var(--color-chip)"/>
+          <text class="mono" x="1059" y="424" font-size="12" fill="var(--color-text)">SearchInput</text>
+          <text x="1140" y="425" font-size="13" text-anchor="middle" fill="var(--color-muted)">×</text>
         </g>
-        <text class="mono" x="922" y="506" font-size="12" fill="var(--color-primary)">App › SearchBar › </text>
-        <text class="mono" x="1040" y="506" font-size="12" font-weight="700" fill="var(--color-text)">SearchButton</text>
+        <text class="mono" x="926" y="486" font-size="12" fill="var(--color-primary)">App › SearchBar › </text>
+        <text class="mono" x="1044" y="486" font-size="12" font-weight="700" fill="var(--color-text)">SearchButton</text>
         <g id="QuickEdit-Input" data-component="Input">
-          <rect x="922" y="518" width="328" height="190" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
-          <text x="934" y="540" font-size="13" fill="var(--color-muted)">描述你想怎麼改</text>
+          <rect x="926" y="498" width="334" height="230" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
+          <text x="938" y="520" font-size="13" fill="var(--color-muted)">描述你想怎麼改</text>
         </g>
-        <text x="922" y="732" font-size="12" fill="var(--color-muted)">清單 2 筆</text>
+        <text x="926" y="760" font-size="12" fill="var(--color-muted)">清單 2 筆</text>
         <g id="QuickEdit-Actions" data-component="Toolbar" data-layout="row gap-8">
-          <rect x="1028" y="716" width="100" height="40" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
-          <text x="1078" y="741" font-size="13" text-anchor="middle" fill="var(--color-text)">加入清單</text>
-          <rect x="1136" y="716" width="114" height="40" rx="8" fill="var(--color-primary)"/>
-          <text x="1193" y="741" font-size="13" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Copy Prompt</text>
+          <rect x="1038" y="740" width="100" height="40" rx="8" fill="var(--color-panel)" stroke="var(--color-line)"/>
+          <text x="1088" y="765" font-size="13" text-anchor="middle" fill="var(--color-text)">加入清單</text>
+          <rect x="1146" y="740" width="114" height="40" rx="8" fill="var(--color-primary)"/>
+          <text x="1203" y="765" font-size="13" font-weight="600" text-anchor="middle" fill="var(--color-on-primary)">Copy Prompt</text>
         </g>
       </g>
     </g>

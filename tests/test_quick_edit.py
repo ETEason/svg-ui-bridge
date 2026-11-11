@@ -275,6 +275,16 @@ def test_responsive(browser, url: str, port: int) -> None:
     page.wait_for_timeout(150)
     check("selected items scroll with the mouse wheel", grows and page.evaluate("document.getElementById('qeChips').scrollTop") > 0)
 
+    m, sv, sd, a, sh, q = (rect(page, k) for k in ("main", "#splitV", "#side", "aside", "#splitH", "#qe"))
+    gaps = [m["x"], sd["x"] - m["right"], 1280 - sd["right"], m["y"] - rect(page, "header")["bottom"], q["y"] - a["bottom"],
+            800 - q["bottom"], sv["w"], sh["h"]]
+    check("page margin, dividers and gaps are all 6px", all(abs(g - 6) <= 0.5 for g in gaps), gaps)
+    hit = page.evaluate(f"document.elementFromPoint({sd['x'] + 2}, {sv['y'] + sv['h'] / 2}).id")
+    check("the divider can be grabbed 2px inside the side column", hit == "splitV", hit)
+    hit = page.evaluate(f"document.elementFromPoint({m['right'] - 2}, {sv['y'] + sv['h'] / 2}).id")
+    check("the grab area stays off the design pane", hit != "splitV", hit)
+    check("marks use the page tokens", page.evaluate("MARK === getComputedStyle(document.documentElement).getPropertyValue('--sel').trim()"))
+
     w0, h0 = rect(page, "#side")["w"], rect(page, "aside")["h"]
     drag(page, "#splitV", -120, 0)
     drag(page, "#splitH", 0, 60)
@@ -311,7 +321,7 @@ def test_responsive(browser, url: str, port: int) -> None:
         check(f"{w}x{h} hides the tree and its position menu",
               not rect(page, "aside")["shown"] and not rect(page, "#sidePosLabel")["shown"])
         check(f"{w}x{h} design pane fills the window while Quick Edit is closed",
-              not rect(page, "#side")["shown"] and abs(rect(page, "main")["bottom"] - (h - 16)) <= 2, rect(page, "main"))
+              not rect(page, "#side")["shown"] and abs(rect(page, "main")["bottom"] - (h - 6)) <= 2, rect(page, "main"))
         stage, card = rect(page, ".stage"), rect(page, ".card")
         check(f"{w}x{h} fit scales the design down to the card instead of reflowing it",
               stage["right"] <= card["right"] and page.evaluate("getComputedStyle(document.querySelector('.stage')).transform") != "none",
@@ -334,7 +344,7 @@ def test_responsive(browser, url: str, port: int) -> None:
         check(f"{w}x{h} Quick Edit height survives a reload", abs(rect(page, "#side")["h"] - (q0 + 60)) <= 1, rect(page, "#side"))
         page.keyboard.press("Escape")
         check(f"{w}x{h} Esc gives the design the full height back",
-              not rect(page, "#side")["shown"] and abs(rect(page, "main")["bottom"] - (h - 16)) <= 2)
+              not rect(page, "#side")["shown"] and abs(rect(page, "main")["bottom"] - (h - 6)) <= 2)
         ctx.close()
 
     ctx = browser.new_context(viewport={"width": 1280, "height": 800})
