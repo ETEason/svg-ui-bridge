@@ -19,7 +19,7 @@ python <skill>/scripts/svg_preview.py design/html --serve     # local：即時�
 python <skill>/scripts/svg_preview.py design/html --no-open   # sandbox：要發佈的靜態頁
 ```
 
-預覽頁把每個畫面放在各自的卡片中，用設計稿自己的 HTML 和本機 CSS 呈現，並移除腳本。「寬度」選單設定視窗寬度（1280、768、390，或卡片寬度），media query 會生效、文字會重新換行。選取、Alt 拖曳框選、breadcrumb 和 Quick Edit 面板的用法都和 SVG 路線相同。修改請求以 `file.html#Id?state=…&width=…` 指出位置；區域座標是相對於畫面的 CSS 像素。處理方式照 SKILL.md：先執行 `svg_render.py --job` 並看圖，它會在同樣的寬度下算出同一個畫面。
+預覽頁把每個畫面放在各自的卡片中，用設計稿自己的 HTML 和本機 CSS 呈現，並移除腳本。每個畫面以設計寬度呈現，取自畫面上選填的 `data-target`（例如 `mobile-390x844`；沒有時為 1280）。「寬度」選單可切換成 1280、768 或 390，media query 會生效、文字會重新換行。調整預覽視窗大小不會讓畫面重新排版，而是由縮放等比縮小。選取、Alt 拖曳框選、breadcrumb 和 Quick Edit 面板的用法都和 SVG 路線相同。修改請求以 `file.html#Id?state=…&width=…` 指出位置；區域座標是相對於畫面的 CSS 像素。處理方式照 SKILL.md：先執行 `svg_render.py --job` 並看圖，它會在同樣的寬度下算出同一個畫面。
 
 ## 請人審閱前先檢查
 

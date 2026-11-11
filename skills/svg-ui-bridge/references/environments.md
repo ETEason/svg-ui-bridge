@@ -31,7 +31,7 @@ browser can open here, so a live server shows nobody anything.
 folder are included with their local CSS inlined, so the static page still needs no other files.
 
 Quick Edit works inside an artifact as well. If the iframe blocks the clipboard, the panel shows the
-full text for the user to copy by hand. Artifact comments stay available. The "送給 Agent" button
+full text for the user to copy by hand. Artifact comments stay available. The send-to-agent button
 needs `--serve`, so it does not appear on a static page.
 
 The user's approval is what passes the gate, in the same way as in local mode. Do not write product

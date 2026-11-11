@@ -17,7 +17,7 @@ In sandbox mode (no graphical interface, or SVG_UI_MODE=sandbox) the browser is 
 CDN, so it can be published as an artifact as is.
 
 Paths in Quick Edit prompts are relative to the working directory; --absolute-paths writes full
-paths instead. With --serve, "送給 Agent" appends the request to design/_feedback.md.
+paths instead. With --serve, the send-to-agent button appends the request to design/_feedback.md.
 """
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ PAGE = r"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SVG Design Review</title>
 <style>
-:root{--bg:#f3f4f7;--panel:#fff;--text:#1d2230;--muted:#6b7280;--line:#e3e6ec;--hi:#e5484d;--sel:#e0218a;--primary:#1d4ed8;--chip:#eef0f5;--grip:#b6bdcc;--hdr:52px;--side-w:356px;--tree-h:300px}
+:root{--bg:#f3f4f7;--panel:#fff;--text:#1d2230;--muted:#6b7280;--line:#e3e6ec;--hi:#e5484d;--sel:#e0218a;--primary:#1d4ed8;--chip:#eef0f5;--grip:#b6bdcc;--hdr:52px;--side-w:356px;--tree-h:300px;--qe-h:340px}
 :root[data-theme=dark]{--bg:#0b0d11;--panel:#151821;--text:#e8eaf0;--muted:#8b93a7;--line:#262b36;--primary:#4f7dff;--chip:#262b36;--grip:#4a5164}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,"Noto Sans TC",sans-serif}
 header{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
@@ -69,7 +69,7 @@ aside h3{margin:4px 0 8px;font-size:13px;color:var(--muted)}aside li{list-style:
 aside li:hover,aside li.on{background:var(--hi);color:#fff}aside li.sel{background:var(--sel);color:#fff}aside ul{margin:0;padding:0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;flex:none}
 .card h2{margin:0 0 8px;font-size:14px}.card .meta{color:var(--muted);font-size:12px;font-weight:400}
-.stage{transform-origin:0 0;user-select:none;-webkit-user-select:none}
+.stage{transform-origin:0 0;width:max-content;user-select:none;-webkit-user-select:none}
 body.dragging{user-select:none;-webkit-user-select:none}body.dragging iframe{pointer-events:none}
 #qe{flex:1 1 0;min-height:240px;display:none;flex-direction:column;padding:8px 13px 28px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px}
 #qe.open{display:flex}#qe button:focus-visible,#qe textarea:focus-visible,#qeOpen:focus-visible,aside li:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
@@ -85,16 +85,16 @@ body.dragging{user-select:none;-webkit-user-select:none}body.dragging iframe{poi
 .qe-actions button{min-height:40px;padding:0 10px;border-radius:8px;background:var(--panel)}#qeQueue{min-width:100px}#qeCopy{min-width:114px}.qe-actions button.primary{border-color:var(--primary);background:var(--primary);color:#fff;font-weight:600}
 #tip{position:fixed;pointer-events:none;z-index:9;background:#111;color:#fff;font-size:12px;padding:6px 8px;border-radius:6px;max-width:320px;display:none}
 #tip code{color:#ffb4b4}
-/* narrow: design, tree and Quick Edit stack in the page flow */
-@media (max-width:800px){.wrap,.wrap.side-left{flex-direction:column;height:auto}main{overflow:visible}.split-v,.split-h{display:none!important}
-  #side{width:auto;margin-top:16px;gap:16px}aside{flex:none;max-height:220px}#qe{flex:none;min-height:0}#qeText{flex:none;min-height:110px}
-  .qe-actions button{flex:1;min-height:44px}#qeCount{flex:0 0 100%}}
+/* narrow: no tree; the design pane on top and Quick Edit below share the window height */
+@media (max-width:800px){.wrap,.wrap.side-left{flex-direction:column}.split-v,#side aside,#sidePosLabel{display:none!important}
+  #side{width:auto;flex:0 0 var(--qe-h)}#qe{min-height:0}#qeText{min-height:60px}
+  .qe-actions button{flex:1;min-height:44px}#qeCount{flex:0 0 100%}#qeStatus:empty{display:none}}
 </style></head><body>
 <header><b>SVG Design Review</b>
 <label>狀態 <select id="state"></select></label>
-<label hidden>寬度 <select id="width"><option value="">原始</option><option>1280</option><option>768</option><option>390</option></select></label>
-<label>縮放 <select id="zoom"><option>0.5</option><option>0.75</option><option selected>1</option><option>1.5</option><option>2</option></select></label>
-<label>元件列 <select id="sidePos"><option value="right">右側</option><option value="left">左側</option><option value="none">不顯示</option></select></label>
+<label hidden>寬度 <select id="width"><option value="">設計尺寸</option><option>1280</option><option>768</option><option>390</option></select></label>
+<label>縮放 <select id="zoom"><option value="fit" selected>符合寬度</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></label>
+<label id="sidePosLabel">元件列 <select id="sidePos"><option value="right">右側</option><option value="left">左側</option><option value="none">不顯示</option></select></label>
 <button id="theme">切換背景</button><button id="qeOpen">Quick Edit</button><span id="live" class="live"></span></header>
 <div class="wrap" id="wrap"><main id="main"></main>
 <div class="split-v" id="splitV" role="separator" aria-orientation="vertical" aria-label="調整側欄寬度" tabindex="0"></div>
@@ -116,7 +116,7 @@ const MARK='#e0218a',HOVER='#e5484d',MIN_DRAG=4,EDGE=2,WIDTHS=['','1280','768','
 const states=new Set(['default']),roots=[];let queue=[],dragging=null,skipClick=false,statusTimer=0,cur=null,curBox=null;
 /* a root is one reviewable canvas: an SVG in a shadow root, or one HTML [data-screen] in a script-free iframe */
 function card(title){const c=document.createElement('section');c.className='card';c.innerHTML='<h2></h2><div class="stage"></div>';
-  const h=c.querySelector('h2');h.textContent=title+' ';const m=document.createElement('span');m.className='meta';h.appendChild(m);main.appendChild(c);return c;}
+  const h=c.querySelector('h2');h.textContent=title+' ';const m=document.createElement('span'),z=document.createElement('span');m.className='meta';z.className='meta zm';h.append(m,' ',z);main.appendChild(c);return c;}
 function cleanDoc(html){const doc=new DOMParser().parseFromString(html,'text/html');
   doc.querySelectorAll('script,iframe,frame,object,embed,link,meta,base').forEach(n=>n.remove());
   doc.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{if(/^on/i.test(a.name)||/^\s*javascript:/i.test(a.value))n.removeAttribute(a.name);}));return doc;}
@@ -135,13 +135,16 @@ DATA.forEach(d=>{
     frame.setAttribute('sandbox','allow-same-origin');frame.setAttribute('scrolling','no');frame.title=screen.id;
     frame.style.cssText='display:block;border:0;width:100%;height:80px;box-shadow:0 1px 4px #0003;background:#fff';
     frame.srcdoc=`<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body style="margin:0">${screen.outerHTML}</body></html>`;
-    const r={kind:'html',file:d.path,d,card:c,host,frame,id:screen.id,state:screen.dataset.state||'default',w:0,doc:null,screen:null};roots.push(r);host.appendChild(frame);
+    const r={kind:'html',file:d.path,d,card:c,host,frame,id:screen.id,state:screen.dataset.state||'default',dw:designW(screen),w:0,doc:null,screen:null};roots.push(r);host.appendChild(frame);
     treeHead(`${d.file} · ${screen.id}`);screen.querySelectorAll('[data-component][id]').forEach(n=>{let depth=0;for(let p=n.parentElement;p&&p!==screen;p=p.parentElement)if(p.dataset.component!==undefined&&p.id)depth++;treeItem(r,n.id,depth);});
     frame.addEventListener('load',()=>{r.doc=frame.contentDocument;r.screen=r.doc.getElementById(r.id);hookFrame(r);sizeFrame(r);new ResizeObserver(()=>sizeFrame(r)).observe(r.doc.documentElement);draw();});});});
 const hasHtml=roots.some(r=>r.kind==='html'),widthSel=$('width');widthSel.parentElement.hidden=!hasHtml;
-function sizeFrame(r){if(!r.doc)return;const want=widthSel.value?+widthSel.value:Math.floor(r.card.clientWidth-24);
+/* an HTML screen renders at its design width (data-target such as mobile-390x844, else 1280), never at
+   the card width, so a squeezed pane cannot reflow the draft; the zoom scales it instead */
+function designW(screen){const m=/(\d+)(?:x\d+)?$/.exec(screen.dataset.target||'');return m?+m[1]:1280;}
+function sizeFrame(r){if(!r.doc)return;const want=widthSel.value?+widthSel.value:r.dw;
   if(r.w!==want){r.w=want;r.frame.style.width=want+'px';}r.frame.style.height=r.doc.documentElement.scrollHeight+'px';
-  r.card.querySelector('.meta').textContent=`${r.file} · ${r.state} · 寬度 ${r.w}`;}
+  r.card.querySelector('.meta').textContent=`${r.file} · ${r.state} · 寬度 ${r.w}`;applyZoom();}
 widthSel.onchange=()=>{roots.forEach(sizeFrame);draw();try{sessionStorage.setItem('wd',widthSel.value)}catch(e){}};
 const sel=$('state');[...states].forEach(s=>sel.add(new Option(s,s)));sel.parentElement.hidden=!roots.some(r=>r.kind==='svg');
 function applyState(){const s=sel.value;roots.forEach(r=>{if(r.kind!=='svg')return;r.sr.querySelectorAll('[data-state]').forEach(e=>{
@@ -149,7 +152,14 @@ function applyState(){const s=sel.value;roots.forEach(r=>{if(r.kind!=='svg')retu
   e.style.display=show?'inline':'none';});});
   /* components without the chosen state keep showing their default layer */}
 sel.onchange=()=>{applyState();draw();try{sessionStorage.setItem('st',sel.value)}catch(e){}};
-$('zoom').onchange=e=>{document.querySelectorAll('.stage').forEach(s=>s.style.transform=`scale(${e.target.value})`);try{sessionStorage.setItem('zm',e.target.value)}catch(_){}};
+/* one scale for every card, so a phone and a laptop draft keep their true size relative to each other;
+   符合寬度 picks the largest scale (at most 1) at which the widest draft fits its card */
+let scale=1;
+function applyZoom(){const z=$('zoom').value,st=roots.map(r=>r.host),nat=st.map(s=>[s.offsetWidth,s.offsetHeight]);
+  scale=z==='fit'?Math.min(1,...st.map((s,i)=>nat[i][0]?Math.floor((s.parentElement.clientWidth-24)/nat[i][0]*1000)/1000:1)):+z;
+  st.forEach((s,i)=>{s.style.transform=`scale(${scale})`;s.style.marginRight=nat[i][0]*(scale-1)+'px';s.style.marginBottom=nat[i][1]*(scale-1)+'px';});
+  document.querySelectorAll('.zm').forEach(m=>m.textContent=`· ${z==='fit'?'符合寬度 ':''}${Math.round(scale*100)}%`);}
+$('zoom').onchange=()=>{applyZoom();draw();try{sessionStorage.setItem('zm',$('zoom').value)}catch(_){}};
 $('theme').onclick=()=>{rootEl.dataset.theme=rootEl.dataset.theme==='dark'?'light':'dark';};
 /* geometry: local = SVG units or screen-relative CSS px; client = coordinates in this page */
 function isComp(n,r){return !!n&&n.nodeType===1&&!!n.dataset&&n.dataset.component!==undefined&&(r.kind==='html'||n.tagName==='g');}
@@ -201,11 +211,11 @@ function compItem(r,g){const c=chain(g,r),t=c[c.length-1];return t?{root:r,g:t,i
 function itemBox(i){return i.g?localBox(i.root,i.g):i.bbox;}
 function sameItem(a,b){return a.root===b.root&&(a.g?a.g===b.g:String(a.bbox)===String(b.bbox));}
 const narrow=()=>matchMedia('(max-width:800px)').matches;
-function viewTop(){return narrow()?document.querySelector('header').getBoundingClientRect().bottom:main.getBoundingClientRect().top;}
-function viewBottom(){return narrow()?innerHeight:main.getBoundingClientRect().bottom;}
+function viewTop(){return main.getBoundingClientRect().top;}
+function viewBottom(){return main.getBoundingClientRect().bottom;}
 function reveal(i){const c=i.root.card,cr=c.getBoundingClientRect();let r=toClient(i.root,itemBox(i));
   if(r.right>cr.right-12)c.scrollLeft+=Math.min(r.right-cr.right+24,r.left-cr.left-12);else if(r.left<cr.left+12)c.scrollLeft-=cr.left+12-r.left;
-  r=toClient(i.root,itemBox(i));const top=viewTop()+8,low=viewBottom()-8,sc=narrow()?window:main;
+  r=toClient(i.root,itemBox(i));const top=viewTop()+8,low=viewBottom()-8,sc=main;
   if(r.bottom>low)sc.scrollBy(0,Math.min(r.bottom-low,r.top-top));else if(r.top<top)sc.scrollBy(0,r.top-top);}
 function pick(item,add){if(!item)return;const at=picked.findIndex(i=>sameItem(i,item));
   if(!add)picked.length=0,picked.push(item);else if(at>=0)picked.splice(at,1);else picked.push(item);
@@ -241,11 +251,11 @@ function visible(r){const v=canvas(r),cb=toClient(r,v),cr=r.card.getBoundingClie
   const p=toLocal(r,l,t),q=toLocal(r,rt,bt),x2=v[0]+v[2],y2=v[1]+v[3],x=p[0]-v[0]<=EDGE?v[0]:Math.floor(p[0]),y=p[1]-v[1]<=EDGE?v[1]:Math.floor(p[1]);
   return ints([x,y,(x2-q[0]<=EDGE?x2:Math.ceil(q[0]))-x,(y2-q[1]<=EDGE?y2:Math.ceil(q[1]))-y]);}
 function rootForKey(k){return roots.find(r=>keyOf(r)===k);}
-function snapshot(entries,keys){const all=entries.flatMap(e=>e.items),state=entries[entries.length-1].state,zoom=+$('zoom').value;
+function snapshot(entries,keys){const all=entries.flatMap(e=>e.items),state=entries[entries.length-1].state;
   const jobs=keys.map((k,n)=>{const r=rootForKey(k),selection=all.filter(i=>i.key===k).map(({ref,kind,path,bbox})=>({ref,kind,path,bbox})),
       outputs=[{path:`<tmp>/svgui-quickedit-current-view${n?'-'+(n+1):''}.png`,label:'current view',scale:1,highlight:true}];
-    return r.kind==='html'?{input:r.file,format:'html',screen:r.id,state:r.state,view:{zoom,width:r.w,visible:visible(r)},selection,outputs}
-      :{input:r.file,screen:r.d.screen,target:r.d.target,state,view:{zoom,visible:visible(r)},selection,outputs};});
+    return r.kind==='html'?{input:r.file,format:'html',screen:r.id,state:r.state,view:{zoom:scale,width:r.w,visible:visible(r)},selection,outputs}
+      :{input:r.file,screen:r.d.screen,target:r.d.target,state,view:{zoom:scale,visible:visible(r)},selection,outputs};});
   return JSON.stringify(jobs.length===1?jobs[0]:jobs);}
 function buildPrompt(){const entries=queue.concat(current()||[]);if(!entries.length)return '';
   let keys=[...new Set(entries.flatMap(e=>e.items.map(i=>i.key)))];if(!keys.length)keys=[keyOf(roots[0])];
@@ -284,34 +294,37 @@ $('qeQueue').onclick=()=>{const e=current();if(!e)return;queue.push(e);qeText.va
 qeText.addEventListener('input',save);
 function onKey(e){if(!qe.classList.contains('open'))return;if(e.key==='Escape')closePanel();else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();copyAll();}}
 addEventListener('keydown',onKey);
-/* side column: position, width and tree height are remembered in this browser */
+/* side column: position, width, tree height and the narrow Quick Edit height are remembered in this browser */
 const wrap=$('wrap'),side=$('side'),sidePos=$('sidePos'),PREFS='svgui.layout';
-let prefs={pos:'right',w:356,treeH:300};
+let prefs={pos:'right',w:356,treeH:300,qeH:340};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem(PREFS)||'{}'));}catch(e){}
 if(!['right','left','none'].includes(prefs.pos))prefs.pos='right';
 function storePrefs(){try{localStorage.setItem(PREFS,JSON.stringify(prefs));}catch(e){}}
 function clampW(w){return Math.round(Math.max(240,Math.min(w,wrap.clientWidth*0.6)));}
 function clampH(h){return Math.round(Math.max(80,Math.min(h,side.clientHeight-(qe.classList.contains('open')?252:0))));}
+function clampQ(h){return Math.round(Math.max(200,Math.min(h,wrap.clientHeight-32-16-120)));}
 function layout(){const open=qe.classList.contains('open');rootEl.style.setProperty('--hdr',document.querySelector('header').offsetHeight+'px');
-  wrap.classList.toggle('side-left',prefs.pos==='left');wrap.classList.toggle('side-hidden',prefs.pos==='none'&&!open);
+  wrap.classList.toggle('side-left',prefs.pos==='left');wrap.classList.toggle('side-hidden',(prefs.pos==='none'||narrow())&&!open);
   side.classList.toggle('no-tree',prefs.pos==='none');side.classList.toggle('no-qe',!open);sidePos.value=prefs.pos;
-  rootEl.style.setProperty('--side-w',clampW(prefs.w)+'px');if(side.clientHeight)rootEl.style.setProperty('--tree-h',clampH(prefs.treeH)+'px');
-  if(!widthSel.value)roots.forEach(sizeFrame);draw();}
+  rootEl.style.setProperty('--side-w',clampW(prefs.w)+'px');rootEl.style.setProperty('--qe-h',clampQ(prefs.qeH)+'px');if(side.clientHeight&&!narrow())rootEl.style.setProperty('--tree-h',clampH(prefs.treeH)+'px');
+  applyZoom();draw();}
 sidePos.onchange=()=>{prefs.pos=sidePos.value;storePrefs();layout();};
 /* sizes follow the pointer's movement since it went down, so grabbing the splitter anywhere never jumps */
 function dragSplit(el,onMove){el.addEventListener('pointerdown',e=>{if(e.button)return;e.preventDefault();el.setPointerCapture(e.pointerId);document.body.classList.add('dragging');
-    const start={x:e.clientX,y:e.clientY,w:side.getBoundingClientRect().width,h:$('side').querySelector('aside').getBoundingClientRect().height};
+    const start={x:e.clientX,y:e.clientY,w:side.getBoundingClientRect().width,h:$('side').querySelector('aside').getBoundingClientRect().height,q:side.getBoundingClientRect().height};
     const move=ev=>{onMove(ev,start);layout();},up=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);document.body.classList.remove('dragging');storePrefs();};
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);});}
 dragSplit($('splitV'),(e,s)=>{prefs.w=clampW(s.w+(prefs.pos==='left'?e.clientX-s.x:s.x-e.clientX));});
-dragSplit($('splitH'),(e,s)=>{prefs.treeH=clampH(s.h+e.clientY-s.y);});
+/* wide: the splitter sets the tree height; narrow: it sits above Quick Edit and sets its height */
+dragSplit($('splitH'),(e,s)=>{if(narrow())prefs.qeH=clampQ(s.q-(e.clientY-s.y));else prefs.treeH=clampH(s.h+e.clientY-s.y);});
 $('splitV').addEventListener('keydown',e=>{const d={ArrowLeft:1,ArrowRight:-1}[e.key];if(!d)return;e.preventDefault();prefs.w=clampW(prefs.w+d*16*(prefs.pos==='left'?-1:1));storePrefs();layout();});
-$('splitH').addEventListener('keydown',e=>{const d={ArrowUp:-1,ArrowDown:1}[e.key];if(!d)return;e.preventDefault();prefs.treeH=clampH(prefs.treeH+d*16);storePrefs();layout();});
+$('splitH').addEventListener('keydown',e=>{const d={ArrowUp:-1,ArrowDown:1}[e.key];if(!d)return;e.preventDefault();if(narrow())prefs.qeH=clampQ(prefs.qeH-d*16);else prefs.treeH=clampH(prefs.treeH+d*16);storePrefs();layout();});
 addEventListener('resize',layout);
-try{const s=sessionStorage.getItem('st');if(s&&[...sel.options].some(o=>o.value===s))sel.value=s;const z=sessionStorage.getItem('zm');if(z){$('zoom').value=z;$('zoom').onchange({target:{value:z}})}
+try{const s=sessionStorage.getItem('st');if(s&&[...sel.options].some(o=>o.value===s))sel.value=s;const z=sessionStorage.getItem('zm');if(z&&[...$('zoom').options].some(o=>o.value===z))$('zoom').value=z;
   const w=sessionStorage.getItem('wd');if(w!==null&&WIDTHS.includes(w))widthSel.value=w;
   const q=JSON.parse(sessionStorage.getItem('qe')||'null');if(q){qeText.value=q.text||'';queue=q.queue||[];if(qeText.value||queue.length)openPanel();}}catch(e){}
 applyState();render();layout();
+new ResizeObserver(layout).observe(document.querySelector('header')); /* the header can wrap to more rows later, e.g. the live badge */
 if(LIVE){const l=$('live');let v=null;l.textContent='● 即時預覽中';
   setInterval(()=>fetch('/__version').then(r=>r.text()).then(t=>{if(v&&t!==v)location.reload();v=t}).catch(()=>{l.textContent='○ 預覽伺服器已停止'}),1000);}
 </script></body></html>"""

@@ -5,7 +5,7 @@ description: Use for any change to what a user sees, such as screens, components
 
 # svg-ui-bridge
 
-Version: 0.6.0
+Version: 0.7.0
 
 A rendered draft is the shared language between the human's visual intent and the agent's code:
 the human judges a picture, the agent reads named, layered, tokenised markup. Iterate on the
@@ -88,6 +88,7 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
 - **The human reviews in the browser**, not the XML and not a PNG: `svg_preview.py --serve` opens
   a page at http://localhost:8765 that reloads by itself whenever an SVG in `design/` changes, with a
   state switcher (default/hover/disabled…), hover-to-identify components (id, layout, note) and zoom.
+  Drafts keep their design size; a squeezed pane scales them (fit to width by default), never reflows them.
   Start it once in the background at the beginning of design work and tell the user the URL.
   Without a long-running process: `svg_preview.py design` writes `design/_preview.html` and opens it.
 - **The agent checks its own drawing** by rendering a PNG and reading it (look for overlaps,
@@ -96,12 +97,13 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent: PNG to loo
   (preview refreshes) → repeat.
 - Tell the user they can click components in the preview, write a change in Quick Edit and copy it
   to you. It opens in the side column below the component tree, beside the design rather than over
-  it; the 元件列 select puts that column right (default) or left, or hides the tree.
+  it; the tree position menu puts that column right (default) or left, or hides the tree. In a
+  narrow or portrait window the tree is hidden and Quick Edit docks below the design.
 - When a message contains `Snapshot JSON (svg_render.py --job)` and a `.svg#` reference: first run
   `python <skill>/scripts/svg_render.py --job '<json>'` and read the PNG to confirm you see what the
   user saw, then find each component or region from its reference and follow this loop. The syntax
   is in `references/svg-conventions.md`.
-- With `--serve`, the "送給 Agent" button writes to `design/_feedback.md`. During review, read new
+- With `--serve`, the send-to-agent button writes to `design/_feedback.md`. During review, read new
   entries in that file before each reply. Mark handled entries `[done]`; do not delete them.
 - **Gate:** no product code until the user approves the design (this is the design approval in
   superpowers terms). For a design-only request, the work ends here.

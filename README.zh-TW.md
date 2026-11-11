@@ -111,7 +111,9 @@ npx skills add ETEason/svg-ui-bridge
 
 ## ✏️ 用 Quick Edit 指出要改的地方
 
-在預覽頁直接指給 Claude 看，不用文字描述位置。Quick Edit 開在側欄、元件列的下方，和設計稿並排而不會蓋住它。用頂部的「元件列」選單把側欄放在右側（預設）或左側，或隱藏元件列；拖曳分隔線可調整大小。這些選擇會記在瀏覽器裡。
+在預覽頁直接指給 Claude 看，不用文字描述位置。Quick Edit 開在側欄、元件列的下方，和設計稿並排而不會蓋住它。用頂部的「元件列」選單把側欄放在右側（預設）或左側，或隱藏元件列；拖曳分隔線可調整大小。視窗窄或直式時不顯示元件列，Quick Edit 固定在設計稿下方，兩者同時看得到。這些選擇會記在瀏覽器裡。
+
+設計稿維持設計尺寸。預覽區被對話框或側欄擠壓時，縮放會把所有設計稿等比縮小（預設「符合寬度」），不會改變設計稿裡任何東西的位置。響應式排版是成品的事，不是草稿的事。
 
 | 動作 | 操作 |
 |---|---|
@@ -122,12 +124,13 @@ npx skills add ETEason/svg-ui-bridge
 | 累積多筆修改 | 寫好一筆後按「加入清單」，再選下一處 |
 | 複製給 Claude | Copy Prompt，或 Ctrl/Cmd＋Enter |
 | 調整側欄 | 「元件列」選右側、左側或不顯示；拖曳分隔線調整大小；Esc 關閉 Quick Edit |
+| 縮放 | 「符合寬度」（預設）或固定比例；設計稿內的排版不會改變 |
 
 把複製的文字貼給 Claude，它會先用 `svg_render.py --job` 重現你看到的畫面確認位置，再改 SVG。剪貼簿被擋時，面板會顯示全文讓你手動複製。`--serve` 模式下可按「送給 Agent」，內容會寫到 `design/_feedback.md`。prompt 預設用相對路徑，加 `--absolute-paths` 才是絕對路徑。
 
 ## 🧭 選擇設計格式
 
-專案沒有指定時只看一條規則：**網頁 UI 用 HTML/CSS，其他都用 SVG**（原生 app、遊戲與 HUD、圖表）。兩者都有即時預覽、Quick Edit、元件清單、token 匯出和逐元件視覺比對。HTML 設計稿會依預覽頁選的寬度重新排版，所以響應式頁面只要一個檔案，不必每個斷點各畫一份 SVG。詳見 [HTML 設計路線](docs/zh-TW/html-design.md)。
+專案沒有指定時只看一條規則：**網頁 UI 用 HTML/CSS，其他都用 SVG**（原生 app、遊戲與 HUD、圖表）。兩者都有即時預覽、Quick Edit、元件清單、token 匯出和逐元件視覺比對。HTML 設計稿以設計寬度呈現，也可在預覽頁切換成 1280、768 或 390，所以響應式頁面只要一個檔案，不必每個斷點各畫一份 SVG。詳見 [HTML 設計路線](docs/zh-TW/html-design.md)。
 
 元件重複或變體很多時，可用 TSX 元件搭配共用主題，在建置時產生設計稿。[examples/tsx-design](examples/tsx-design) 是鎖定版本、有型別檢查的範例；詳見[元件化撰寫](docs/zh-TW/component-authoring.md)。
 

@@ -2,7 +2,7 @@
 
 [English](../../skills/svg-ui-bridge/SKILL.md)
 
-版本：0.6.0
+版本：0.7.0
 
 ![工作流程圖：四個階段與每一步執行的程式](../images/diagram-flow.zh-TW.png)
 
@@ -68,11 +68,11 @@ python <skill>/scripts/svg_render.py design/<screen>.svg     # agent：用 Read 
 - 每次修改來源後，先重新建置產生的 SVG，再執行這些指令。
 - 決策所依據的狀態或方案，各自輸出成同尺寸的 SVG，讓預覽頁並排顯示。說明文字放在 UI 之外，並記錄核准的檔案、狀態與尺寸。狀態切換是檢查用的，不能是發現各種方案的唯一途徑。
 - 修正所有 ERROR；warning 也要修，除非有明確理由。
-- **人在瀏覽器上審閱**，不看 XML，也不看 PNG：`svg_preview.py --serve` 會開啟 http://localhost:8765 的頁面，`design/` 裡的 SVG 一變更就自動重新載入，並提供狀態切換（default/hover/disabled…）、滑過辨識元件（id、layout、note）和縮放。設計工作開始時在背景啟動一次，並把網址告訴使用者。
+- **人在瀏覽器上審閱**，不看 XML，也不看 PNG：`svg_preview.py --serve` 會開啟 http://localhost:8765 的頁面，`design/` 裡的 SVG 一變更就自動重新載入，並提供狀態切換（default/hover/disabled…）、滑過辨識元件（id、layout、note）和縮放。設計稿維持設計尺寸；預覽區被擠壓時等比縮小（預設「符合寬度」），不會重新排版。設計工作開始時在背景啟動一次，並把網址告訴使用者。
   不想讓程序長時間執行時：`svg_preview.py design` 會寫出 `design/_preview.html` 並開啟。
 - **Agent 先檢查自己的畫稿**：請使用者看之前，先算出 PNG 並讀取（檢查重疊、文字被裁切、對不齊）。`--all-states` 會算出每種狀態。
 - 用視覺語言徵求回饋。把回饋改進 SVG 或其來源（再重新建置）→ 重新檢查 →（預覽自動更新）→ 重複。
-- 告訴使用者可以在預覽頁點選元件，用 Quick Edit 寫修改建議並複製給你（一次來回的流程見下圖）。Quick Edit 開在側欄、元件列的下方，和設計稿並排不會蓋住它；「元件列」選單可把側欄放右側（預設）或左側，或隱藏元件列。
+- 告訴使用者可以在預覽頁點選元件，用 Quick Edit 寫修改建議並複製給你（一次來回的流程見下圖）。Quick Edit 開在側欄、元件列的下方，和設計稿並排不會蓋住它；「元件列」選單可把側欄放右側（預設）或左側，或隱藏元件列。視窗窄或直式時不顯示元件列，Quick Edit 固定在設計稿下方。
 - 收到含 `Snapshot JSON (svg_render.py --job)` 與 `.svg#` reference 的文字時：先執行 `python <skill>/scripts/svg_render.py --job '<json>'` 並看圖，確認和使用者看到的一致，再依 reference 找到元件或區域，照本流程修改。語法見 [SVG 規範](svg-conventions.md)。
 - `--serve` 模式下，「送給 Agent」會寫到 `design/_feedback.md`。審稿期間每次回應前先讀新內容；處理完的項目標記 `[done]`，不要刪掉。
   ![Quick Edit 來回圖：你選取並複製，Agent 重現畫面、修改並更新預覽](../images/diagram-quick-edit.zh-TW.png)

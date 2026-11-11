@@ -31,8 +31,10 @@ python <skill>/scripts/svg_preview.py design/html --no-open   # sandbox: static 
 ```
 
 The preview shows each screen in its own card, rendered from the draft's HTML and local CSS with
-scripts removed. The 寬度 select sets the viewport width (1280, 768, 390, or the card width), so
-media queries apply and text reflows. Selection, Alt-drag regions, the breadcrumb and the Quick Edit
+scripts removed. Each screen renders at its design width, taken from an optional `data-target` on
+the screen (such as `mobile-390x844`; 1280 when absent). The width menu can switch it to 1280, 768 or
+390, so media queries apply and text reflows. Resizing the preview never reflows a screen: the zoom
+scales it instead. Selection, Alt-drag regions, the breadcrumb and the Quick Edit
 panel work as on the SVG route. A request references `file.html#Id?state=…&width=…`; region
 coordinates are CSS pixels relative to the screen. Handle it as SKILL.md describes: run
 `svg_render.py --job` first and read the PNG, which renders the same screen at the same width.
@@ -91,7 +93,7 @@ state and fonts must match the baseline; dynamic data in the implementation show
 
 | | SVG route | HTML route |
 |---|---|---|
-| Preview and Quick Edit | `svg_preview.py` | `svg_preview.py`, plus the 寬度 select |
+| Preview and Quick Edit | `svg_preview.py` | `svg_preview.py`, plus the width menu |
 | Reproduce a Quick Edit view | `svg_render.py --job` | `svg_render.py --job` (`format: html`) |
 | Draft checks | `svg_lint.py` | `html_review.py` |
 | Component manifest | `svg_manifest.py` | `html_review.py` (`<id>.components.json`) |
